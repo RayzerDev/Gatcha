@@ -1,0 +1,48 @@
+services:
+  mongodb-auth:
+    image: mongo:8.2.3
+    container_name: mongodb-auth
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data-auth:/data/db
+    networks:
+      - gatcha-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mongosh --username ${MONGO_INITDB_ROOT_USERNAME:-root} --password ${MONGO_INITDB_ROOT_PASSWORD:-example} --eval 'db.adminCommand(\"ping\")' || exit 1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  api-auth:
+    build:
+      context: ./auth
+    container_name: api-auth
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      mongodb-auth:
+        condition: service_healthy
+    environment:
+      MONGO_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
+      MONGO_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
+      MONGO_HOST: mongodb-auth
+      MONGO_PORT: 27017
+    networks:
+      - gatcha-network
+
+volumes:
+  mongo-data-auth:
+
+networks:
+  gatcha-network:
+    driver: bridge
