@@ -3,11 +3,10 @@ package fr.imt.nord.fisa.ti.gatcha.auth.controller;
 import fr.imt.nord.fisa.ti.gatcha.auth.dto.InputLoginDTO;
 import fr.imt.nord.fisa.ti.gatcha.auth.dto.InputRegisterDTO;
 import fr.imt.nord.fisa.ti.gatcha.auth.dto.OutputLoginDTO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("api/users")
+@RestController
+@RequestMapping("/api/users")
 public class UserContoller {
 
     @PostMapping("/login")
