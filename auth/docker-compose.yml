@@ -1,48 +1,45 @@
 services:
-  mongodb-auth:
+  mongodb:
     image: mongo:8.2.3
-    container_name: mongodb-auth
-    restart: unless-stopped
+    container_name: mongodb-auth-local
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data-auth:/data/db
-    networks:
-      - gatcha-network
+      - mongo-data:/data/db
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "mongosh --username ${MONGO_INITDB_ROOT_USERNAME:-root} --password ${MONGO_INITDB_ROOT_PASSWORD:-example} --eval 'db.adminCommand(\"ping\")' || exit 1",
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "mongosh --eval 'db.runCommand({ping:1}).ok' --quiet"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
 
-  api-auth:
+  api:
     build:
-      context: ./auth
-    container_name: api-auth
-    restart: unless-stopped
+      context: ..
+      dockerfile: api.Dockerfile
+      args:
+        SERVICE_NAME: auth
+    container_name: api-auth-local
     ports:
-      - "8080:8080"
+      - "8081:8080"
     depends_on:
-      mongodb-auth:
+      mongodb:
         condition: service_healthy
     environment:
-      MONGO_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
-      MONGO_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
-      MONGO_HOST: mongodb-auth
+      MONGO_USERNAME: root
+      MONGO_PASSWORD: example
+      MONGO_HOST: mongodb
       MONGO_PORT: 27017
-    networks:
-      - gatcha-network
+      MONGO_DATABASE: authdb
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
 volumes:
-  mongo-data-auth:
-
-networks:
-  gatcha-network:
-    driver: bridge
+  mongo-data:

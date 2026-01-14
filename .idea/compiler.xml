@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.42/8365263844ebb62398e0dc33057ba10ba472d3b8/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="player.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fr.imt.nord.fisa.ti.gatcha.auth" target="21" />
+      <module name="fr.imt.nord.fisa.ti.gatcha.auth.main" target="21" />
+      <module name="fr.imt.nord.fisa.ti.gatcha.auth.test" target="21" />
+      <module name="invocation.auth" target="21" />
+      <module name="invocation.auth.main" target="21" />
+      <module name="invocation.auth.test" target="21" />
+      <module name="monster.auth" target="21" />
+      <module name="monster.auth.main" target="21" />
+      <module name="monster.auth.test" target="21" />
+      <module name="player.auth" target="21" />
+      <module name="player.auth.main" target="21" />
+      <module name="player.auth.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="auth" options="-parameters" />
+      <module name="auth.main" options="-parameters" />
+      <module name="auth.test" options="-parameters" />
+      <module name="combat" options="-parameters" />
+      <module name="combat.main" options="-parameters" />
+      <module name="combat.test" options="-parameters" />
+      <module name="fr.imt.nord.fisa.ti.gatcha.auth" options="-parameters" />
+      <module name="fr.imt.nord.fisa.ti.gatcha.auth.main" options="-parameters" />
+      <module name="fr.imt.nord.fisa.ti.gatcha.auth.test" options="-parameters" />
+      <module name="invocation" options="-parameters" />
+      <module name="invocation.auth" options="-parameters" />
+      <module name="invocation.auth.main" options="-parameters" />
+      <module name="invocation.auth.test" options="-parameters" />
+      <module name="invocation.main" options="-parameters" />
+      <module name="invocation.test" options="-parameters" />
+      <module name="monster" options="-parameters" />
+      <module name="monster.auth" options="-parameters" />
+      <module name="monster.auth.main" options="-parameters" />
+      <module name="monster.auth.test" options="-parameters" />
+      <module name="monster.main" options="-parameters" />
+      <module name="monster.test" options="-parameters" />
+      <module name="player" options="-parameters" />
+      <module name="player.auth" options="-parameters" />
+      <module name="player.auth.main" options="-parameters" />
+      <module name="player.auth.test" options="-parameters" />
+      <module name="player.main" options="-parameters" />
+      <module name="player.test" options="-parameters" />
+    </option>
+  </component>
+</project>

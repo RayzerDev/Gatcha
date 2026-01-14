@@ -1,4 +1,4 @@
-package fr.imt.nord.fisa.ti.gatcha.auth.dto.user;
+package fr.imt.nord.fisa.ti.gatcha.auth.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'fr.imt.nord.fisa.ti.gatcha'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 description = 'auth'
 
 java {
