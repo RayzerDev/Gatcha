@@ -44,18 +44,15 @@ class TokenServiceTest {
 
     @Test
     void generateToken_ShouldCreateTokenWithCorrectFormat() {
-        // Arrange
         String expectedEncryptedToken = "$2a$10$encrypted_token";
         when(encryptService.encrypt(any(String.class))).thenReturn(expectedEncryptedToken);
         when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         String actualToken = tokenService.generateToken(testUser);
 
         // Assert
         assertEquals(expectedEncryptedToken, actualToken);
 
-        // Vérifier que le token a été sauvegardé
         ArgumentCaptor<Token> tokenCaptor = ArgumentCaptor.forClass(Token.class);
         verify(tokenRepository).save(tokenCaptor.capture());
 
@@ -64,7 +61,6 @@ class TokenServiceTest {
         assertEquals(testUser, savedToken.getUser());
         assertNotNull(savedToken.getExpiryDate());
 
-        // Vérifier que la date d'expiration est dans environ 1 heure
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiryDate = savedToken.getExpiryDate();
         assertTrue(expiryDate.isAfter(now.plusMinutes(59)));
@@ -73,7 +69,6 @@ class TokenServiceTest {
 
     @Test
     void verifyToken_WithValidToken_ShouldReturnDTOAndUpdateExpiry() throws Exception {
-        // Arrange
         String tokenString = "$2a$10$valid_token";
         Token token = new Token();
         token.setId(UUID.randomUUID());
@@ -84,10 +79,8 @@ class TokenServiceTest {
         when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
         when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         OutputVerifyDTO result = tokenService.verifyToken(tokenString);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isStatus());
         assertEquals("testuser", result.getUsername());
@@ -99,7 +92,6 @@ class TokenServiceTest {
 
     @Test
     void verifyToken_WithExpiredToken_ShouldThrowExceptionAndDeleteToken() {
-        // Arrange
         String tokenString = "$2a$10$expired_token";
         Token token = new Token();
         token.setId(UUID.randomUUID());
@@ -110,7 +102,6 @@ class TokenServiceTest {
         when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
         doNothing().when(tokenRepository).delete(token);
 
-        // Act & Assert
         assertThrows(
                 fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenExpiredException.class,
                 () -> tokenService.verifyToken(tokenString)
@@ -122,17 +113,80 @@ class TokenServiceTest {
 
     @Test
     void verifyToken_WithNonExistentToken_ShouldThrowException() {
-        // Arrange
         String tokenString = "$2a$10$nonexistent_token";
         when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(
                 fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenNotFoundException.class,
                 () -> tokenService.verifyToken(tokenString)
         );
 
         // Vérifier qu'aucune suppression n'a été effectuée
+        verify(tokenRepository, never()).delete(any(Token.class));
+    }
+
+    @Test
+    void verifyToken_WithValidToken_ShouldExtendExpiryToAboutOneHourFromNow() throws Exception {
+        String tokenString = "$2a$10$valid_token";
+        Token token = new Token();
+        token.setId(UUID.randomUUID());
+        token.setToken(tokenString);
+        token.setUser(testUser);
+        token.setExpiryDate(LocalDateTime.now().plusMinutes(5));
+
+        when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
+        when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        LocalDateTime beforeCall = LocalDateTime.now();
+
+        tokenService.verifyToken(tokenString);
+
+        LocalDateTime afterCall = LocalDateTime.now();
+
+        ArgumentCaptor<Token> tokenCaptor = ArgumentCaptor.forClass(Token.class);
+        verify(tokenRepository).save(tokenCaptor.capture());
+
+        Token saved = tokenCaptor.getValue();
+        assertNotNull(saved.getExpiryDate());
+
+        // On attend environ +1h depuis le moment du call
+        LocalDateTime minExpected = beforeCall.plusMinutes(59);
+        LocalDateTime maxExpected = afterCall.plusMinutes(61);
+        assertTrue(saved.getExpiryDate().isAfter(minExpected));
+        assertTrue(saved.getExpiryDate().isBefore(maxExpected));
+
+        verify(tokenRepository, never()).delete(any(Token.class));
+    }
+
+    @Test
+    void verifyToken_WithTokenExpiringExactlyNow_ShouldBeTreatedAsValidAndExtended() throws Exception {
+        String tokenString = "$2a$10$edge_token";
+        Token token = new Token();
+        token.setId(UUID.randomUUID());
+        token.setToken(tokenString);
+        token.setUser(testUser);
+        token.setExpiryDate(LocalDateTime.now().plusSeconds(5));
+
+        when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
+        when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        OutputVerifyDTO result = tokenService.verifyToken(tokenString);
+
+        assertTrue(result.isStatus());
+        verify(tokenRepository).save(any(Token.class));
+        verify(tokenRepository, never()).delete(any(Token.class));
+    }
+
+    @Test
+    void generateToken_ShouldSaveTokenOnce_AndNotDeleteAnything() {
+        String expectedEncryptedToken = "$2a$10$encrypted_token";
+        when(encryptService.encrypt(any(String.class))).thenReturn(expectedEncryptedToken);
+        when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        tokenService.generateToken(testUser);
+
+        verify(encryptService, times(1)).encrypt(any(String.class));
+        verify(tokenRepository, times(1)).save(any(Token.class));
         verify(tokenRepository, never()).delete(any(Token.class));
     }
 }
