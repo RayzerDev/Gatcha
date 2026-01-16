@@ -72,7 +72,7 @@ class TokenServiceTest {
     }
 
     @Test
-    void verifyToken_WithValidToken_ShouldReturnDTOAndUpdateExpiry() {
+    void verifyToken_WithValidToken_ShouldReturnDTOAndUpdateExpiry() throws Exception {
         // Arrange
         String tokenString = "$2a$10$valid_token";
         Token token = new Token();
@@ -112,8 +112,8 @@ class TokenServiceTest {
 
         // Act & Assert
         assertThrows(
-            fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenExpiredException.class,
-            () -> tokenService.verifyToken(tokenString)
+                fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenExpiredException.class,
+                () -> tokenService.verifyToken(tokenString)
         );
 
         // Vérifier que le token a été supprimé
@@ -128,8 +128,8 @@ class TokenServiceTest {
 
         // Act & Assert
         assertThrows(
-            fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenNotFoundException.class,
-            () -> tokenService.verifyToken(tokenString)
+                fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenNotFoundException.class,
+                () -> tokenService.verifyToken(tokenString)
         );
 
         // Vérifier qu'aucune suppression n'a été effectuée

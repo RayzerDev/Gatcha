@@ -3,6 +3,8 @@ package fr.imt.nord.fisa.ti.gatcha.auth.controller;
 import fr.imt.nord.fisa.ti.gatcha.auth.dto.user.InputLoginDTO;
 import fr.imt.nord.fisa.ti.gatcha.auth.dto.user.InputRegisterDTO;
 import fr.imt.nord.fisa.ti.gatcha.auth.dto.user.OutputLoginDTO;
+import fr.imt.nord.fisa.ti.gatcha.auth.exception.InvalidCredentialsException;
+import fr.imt.nord.fisa.ti.gatcha.auth.exception.UserAlreadyExistsException;
 import fr.imt.nord.fisa.ti.gatcha.auth.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,10 +14,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @AllArgsConstructor
 @Tag(name = "Authentication", description = "API d'authentification des utilisateurs")
 public class UserContoller {
@@ -42,7 +47,7 @@ public class UserContoller {
             )
     })
     @PostMapping("/login")
-    public OutputLoginDTO login(@Valid @RequestBody InputLoginDTO userLoginDTO) {
+    public OutputLoginDTO login(@Valid @RequestBody InputLoginDTO userLoginDTO) throws InvalidCredentialsException {
         return userService.login(userLoginDTO);
     }
 
@@ -66,7 +71,7 @@ public class UserContoller {
             )
     })
     @PostMapping("/register")
-    public OutputLoginDTO register(@Valid @RequestBody InputRegisterDTO inputRegisterDTO) {
+    public OutputLoginDTO register(@Valid @RequestBody InputRegisterDTO inputRegisterDTO) throws UserAlreadyExistsException {
         return userService.register(inputRegisterDTO);
     }
 }

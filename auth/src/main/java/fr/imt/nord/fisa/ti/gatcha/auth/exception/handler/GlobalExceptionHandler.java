@@ -3,6 +3,8 @@ package fr.imt.nord.fisa.ti.gatcha.auth.exception.handler;
 import fr.imt.nord.fisa.ti.gatcha.auth.dto.error.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -18,6 +20,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestControllerAdvice
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,13 +47,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(Exception.class)
+    /**
+     * Catch-all pour erreurs inattendues.
+     * <p>
+     * Note: on cible volontairement RuntimeException (plutôt que Exception) pour éviter
+     * d'interférer avec des handlers plus spécifiques.
+     */
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(
-            Exception ex,
+            RuntimeException ex,
             HttpServletRequest request) {
 
-        // Logger l'exception avec la stack trace complète
-        log.error("Unexpected error occurred at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
+        log.error("Unexpected runtime error occurred at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
 
         ErrorResponseDTO error = new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

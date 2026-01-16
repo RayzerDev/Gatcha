@@ -64,7 +64,7 @@ public class TokenService {
      * @throws TokenNotFoundException si le token n'existe pas en base
      * @throws TokenExpiredException  si le token a expiré
      */
-    public OutputVerifyDTO verifyToken(String tokenStr) {
+    public OutputVerifyDTO verifyToken(String tokenStr) throws TokenNotFoundException, TokenExpiredException {
         log.debug("Verifying token");
 
         Optional<Token> tokenOptional = tokenRepository.findByToken(tokenStr);

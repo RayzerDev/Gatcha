@@ -28,7 +28,7 @@ public class UserService {
      * @return OutputLoginDTO contenant le token généré
      * @throws InvalidCredentialsException si les identifiants sont invalides
      */
-    public OutputLoginDTO login(InputLoginDTO inputLoginDTO) {
+    public OutputLoginDTO login(InputLoginDTO inputLoginDTO) throws InvalidCredentialsException {
         log.info("Login attempt for user: {}", inputLoginDTO.getUsername());
 
         Optional<User> userOptional = userRepository.findByUsername(inputLoginDTO.getUsername());
@@ -61,7 +61,7 @@ public class UserService {
      * @return OutputLoginDTO contenant le token généré
      * @throws UserAlreadyExistsException si le username existe déjà
      */
-    public OutputLoginDTO register(InputRegisterDTO inputRegisterDTO) {
+    public OutputLoginDTO register(InputRegisterDTO inputRegisterDTO) throws UserAlreadyExistsException {
         log.info("Registration attempt for username: {}", inputRegisterDTO.getUsername());
 
         Optional<User> userOptional = userRepository.findByUsername(inputRegisterDTO.getUsername());
