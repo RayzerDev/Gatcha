@@ -9,13 +9,18 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * Configuration OpenAPI/Swagger pour la documentation de l'API.
+ * <p>
+ * La documentation est accessible à : <a href="http://localhost:8080/swagger-ui.html">...</a>
+ */
 @Configuration
 public class OpenApiConfig {
 
     /**
      * En dev "standalone" (bootRun du module), on veut que Swagger UI appelle la même origine
      * (même host/port) => on utilise une URL relative.
-     *
+     * <p>
      * En mode "gateway" (docker-compose), on force une URL absolue via env OPENAPI_SERVER_URL.
      */
     @Bean
@@ -24,9 +29,22 @@ public class OpenApiConfig {
     ) {
         var api = new OpenAPI()
                 .info(new Info()
-                        .title("API Auth")
-                        .version("1.0")
-                        .description("Documentation de l'API d'authentification"));
+                        .title("API d'Authentification Gatcha")
+                        .version("1.0.0")
+                        .description("""
+                                API de gestion de l'authentification pour le système Gatcha.
+                                
+                                Cette API permet de :
+                                - Enregistrer de nouveaux utilisateurs
+                                - Authentifier les utilisateurs existants
+                                - Générer des tokens de session valables 1 heure
+                                - Vérifier la validité des tokens
+                                - Renouveler automatiquement les tokens valides
+                                
+                                Format du token : username-YYYY/MM/DD-HH:mm:ss (encrypté avec BCrypt)
+                                
+                                Les tokens sont automatiquement prolongés de 1 heure à chaque vérification réussie.
+                                """));
 
         // Si vide -> URL relative, Swagger utilisera la même origine (évite les soucis de ports)
         if (serverUrl == null || serverUrl.isBlank()) {
