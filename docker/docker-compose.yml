@@ -129,6 +129,7 @@ services:
       <<: *api-env-base
       MONGO_HOST: mongodb-auth
       MONGO_DATABASE: authdb
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/auth
 
   api-player:
     <<: *api-common
@@ -148,6 +149,7 @@ services:
       MONGO_HOST: mongodb-player
       MONGO_DATABASE: playerdb
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/player
 
   api-monster:
     <<: *api-common
@@ -167,6 +169,7 @@ services:
       MONGO_HOST: mongodb-monster
       MONGO_DATABASE: monsterdb
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/monster
 
   api-invocation:
     <<: *api-common
@@ -190,6 +193,7 @@ services:
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
       MONSTER_API_URL: ${MONSTER_API_URL:-http://api-monster:8080}
       PLAYER_API_URL: ${PLAYER_API_URL:-http://api-player:8080}
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/invocation
 
   api-combat:
     <<: *api-common
@@ -213,6 +217,7 @@ services:
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
       MONSTER_API_URL: ${MONSTER_API_URL:-http://api-monster:8080}
       PLAYER_API_URL: ${PLAYER_API_URL:-http://api-player:8080}
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/combat
 
 # ============================================
 # Volumes
