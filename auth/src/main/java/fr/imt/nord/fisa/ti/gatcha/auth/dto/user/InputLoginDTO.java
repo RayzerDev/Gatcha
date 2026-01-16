@@ -1,4 +1,4 @@
-package fr.imt.nord.fisa.ti.gatcha.auth.dto;
+package fr.imt.nord.fisa.ti.gatcha.auth.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

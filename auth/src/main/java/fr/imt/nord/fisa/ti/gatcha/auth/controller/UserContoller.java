@@ -1,8 +1,8 @@
 package fr.imt.nord.fisa.ti.gatcha.auth.controller;
 
-import fr.imt.nord.fisa.ti.gatcha.auth.dto.InputLoginDTO;
-import fr.imt.nord.fisa.ti.gatcha.auth.dto.InputRegisterDTO;
-import fr.imt.nord.fisa.ti.gatcha.auth.dto.OutputLoginDTO;
+import fr.imt.nord.fisa.ti.gatcha.auth.dto.user.InputLoginDTO;
+import fr.imt.nord.fisa.ti.gatcha.auth.dto.user.InputRegisterDTO;
+import fr.imt.nord.fisa.ti.gatcha.auth.dto.user.OutputLoginDTO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
