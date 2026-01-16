@@ -11,8 +11,8 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Auth")
+                        .title("API Player")
                         .version("1.0")
-                        .description("Documentation de l'API d'authentification"));
+                        .description("Documentation de l'API Player"));
     }
 }
