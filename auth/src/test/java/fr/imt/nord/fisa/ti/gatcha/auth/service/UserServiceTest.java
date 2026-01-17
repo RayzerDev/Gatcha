@@ -29,6 +29,9 @@ class UserServiceTest {
     @Mock
     private TokenService tokenService;
 
+    @Mock
+    private EncryptService encryptService;
+
     @InjectMocks
     private UserService userService;
 
@@ -36,13 +39,14 @@ class UserServiceTest {
     void login_WithValidCredentials_ShouldReturnTokenAndMessage_AndGenerateTokenOnce() throws Exception {
         User user = new User();
         user.setUsername("john");
-        user.setPassword("pwd");
+        user.setPassword("encryptedPwd");
 
         InputLoginDTO input = new InputLoginDTO();
         input.setUsername("john");
         input.setPassword("pwd");
 
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(encryptService.matches("pwd", "encryptedPwd")).thenReturn(true);
         when(tokenService.generateToken(user)).thenReturn("token123");
 
         OutputLoginDTO out = userService.login(input);
@@ -52,6 +56,7 @@ class UserServiceTest {
         assertEquals("Login successful", out.getMessage());
 
         verify(userRepository, times(1)).findByUsername("john");
+        verify(encryptService, times(1)).matches("pwd", "encryptedPwd");
         verify(tokenService, times(1)).generateToken(user);
         verifyNoMoreInteractions(tokenService);
     }
@@ -72,15 +77,17 @@ class UserServiceTest {
     void login_WithWrongPassword_ShouldThrowInvalidCredentials_AndNotGenerateToken() {
         User user = new User();
         user.setUsername("john");
-        user.setPassword("correct");
+        user.setPassword("encryptedCorrect");
 
         InputLoginDTO input = new InputLoginDTO();
         input.setUsername("john");
         input.setPassword("wrong");
 
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(encryptService.matches("wrong", "encryptedCorrect")).thenReturn(false);
 
         assertThrows(InvalidCredentialsException.class, () -> userService.login(input));
+        verify(encryptService, times(1)).matches("wrong", "encryptedCorrect");
         verify(tokenService, never()).generateToken(any());
     }
 
@@ -105,6 +112,7 @@ class UserServiceTest {
         input.setPassword("pwd");
 
         when(userRepository.findByUsername("alice")).thenReturn(Optional.empty());
+        when(encryptService.encrypt("pwd")).thenReturn("encryptedPwd");
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(tokenService.generateToken(any(User.class))).thenReturn("tokenABC");
 
@@ -120,8 +128,9 @@ class UserServiceTest {
 
         assertNotNull(saved.getId());
         assertEquals("alice", saved.getUsername());
-        assertEquals("pwd", saved.getPassword());
+        assertEquals("encryptedPwd", saved.getPassword());
 
+        verify(encryptService, times(1)).encrypt("pwd");
         verify(tokenService, times(1)).generateToken(saved);
     }
 }
