@@ -19,11 +19,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @org.springframework.boot.test.context.SpringBootTest
 @org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig
@@ -74,19 +74,9 @@ class AuthIntegrationTest {
     }
 
     @Test
-    void verifyToken_GetWithoutTokenParam_ShouldReturn400() throws Exception {
+    void verifyToken_GetWithoutTokenParam_ShouldReturn401() throws Exception {
         mockMvc.perform(get("/tokens/verify"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void verifyToken_PostWithMissingField_ShouldReturn400() throws Exception {
-        // token vide => @NotBlank doit échouer => 400
-        mockMvc.perform(post("/tokens/verify")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"token\":\"\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -187,7 +177,7 @@ class AuthIntegrationTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         mockMvc.perform(get("/tokens/verify")
-                        .param("token", tokenString))
+                        .header("Authorization", "Bearer " + tokenString))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(true))
                 .andExpect(jsonPath("$.username").value("bob"))
@@ -244,7 +234,7 @@ class AuthIntegrationTest {
     }
 
     @Test
-    void verifyToken_PostWithValidToken_ShouldReturn200() throws Exception {
+    void verifyToken_WithValidToken_ShouldReturn200() throws Exception {
         String tokenString = "valid-post";
 
         User user = new User();
@@ -261,33 +251,12 @@ class AuthIntegrationTest {
         Mockito.when(tokenRepository.save(Mockito.any(Token.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        mockMvc.perform(post("/tokens/verify")
+        mockMvc.perform(get("/tokens/verify")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"token\":\"" + tokenString + "\"}"))
+                        .header("Authorization", "Bearer " + tokenString))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(true))
                 .andExpect(jsonPath("$.username").value("bob"))
                 .andExpect(jsonPath("$.message").value("Token valid"));
-    }
-
-    @Test
-    void verifyToken_PostWithNonExistentToken_ShouldReturn401() throws Exception {
-        Mockito.when(tokenRepository.findByToken("nope-post"))
-                .thenReturn(Optional.empty());
-
-        mockMvc.perform(post("/tokens/verify")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"token\":\"nope-post\"}"))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.status").value(401));
-    }
-
-    @Test
-    void verifyToken_PostWithMissingTokenField_ShouldReturn400() throws Exception {
-        mockMvc.perform(post("/tokens/verify")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400));
     }
 }

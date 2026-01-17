@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 @AllArgsConstructor
 @Tag(name = "Authentication", description = "API d'authentification des utilisateurs")
-public class UserContoller {
+public class UserController {
 
     private final UserService userService;
 

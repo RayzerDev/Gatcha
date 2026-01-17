@@ -20,6 +20,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final EncryptService encryptService;
 
     /**
      * Authentifie un utilisateur et génère un token.
@@ -40,7 +41,7 @@ public class UserService {
 
         User user = userOptional.get();
 
-        if (!user.getPassword().equals(inputLoginDTO.getPassword())) {
+        if (!encryptService.matches(inputLoginDTO.getPassword(), user.getPassword())) {
             log.warn("Login failed: invalid password for user - {}", inputLoginDTO.getUsername());
             throw new InvalidCredentialsException("Invalid username or password");
         }
@@ -74,7 +75,7 @@ public class UserService {
         User newUser = new User();
         newUser.setId(UUID.randomUUID());
         newUser.setUsername(inputRegisterDTO.getUsername());
-        newUser.setPassword(inputRegisterDTO.getPassword());
+        newUser.setPassword(encryptService.encrypt(inputRegisterDTO.getPassword()));
         userRepository.save(newUser);
 
         log.info("User registered successfully: {}", newUser.getUsername());

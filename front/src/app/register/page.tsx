@@ -2,7 +2,7 @@
 
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {authApi} from '@/lib/api';
+import {authService, ApiError} from '@/lib/services';
 import {useAuth} from '@/contexts/AuthContext';
 
 export default function RegisterPage() {
@@ -31,11 +31,18 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
-            const response = await authApi.register({username, password});
+            const response = await authService.register({username, password});
             await loginContext(response.token);
             router.push('/dashboard');
-        } catch (err: any) {
-            setError(err.message || 'Registration failed');
+        } catch (err: unknown) {
+            if (err instanceof ApiError) {
+                // Afficher le message d'erreur de l'API
+                setError(err.message);
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Registration failed');
+            }
         } finally {
             setLoading(false);
         }
