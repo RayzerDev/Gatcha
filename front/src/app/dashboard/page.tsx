@@ -57,15 +57,13 @@ export default function DashboardPage() {
                 <div className="rounded-lg bg-white p-6 shadow dark:bg-zinc-800">
                     <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Dashboard</h2>
                     <p className="mt-4 text-zinc-600 dark:text-zinc-400">
-                        You are successfully authenticated! Your token is stored in localStorage.
+                        You are successfully authenticated!
                     </p>
                     <div className="mt-6 space-y-4">
                         <div className="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20">
                             <h3 className="font-semibold text-blue-900 dark:text-blue-300">Authentication Status</h3>
                             <ul className="mt-2 space-y-1 text-sm text-blue-800 dark:text-blue-400">
                                 <li>✓ Authenticated as <strong>{username}</strong></li>
-                                <li>✓ Token stored in localStorage</li>
-                                <li>✓ Token auto-verified on page load</li>
                             </ul>
                         </div>
                     </div>

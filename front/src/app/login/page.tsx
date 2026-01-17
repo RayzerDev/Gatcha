@@ -2,8 +2,8 @@
 
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {authApi} from '@/lib/api';
 import {useAuth} from '@/contexts/AuthContext';
+import {authService, ApiError} from '@/lib/services';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -19,11 +19,18 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            const response = await authApi.login({username, password});
+            const response = await authService.login({username, password});
             await loginContext(response.token);
             router.push('/dashboard');
-        } catch (err: any) {
-            setError(err.message || 'Login failed');
+        } catch (err: unknown) {
+            if (err instanceof ApiError) {
+                // Afficher le message d'erreur de l'API
+                setError(err.message);
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Login failed');
+            }
         } finally {
             setLoading(false);
         }

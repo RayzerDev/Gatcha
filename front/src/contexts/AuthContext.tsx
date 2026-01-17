@@ -1,6 +1,6 @@
 ﻿'use client';
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {authApi, VerifyResponse} from '@/lib/api';
+import {authService} from '@/lib/services';
 
 interface AuthContextType {
     token: string | null;
@@ -12,48 +12,59 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const TOKEN_KEY = 'gatcha_token';
 
 export function AuthProvider({children}: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
-        const stored = localStorage.getItem(TOKEN_KEY);
-        if (stored) {
-            authApi
-                .verify(stored)
-                .then((data: VerifyResponse) => {
+        // Vérifier uniquement côté client
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        const checkAuth = async () => {
+            const storedToken = authService.getToken();
+            if (storedToken) {
+                try {
+                    const data = await authService.verify(storedToken);
                     if (data.status) {
-                        setToken(stored);
+                        setToken(storedToken);
                         setUsername(data.username);
                     } else {
-                        localStorage.removeItem(TOKEN_KEY);
+                        authService.logout();
                     }
-                })
-                .catch(() => {
-                    localStorage.removeItem(TOKEN_KEY);
-                })
-                .finally(() => setIsLoading(false));
-        } else {
-            setIsLoading(false);
-        }
+                } catch {
+                    authService.logout();
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                setIsLoading(false);
+            }
+        };
+
+        checkAuth();
     }, []);
+
     const login = async (newToken: string) => {
-        const data = await authApi.verify(newToken);
+        const data = await authService.verify(newToken);
         if (data.status) {
-            localStorage.setItem(TOKEN_KEY, newToken);
+            authService.logout(); // Nettoyer l'ancien token
             setToken(newToken);
             setUsername(data.username);
         } else {
             throw new Error('Invalid token');
         }
     };
+
     const logout = () => {
-        localStorage.removeItem(TOKEN_KEY);
+        authService.logout();
         setToken(null);
         setUsername(null);
     };
+
     return (
         <AuthContext.Provider
             value={{

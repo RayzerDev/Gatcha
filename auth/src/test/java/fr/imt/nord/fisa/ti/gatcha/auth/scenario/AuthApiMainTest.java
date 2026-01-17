@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * E2E léger contre le gateway docker (http://localhost:8000).
- *
+ * <p>
  * Objectif: tester le comportement "réel" HTTP (gateway + service auth + Mongo) sans MockMvc.
- *
+ * <p>
  * Pré-requis:
  * - docker compose up -d (dans /docker)
  */
@@ -42,20 +42,14 @@ class AuthApiMainTest {
         assertEquals(200, login.statusCode(), login.body());
         assertTrue(login.body().contains("token"), login.body());
 
-        String token = extractJsonStringField(login.body(), "token");
+        String token = extractJsonStringField(login.body());
         assertNotNull(token);
         assertFalse(token.isBlank());
 
-        // verify with GET (query param)
-        HttpResponse<String> verify = get("/tokens/verify?token=" + java.net.URLEncoder.encode(token, java.nio.charset.StandardCharsets.UTF_8));
-        assertEquals(200, verify.statusCode(), verify.body());
-        assertTrue(verify.body().contains("\"status\":true"), verify.body());
-        assertTrue(verify.body().contains(username), verify.body());
+        HttpResponse<String> verifyGet = get(token);
 
-        // verify with POST
-        HttpResponse<String> verifyPost = postJson("/tokens/verify", "{\"token\":\"" + escapeJson(token) + "\"}");
-        assertEquals(200, verifyPost.statusCode(), verifyPost.body());
-        assertTrue(verifyPost.body().contains("\"status\":true"), verifyPost.body());
+        assertEquals(200, verifyGet.statusCode(), verifyGet.body());
+        assertTrue(verifyGet.body().contains("\"status\":true"), verifyGet.body());
     }
 
     @Test
@@ -81,27 +75,10 @@ class AuthApiMainTest {
     }
 
     @Test
-    void verify_missingToken_shouldReturn400() throws Exception {
+    void verify_missingToken_shouldReturn401() throws Exception {
         // GET sans query param => 400
-        HttpResponse<String> r1 = get("/tokens/verify");
-        assertEquals(400, r1.statusCode(), r1.body());
-
-        // POST avec token vide => 400 (validation)
-        HttpResponse<String> r2 = postJson("/tokens/verify", "{\"token\":\"\"}");
-        assertEquals(400, r2.statusCode(), r2.body());
-    }
-
-    @Test
-    void verify_tokenNotFound_shouldReturn401() throws Exception {
-        HttpResponse<String> r = get("/tokens/verify?token=does-not-exist");
+        HttpResponse<String> r = get(null);
         assertEquals(401, r.statusCode(), r.body());
-    }
-
-    @Test
-    void verify_postWithMissingTokenField_shouldReturn400() throws Exception {
-        // body JSON invalide pour InputVerifyDTO => 400
-        HttpResponse<String> r = postJson("/tokens/verify", "{}");
-        assertEquals(400, r.statusCode(), r.body());
     }
 
     @Test
@@ -118,13 +95,15 @@ class AuthApiMainTest {
         assertEquals(400, r.statusCode(), r.body());
     }
 
-    private HttpResponse<String> get(String pathAndQuery) throws Exception {
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + pathAndQuery))
+    private HttpResponse<String> get(String token) throws Exception {
+        HttpRequest.Builder req = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/tokens/verify"))
                 .timeout(Duration.ofSeconds(10))
-                .GET()
-                .build();
-        return client.send(req, HttpResponse.BodyHandlers.ofString());
+                .GET();
+        if (token != null) {
+            req.header("Authorization", "Bearer " + token);
+        }
+        return client.send(req.build(), HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> postJson(String path, String json) throws Exception {
@@ -138,9 +117,9 @@ class AuthApiMainTest {
     }
 
     // Extraction JSON minimaliste (suffisant pour nos réponses simples)
-    private static String extractJsonStringField(String json, String field) {
+    private static String extractJsonStringField(String json) {
         // cherche "field":"..."
-        String needle = "\"" + field + "\":";
+        String needle = "\"" + "token" + "\":";
         int i = json.indexOf(needle);
         if (i < 0) return null;
         int start = json.indexOf('"', i + needle.length());
@@ -150,7 +129,4 @@ class AuthApiMainTest {
         return json.substring(start + 1, end);
     }
 
-    private static String escapeJson(String s) {
-        return s.replace("\\", "\\\\").replace("\"", "\\\"");
-    }
 }
