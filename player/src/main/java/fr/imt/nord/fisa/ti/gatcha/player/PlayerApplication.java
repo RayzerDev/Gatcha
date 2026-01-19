@@ -4,8 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = {
-    "fr.imt.nord.fisa.ti.gatcha.player",
-    "fr.imt.nord.fisa.ti.gatcha.common"
+        "fr.imt.nord.fisa.ti.gatcha",
 })
 public class PlayerApplication {
 
