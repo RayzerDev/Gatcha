@@ -3,7 +3,10 @@ package fr.imt.nord.fisa.ti.gatcha.player;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+    "fr.imt.nord.fisa.ti.gatcha.player",
+    "fr.imt.nord.fisa.ti.gatcha.common"
+})
 public class PlayerApplication {
 
     public static void main(String[] args) {
