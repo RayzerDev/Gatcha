@@ -1,5 +1,6 @@
 package fr.imt.nord.fisa.ti.gatcha.common.filter;
 
+import fr.imt.nord.fisa.ti.gatcha.common.context.SecurityContext;
 import fr.imt.nord.fisa.ti.gatcha.common.service.AuthServiceClient;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,13 +33,17 @@ public class TokenValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        filterChain.doFilter(request, response);
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            SecurityContext.clear();
+        }
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/tokens") || path.startsWith("/users") || path.startsWith("/actuator/health");
+        return path.startsWith("/tokens") || path.startsWith("/users") || path.startsWith("/actuator/health") || path.startsWith("/swagger") || path.startsWith("/api-docs");
     }
 
     private String extractToken(HttpServletRequest request) {
