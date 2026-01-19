@@ -39,6 +39,7 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/player" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/common-auth" />
             <option value="$PROJECT_DIR$/player" />
           </set>
         </option>

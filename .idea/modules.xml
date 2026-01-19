@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/front/front.iml" filepath="$PROJECT_DIR$/front/front.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/gatcha.iml" filepath="$PROJECT_DIR$/.idea/gatcha.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/208670271/player.common-auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/208670271/player.common-auth.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/player.main.iml" filepath="$PROJECT_DIR$/.idea/modules/player.main.iml" />
     </modules>
   </component>
 </project>
