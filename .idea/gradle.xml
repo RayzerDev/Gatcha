@@ -16,6 +16,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/combat" />
+            <option value="$PROJECT_DIR$/common-auth" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -23,6 +24,7 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/invocation" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/common-auth" />
             <option value="$PROJECT_DIR$/invocation" />
           </set>
         </option>
@@ -31,6 +33,7 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/monster" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/common-auth" />
             <option value="$PROJECT_DIR$/monster" />
           </set>
         </option>

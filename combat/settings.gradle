@@ -1,1 +1,3 @@
 rootProject.name = 'combat'
+include ':common-auth'
+project(':common-auth').projectDir = file('../common-auth')
