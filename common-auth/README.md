@@ -4,10 +4,12 @@ Ce module contient les fonctionnalités communes pour la validation de tokens da
 
 ## Fonctionnalités
 
-- **AuthServiceClient**: Client HTTP pour communiquer avec l'API Auth
-- **TokenValidationInterceptor**: Interceptor Spring MVC pour valider automatiquement les tokens
-- **TokenVerifyResponse**: DTO pour les réponses de validation
-- **TokenValidationException**: Exception personnalisée pour les erreurs de validation
+- **TokenValidationFilter** : Filtre pour valider les tokens dans les requêtes entrantes.
+- **AuthServiceClient** : Client pour interagir avec le service d'authentification.
+- **FilterConfig** : Configuration du filtre de validation des tokens.
+- **TokenValidationException** : Exception personnalisée pour les erreurs de validation des tokens.
+- **TokenVerifyResponse** : Classe de réponse pour la vérification des tokens.
+- **SecurityContext** : Contexte de sécurité pour stocker les informations d'authentification durant la vie de la requête.
 
 ## Utilisation
 
@@ -29,31 +31,18 @@ project(':common-auth').projectDir = file('../common-auth')
 ### 3. Ajouter la configuration dans application.properties
 
 ```properties
-auth.service.url=http://localhost:8080
+auth.service.url=${AUTH_SERVICE_URL:http://localhost:8080}
+```
+### 4. Ajouter des exclusions de routes dans votre contrôleur
+Vous devez ajouter les routes à exclure de la validation des tokens dans la propriété `auth.filter.excluded.paths` de votre fichier `application.properties`.
+
+```properties
+auth.filter.excluded.paths=/public/**,/health
 ```
 
-### 4. L'interceptor s'active automatiquement sur les routes `/api/**`
-
-Les routes publiques peuvent être exclues avec `/api/public/**`
-
-## Exemple d'utilisation
-
-```java
-@RestController
-@RequestMapping("/api/protected")
-public class MyController {
-    
-    @GetMapping("/data")
-    public ResponseEntity<String> getData() {
-        // Cette route est protégée par l'interceptor
-        // Le token est validé automatiquement
-        return ResponseEntity.ok("Protected data");
-    }
-    
-    @GetMapping("/public/info")
-    public ResponseEntity<String> getPublicInfo() {
-        // Cette route serait exclue si configurée dans /api/public/**
-        return ResponseEntity.ok("Public info");
-    }
-}
-```
+Des routes sont par défaut exclues :
+- `/tokens/**`
+- `/swagger-ui/**`
+- `/users/**`
+- `/api-docs/**`
+- `/actuator/health`
