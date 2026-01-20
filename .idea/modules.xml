@@ -10,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/208670271/invocation.common-auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/208670271/invocation.common-auth.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/invocation.main.iml" filepath="$PROJECT_DIR$/.idea/modules/invocation.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/208670271/monster.common-auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/208670271/monster.common-auth.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/monster.main.iml" filepath="$PROJECT_DIR$/.idea/modules/monster.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/208670271/player.common-auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/208670271/player.common-auth.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/player.main.iml" filepath="$PROJECT_DIR$/.idea/modules/player.main.iml" />
     </modules>
