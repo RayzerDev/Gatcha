@@ -4,26 +4,16 @@
 x-mongodb-common: &mongodb-common
   image: mongo:8.2.3
   restart: unless-stopped
-  environment: &mongodb-env
+  environment:
     MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
     MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
   networks:
     - gatcha-network
-  healthcheck: &mongodb-healthcheck
-    test:
-      [
-        "CMD-SHELL",
-        "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"
-      ]
-    interval: 3s
-    timeout: 2s
-    retries: 5
-    start_period: 3s
 
 x-api-common: &api-common
   build:
-    context: .
-    dockerfile: api.Dockerfile
+    context: ..
+    dockerfile: docker/api.Dockerfile
   restart: unless-stopped
   networks:
     - gatcha-network
@@ -88,26 +78,16 @@ services:
     ports:
       - "${GATEWAY_PORT:-8000}:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../gateway/index.html:/usr/share/nginx/html/index.html:ro
     depends_on:
-      api-auth:
-        condition: service_healthy
-      api-player:
-        condition: service_healthy
-      api-monster:
-        condition: service_healthy
-      api-invocation:
-        condition: service_healthy
-      api-combat:
-        condition: service_healthy
+      - api-auth
+      - api-player
+      - api-monster
+      - api-invocation
+      - api-combat
     networks:
       - gatcha-network
-    healthcheck:
-      test: [ "CMD-SHELL", "wget -q --tries=1 --spider http://127.0.0.1/health || exit 1" ]
-      interval: 5s
-      timeout: 3s
-      retries: 3
-      start_period: 3s
 
   # ============================================
   # Frontend Next.js
@@ -115,8 +95,8 @@ services:
 
   front:
     build:
-      context: .
-      dockerfile: front.Dockerfile
+      context: ..
+      dockerfile: docker/front.Dockerfile
     container_name: front
     restart: unless-stopped
     ports:
@@ -125,16 +105,9 @@ services:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://localhost:${GATEWAY_PORT:-8000}
     depends_on:
-      api-gateway:
-        condition: service_healthy
+      - api-gateway
     networks:
       - gatcha-network
-    healthcheck:
-      test: [ "CMD-SHELL", "wget -q --tries=1 --spider http://127.0.0.1:3000 || exit 1" ]
-      interval: 3s
-      timeout: 2s
-      retries: 3
-      start_period: 5s
 
   # ============================================
   # Spring Boot APIs
@@ -143,82 +116,76 @@ services:
   api-auth:
     <<: *api-common
     build:
-      context: .
-      dockerfile: api.Dockerfile
+      context: ..
+      dockerfile: docker/api.Dockerfile
       args:
         SERVICE_NAME: auth
     container_name: api-auth
     ports:
       - "${API_AUTH_PORT:-8081}:8080"
     depends_on:
-      mongodb-auth:
-        condition: service_healthy
+      - mongodb-auth
     environment:
       <<: *api-env-base
       MONGO_HOST: mongodb-auth
       MONGO_DATABASE: authdb
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/auth
 
   api-player:
     <<: *api-common
     build:
-      context: .
-      dockerfile: api.Dockerfile
+      context: ..
+      dockerfile: docker/api.Dockerfile
       args:
         SERVICE_NAME: player
     container_name: api-player
     ports:
       - "${API_PLAYER_PORT:-8082}:8080"
     depends_on:
-      mongodb-player:
-        condition: service_healthy
-      api-auth:
-        condition: service_healthy
+      - mongodb-player
+      - api-auth
     environment:
       <<: *api-env-base
       MONGO_HOST: mongodb-player
       MONGO_DATABASE: playerdb
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/player
 
   api-monster:
     <<: *api-common
     build:
-      context: .
-      dockerfile: api.Dockerfile
+      context: ..
+      dockerfile: docker/api.Dockerfile
       args:
         SERVICE_NAME: monster
     container_name: api-monster
     ports:
       - "${API_MONSTER_PORT:-8083}:8080"
     depends_on:
-      mongodb-monster:
-        condition: service_healthy
-      api-auth:
-        condition: service_healthy
+      - mongodb-monster
+      - api-auth
     environment:
       <<: *api-env-base
       MONGO_HOST: mongodb-monster
       MONGO_DATABASE: monsterdb
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/monster
 
   api-invocation:
     <<: *api-common
     build:
-      context: .
-      dockerfile: api.Dockerfile
+      context: ..
+      dockerfile: docker/api.Dockerfile
       args:
         SERVICE_NAME: invocation
     container_name: api-invocation
     ports:
       - "${API_INVOCATION_PORT:-8084}:8080"
     depends_on:
-      mongodb-invocation:
-        condition: service_healthy
-      api-auth:
-        condition: service_healthy
-      api-monster:
-        condition: service_healthy
-      api-player:
-        condition: service_healthy
+      - mongodb-invocation
+      - api-auth
+      - api-monster
+      - api-player
     environment:
       <<: *api-env-base
       MONGO_HOST: mongodb-invocation
@@ -226,26 +193,23 @@ services:
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
       MONSTER_API_URL: ${MONSTER_API_URL:-http://api-monster:8080}
       PLAYER_API_URL: ${PLAYER_API_URL:-http://api-player:8080}
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/invocation
 
   api-combat:
     <<: *api-common
     build:
-      context: .
-      dockerfile: api.Dockerfile
+      context: ..
+      dockerfile: docker/api.Dockerfile
       args:
         SERVICE_NAME: combat
     container_name: api-combat
     ports:
       - "${API_COMBAT_PORT:-8085}:8080"
     depends_on:
-      mongodb-combat:
-        condition: service_healthy
-      api-auth:
-        condition: service_healthy
-      api-monster:
-        condition: service_healthy
-      api-player:
-        condition: service_healthy
+      - mongodb-combat
+      - api-auth
+      - api-monster
+      - api-player
     environment:
       <<: *api-env-base
       MONGO_HOST: mongodb-combat
@@ -253,6 +217,7 @@ services:
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
       MONSTER_API_URL: ${MONSTER_API_URL:-http://api-monster:8080}
       PLAYER_API_URL: ${PLAYER_API_URL:-http://api-player:8080}
+      OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/combat
 
 # ============================================
 # Volumes

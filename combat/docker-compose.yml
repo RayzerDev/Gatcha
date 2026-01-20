@@ -1,20 +1,13 @@
 services:
   mongodb:
-    image: mongo:8.2.3
+    extends:
+      file: ../docker/api.docker-compose.base.yml
+      service: mongodb
     container_name: mongodb-combat-local
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27021:27017"
     volumes:
       - mongo-data:/data/db
-    healthcheck:
-      test: [ "CMD-SHELL", "mongosh --eval 'db.runCommand({ping:1}).ok' --quiet" ]
-      interval: 5s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
 
 volumes:
   mongo-data:
