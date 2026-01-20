@@ -8,10 +8,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -19,6 +23,18 @@ import java.io.IOException;
 public class TokenValidationFilter extends OncePerRequestFilter {
 
     private final AuthServiceClient authServiceClient;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    @Value("${auth.filter.excluded.paths:/tokens/**,/users/**,/actuator/health,/swagger/**,/api-docs/**}")
+    private List<String> excludedPaths;
+
+    private static final List<String> DEFAULT_EXCLUDED_PATHS = Arrays.asList(
+            "/tokens/**",
+            "/users/**",
+            "/actuator/health",
+            "/swagger-ui/**",
+            "/api-docs/**"
+    );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -43,7 +59,8 @@ public class TokenValidationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/tokens") || path.startsWith("/users") || path.startsWith("/actuator/health") || path.startsWith("/swagger") || path.startsWith("/api-docs");
+        return excludedPaths.stream().anyMatch(pattern -> pathMatcher.match(pattern, path)) ||
+                DEFAULT_EXCLUDED_PATHS.stream().anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 
     private String extractToken(HttpServletRequest request) {

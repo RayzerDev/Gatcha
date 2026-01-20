@@ -3,8 +3,11 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/auth" />
+    <file type="web" url="file://$PROJECT_DIR$/combat" />
     <file type="web" url="file://$PROJECT_DIR$/common" />
     <file type="web" url="file://$PROJECT_DIR$/common-auth" />
+    <file type="web" url="file://$PROJECT_DIR$/invocation" />
+    <file type="web" url="file://$PROJECT_DIR$/monster" />
     <file type="web" url="file://$PROJECT_DIR$/player" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" project-jdk-name="25" project-jdk-type="JavaSDK">

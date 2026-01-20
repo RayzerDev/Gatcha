@@ -7,8 +7,8 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.42/8365263844ebb62398e0dc33057ba10ba472d3b8/lombok-1.18.42.jar" />
         </processorPath>
-        <module name="player.main" />
-        <module name="player.common-auth.main" />
+        <module name="invocation.main" />
+        <module name="invocation.common-auth.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -32,6 +32,9 @@
       <module name="auth.main" options="-parameters" />
       <module name="auth.test" options="-parameters" />
       <module name="combat" options="-parameters" />
+      <module name="combat.common-auth" options="-parameters" />
+      <module name="combat.common-auth.main" options="-parameters" />
+      <module name="combat.common-auth.test" options="-parameters" />
       <module name="combat.main" options="-parameters" />
       <module name="combat.test" options="-parameters" />
       <module name="fr.imt.nord.fisa.ti.gatcha.auth" options="-parameters" />
@@ -41,12 +44,18 @@
       <module name="invocation.auth" options="-parameters" />
       <module name="invocation.auth.main" options="-parameters" />
       <module name="invocation.auth.test" options="-parameters" />
+      <module name="invocation.common-auth" options="-parameters" />
+      <module name="invocation.common-auth.main" options="-parameters" />
+      <module name="invocation.common-auth.test" options="-parameters" />
       <module name="invocation.main" options="-parameters" />
       <module name="invocation.test" options="-parameters" />
       <module name="monster" options="-parameters" />
       <module name="monster.auth" options="-parameters" />
       <module name="monster.auth.main" options="-parameters" />
       <module name="monster.auth.test" options="-parameters" />
+      <module name="monster.common-auth" options="-parameters" />
+      <module name="monster.common-auth.main" options="-parameters" />
+      <module name="monster.common-auth.test" options="-parameters" />
       <module name="monster.main" options="-parameters" />
       <module name="monster.test" options="-parameters" />
       <module name="player" options="-parameters" />
