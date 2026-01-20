@@ -4,6 +4,7 @@ ARG SERVICE_NAME
 
 WORKDIR /app
 
+COPY --chown=gradle:gradle common-auth /common-auth
 COPY --chown=gradle:gradle ${SERVICE_NAME}/gradle gradle
 COPY --chown=gradle:gradle ${SERVICE_NAME}/gradlew ${SERVICE_NAME}/build.gradle ${SERVICE_NAME}/settings.gradle ./
 
