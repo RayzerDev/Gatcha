@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping
+@RequestMapping("/players")
 public class PlayerController {
     private final PlayerService playerService;
 
@@ -19,49 +19,49 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-    @GetMapping("/players")
+    @GetMapping
     public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
         return ResponseEntity.ok(playerService.getAllPlayers());
     }
 
-    @PostMapping("/players/new")
-    public ResponseEntity<PlayerDTO> createPlayer() {
-        return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer());
+    @PostMapping
+    public ResponseEntity<PlayerDTO> createPlayer(@RequestParam String username) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer(username));
     }
 
-    @GetMapping("/players/{id}")
-    public ResponseEntity<PlayerDTO> getPlayerById(@PathVariable UUID id) {
-        PlayerDTO playerDTO = playerService.getPlayerById(id);
-        return playerDTO != null ? ResponseEntity.ok(playerDTO) : ResponseEntity.notFound().build();
+    @GetMapping("/{username}")
+    public ResponseEntity<PlayerDTO> getPlayerByUsername(@PathVariable String username) {
+        PlayerDTO playerDTO = playerService.getPlayerByUsername(username, false);
+        return ResponseEntity.ok(playerDTO);
     }
 
-    @GetMapping("/players/{id}/level")
-    public ResponseEntity<Integer> getPlayerLevel(@PathVariable UUID id) {
-        return ResponseEntity.ok(playerService.getPlayerLevel(id));
+    @GetMapping("/{username}/level")
+    public ResponseEntity<Integer> getPlayerLevel(@PathVariable String username) {
+        return ResponseEntity.ok(playerService.getPlayerLevel(username));
     }
 
-    @GetMapping("/players/{id}/monsters")
-    public ResponseEntity<List<UUID>> getPlayerMonsters(@PathVariable UUID id) {
-        return ResponseEntity.ok(playerService.getPlayerWithMonsters(id));
+    @GetMapping("/{username}/monsters")
+    public ResponseEntity<List<UUID>> getPlayerMonsters(@PathVariable String username) {
+        return ResponseEntity.ok(playerService.getPlayerWithMonsters(username));
     }
 
-    @PostMapping("/players/{id}/experience")
-    public ResponseEntity<PlayerDTO> addExperience(@PathVariable UUID id, @RequestParam double amount) {
-        return ResponseEntity.status(HttpStatus.OK).body(playerService.addExperience(id, amount));
+    @PostMapping("/{username}/experience")
+    public ResponseEntity<PlayerDTO> addExperience(@PathVariable String username, @RequestParam double amount) {
+        return ResponseEntity.ok(playerService.addExperience(username, amount));
     }
 
-    @PostMapping("/players/{id}/level-up")
-    public ResponseEntity<PlayerDTO> levelUp(@PathVariable UUID id) {
-        return ResponseEntity.ok(playerService.levelUp(id));
+    @PostMapping("/{username}/level-up")
+    public ResponseEntity<PlayerDTO> levelUp(@PathVariable String username) {
+        return ResponseEntity.ok(playerService.levelUp(username));
     }
 
-    @PostMapping("/players/{id}/monsters")
-    public ResponseEntity<PlayerDTO> addMonster(@PathVariable UUID id, @RequestParam UUID monsterId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(playerService.addMonster(id, monsterId));
+    @PostMapping("/{username}/monsters")
+    public ResponseEntity<PlayerDTO> addMonster(@PathVariable String username, @RequestParam UUID monsterId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(playerService.addMonster(username, monsterId));
     }
 
-    @DeleteMapping("/players/{id}/monsters/{monsterId}")
-    public ResponseEntity<PlayerDTO> removeMonster(@PathVariable UUID id, @PathVariable UUID monsterId) {
-        return ResponseEntity.ok(playerService.removeMonster(id, monsterId));
+    @DeleteMapping("/{username}/monsters/{monsterId}")
+    public ResponseEntity<PlayerDTO> removeMonster(@PathVariable String username, @PathVariable UUID monsterId) {
+        return ResponseEntity.ok(playerService.removeMonster(username, monsterId));
     }
 }

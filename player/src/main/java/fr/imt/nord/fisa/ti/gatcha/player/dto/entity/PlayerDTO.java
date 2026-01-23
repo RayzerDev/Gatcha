@@ -8,6 +8,7 @@ import fr.imt.nord.fisa.ti.gatcha.player.model.Player;
 
 public class PlayerDTO {
     private UUID id;
+    private String username;
     private int level;
     private double experience;
     private double experienceStep;
@@ -20,6 +21,7 @@ public class PlayerDTO {
 
     public PlayerDTO(Player player) {
         this.id = player.getId();
+        this.username = player.getUsername();
         this.level = player.getLevel();
         this.experience = player.getExperience();
         this.experienceStep = player.getExperienceStep();
@@ -29,6 +31,10 @@ public class PlayerDTO {
 
     public UUID getId() {
         return id;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public int getLevel() {
@@ -53,6 +59,10 @@ public class PlayerDTO {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setLevel(int level) {

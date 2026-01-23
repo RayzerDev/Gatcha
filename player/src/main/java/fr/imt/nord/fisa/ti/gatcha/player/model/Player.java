@@ -7,6 +7,7 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Setter
@@ -15,6 +16,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Player {
     @Id
     private UUID id;
+
+    @Indexed(unique = true)
+    private String username;
     private int level;
     private double experience;
     private double experienceStep;
@@ -26,6 +30,11 @@ public class Player {
         this.experience = 0.0;
         this.experienceStep = 50.0;
         this.monsters = new ArrayList<>();
+    }
+
+    public Player(String username) {
+        this();
+        this.username = username;
     }
 
     public int getMaxMonsters() {
