@@ -11,11 +11,11 @@ public class PlayerDTO {
     private int level;
     private double experience;
     private double experienceStep;
-    private List<String> monsters;
+    private List<UUID> monsters;
     private int maxMonsters;
 
-    public PlayerDTO() {
-        this.monsters = new ArrayList<>();
+    public PlayerDTO(List<UUID> monsters) {
+        this.monsters = new ArrayList<>(monsters);
     }
 
     public PlayerDTO(Player player) {
@@ -43,7 +43,7 @@ public class PlayerDTO {
         return experienceStep;
     }
 
-    public List<String> getMonsters() {
+    public List<UUID> getMonsters() {
         return monsters;
     }
 
@@ -67,7 +67,7 @@ public class PlayerDTO {
         this.experienceStep = experienceStep;
     }
 
-    public void setMonsters(List<String> monsters) {
+    public void setMonsters(List<UUID> monsters) {
         this.monsters = monsters;
     }
 

@@ -24,7 +24,7 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.getAllPlayers());
     }
 
-    @PostMapping("/players")
+    @PostMapping("/players/new")
     public ResponseEntity<PlayerDTO> createPlayer() {
         return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer());
     }
@@ -41,7 +41,7 @@ public class PlayerController {
     }
 
     @GetMapping("/players/{id}/monsters")
-    public ResponseEntity<PlayerDTO> getPlayerMonsters(@PathVariable UUID id) {
+    public ResponseEntity<List<UUID>> getPlayerMonsters(@PathVariable UUID id) {
         return ResponseEntity.ok(playerService.getPlayerWithMonsters(id));
     }
 
@@ -56,12 +56,12 @@ public class PlayerController {
     }
 
     @PostMapping("/players/{id}/monsters")
-    public ResponseEntity<PlayerDTO> addMonster(@PathVariable UUID id, @RequestParam String monsterId) {
+    public ResponseEntity<PlayerDTO> addMonster(@PathVariable UUID id, @RequestParam UUID monsterId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(playerService.addMonster(id, monsterId));
     }
 
     @DeleteMapping("/players/{id}/monsters/{monsterId}")
-    public ResponseEntity<PlayerDTO> removeMonster(@PathVariable UUID id, @PathVariable String monsterId) {
+    public ResponseEntity<PlayerDTO> removeMonster(@PathVariable UUID id, @PathVariable UUID monsterId) {
         return ResponseEntity.ok(playerService.removeMonster(id, monsterId));
     }
 }
