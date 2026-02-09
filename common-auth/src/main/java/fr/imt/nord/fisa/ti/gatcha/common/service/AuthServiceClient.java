@@ -5,20 +5,21 @@ import fr.imt.nord.fisa.ti.gatcha.common.dto.TokenVerifyResponse;
 import fr.imt.nord.fisa.ti.gatcha.common.exception.TokenValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 @Slf4j
 @Service
 public class AuthServiceClient {
 
-    private final WebClient webClient;
+    private final RestClient restClient;
     private final String authServiceUrl;
 
     public AuthServiceClient(@Value("${auth.service.url:http://localhost:8080}") String authServiceUrl) {
         this.authServiceUrl = authServiceUrl;
-        this.webClient = WebClient.builder()
+        this.restClient = RestClient.builder()
                 .baseUrl(authServiceUrl)
                 .build();
     }
@@ -39,12 +40,14 @@ public class AuthServiceClient {
         log.debug("Verifying token with auth service at: {}", authServiceUrl);
 
         try {
-            TokenVerifyResponse response = webClient.get()
+            TokenVerifyResponse response = restClient.get()
                     .uri("/tokens/verify")
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
-                    .bodyToMono(TokenVerifyResponse.class)
-                    .block();
+                    .onStatus(HttpStatusCode::isError, (request, resp) -> {
+                        throw new TokenValidationException("Auth service error: " + resp.getStatusCode());
+                    })
+                    .body(TokenVerifyResponse.class);
 
             if (response == null || !response.isStatus()) {
                 throw new TokenValidationException("Token validation failed: " +
@@ -55,9 +58,11 @@ public class AuthServiceClient {
             log.info("Token validated successfully for user: {}", response.getUsername());
             return response;
 
-        } catch (WebClientResponseException e) {
+        } catch (RestClientResponseException e) {
             log.error("Auth service error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
             throw new TokenValidationException("Auth service error: " + e.getStatusCode(), e);
+        } catch (TokenValidationException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error connecting to auth service", e);
             throw new TokenValidationException("Failed to connect to auth service", e);
