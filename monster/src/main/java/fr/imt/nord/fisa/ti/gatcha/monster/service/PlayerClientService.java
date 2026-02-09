@@ -1,6 +1,7 @@
 package fr.imt.nord.fisa.ti.gatcha.monster.service;
 
 import fr.imt.nord.fisa.ti.gatcha.common.client.HttpClient;
+import fr.imt.nord.fisa.ti.gatcha.common.service.BaseClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,16 +13,12 @@ import java.util.UUID;
  */
 @Slf4j
 @Service
-public class PlayerClientService {
-
-    private final HttpClient httpClient;
-    private final String playerServiceUrl;
+public class PlayerClientService extends BaseClientService {
 
     public PlayerClientService(
             HttpClient httpClient,
             @Value("${player.service.url:http://localhost:8082}") String playerServiceUrl) {
-        this.httpClient = httpClient;
-        this.playerServiceUrl = playerServiceUrl;
+        super(httpClient, playerServiceUrl);
     }
 
     /**
@@ -30,7 +27,7 @@ public class PlayerClientService {
     public void addMonsterToPlayer(String username, UUID monsterId) {
         try {
             httpClient.post(
-                    playerServiceUrl,
+                    serviceUrl,
                     "/players/" + username + "/monsters?monsterId=" + monsterId,
                     null,
                     Void.class
@@ -48,7 +45,7 @@ public class PlayerClientService {
     public void removeMonsterFromPlayer(String username, UUID monsterId) {
         try {
             httpClient.delete(
-                    playerServiceUrl,
+                    serviceUrl,
                     "/players/" + username + "/monsters/" + monsterId,
                     Void.class
             );

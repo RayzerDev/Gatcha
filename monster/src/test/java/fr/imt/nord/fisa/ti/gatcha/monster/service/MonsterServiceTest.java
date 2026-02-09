@@ -1,12 +1,16 @@
 package fr.imt.nord.fisa.ti.gatcha.monster.service;
 
-import fr.imt.nord.fisa.ti.gatcha.monster.dto.CreateMonsterRequest;
+import fr.imt.nord.fisa.ti.gatcha.common.dto.CreateMonsterRequest;
+import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
+import fr.imt.nord.fisa.ti.gatcha.common.model.StatType;
 import fr.imt.nord.fisa.ti.gatcha.monster.dto.MonsterDTO;
 import fr.imt.nord.fisa.ti.gatcha.monster.exception.InvalidValueException;
 import fr.imt.nord.fisa.ti.gatcha.monster.exception.MonsterNotFoundException;
 import fr.imt.nord.fisa.ti.gatcha.monster.exception.MonsterNotOwnedException;
 import fr.imt.nord.fisa.ti.gatcha.monster.exception.SkillUpgradeException;
-import fr.imt.nord.fisa.ti.gatcha.monster.model.*;
+import fr.imt.nord.fisa.ti.gatcha.monster.model.Monster;
+import fr.imt.nord.fisa.ti.gatcha.monster.model.Ratio;
+import fr.imt.nord.fisa.ti.gatcha.monster.model.Skill;
 import fr.imt.nord.fisa.ti.gatcha.monster.repository.MonsterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,6 +68,27 @@ class MonsterServiceTest {
         skills.add(Skill.createFromBase(1, 100, new Ratio(StatType.ATK, 25), 0, 5));
         skills.add(Skill.createFromBase(2, 200, new Ratio(StatType.ATK, 30), 2, 5));
         skills.add(Skill.createFromBase(3, 400, new Ratio(StatType.ATK, 40), 5, 5));
+        return skills;
+    }
+
+    private List<CreateMonsterRequest.SkillDTO> createDefaultSkillDTOs() {
+        List<CreateMonsterRequest.SkillDTO> skills = new ArrayList<>();
+        skills.add(CreateMonsterRequest.SkillDTO.builder()
+                .num(1)
+                .dmg(100)
+                .ratio(CreateMonsterRequest.RatioDTO.builder().stat("ATK").percent(25).build())
+                .cooldown(0)
+                .lvl(1)
+                .lvlMax(5)
+                .build());
+        skills.add(CreateMonsterRequest.SkillDTO.builder()
+                .num(2)
+                .dmg(200)
+                .ratio(CreateMonsterRequest.RatioDTO.builder().stat("ATK").percent(30).build())
+                .cooldown(2)
+                .lvl(1)
+                .lvlMax(5)
+                .build());
         return skills;
     }
 
@@ -126,7 +151,7 @@ class MonsterServiceTest {
 
         // Act & Assert
         assertThrows(MonsterNotFoundException.class,
-            () -> monsterService.getMonsterById(unknownId, ownerUsername));
+                () -> monsterService.getMonsterById(unknownId, ownerUsername));
     }
 
     @Test
@@ -137,7 +162,7 @@ class MonsterServiceTest {
 
         // Act & Assert
         assertThrows(MonsterNotOwnedException.class,
-            () -> monsterService.getMonsterById(monsterId, "WrongOwner"));
+                () -> monsterService.getMonsterById(monsterId, "WrongOwner"));
     }
 
     // ========== Tests createMonster ==========
@@ -154,7 +179,7 @@ class MonsterServiceTest {
         request.setAtk(450);
         request.setDef(350);
         request.setVit(85);
-        request.setSkills(createDefaultSkills());
+        request.setSkills(createDefaultSkillDTOs());
 
         when(monsterRepository.save(any(Monster.class))).thenAnswer(invocation -> {
             Monster m = invocation.getArgument(0);
@@ -199,10 +224,10 @@ class MonsterServiceTest {
     void addExperience_InvalidXp() {
         // Act & Assert
         assertThrows(InvalidValueException.class,
-            () -> monsterService.addExperience(monsterId, ownerUsername, -10.0));
+                () -> monsterService.addExperience(monsterId, ownerUsername, -10.0));
 
         assertThrows(InvalidValueException.class,
-            () -> monsterService.addExperience(monsterId, ownerUsername, 0.0));
+                () -> monsterService.addExperience(monsterId, ownerUsername, 0.0));
 
         verify(monsterRepository, never()).save(any(Monster.class));
     }
@@ -253,7 +278,7 @@ class MonsterServiceTest {
 
         // Act & Assert
         assertThrows(SkillUpgradeException.class,
-            () -> monsterService.upgradeSkill(monsterId, ownerUsername, 1));
+                () -> monsterService.upgradeSkill(monsterId, ownerUsername, 1));
 
         verify(monsterRepository, never()).save(any(Monster.class));
     }
@@ -264,12 +289,12 @@ class MonsterServiceTest {
         // Arrange
         testMonster.setSkillPoints(1);
         // Mettre la skill directement au niveau max (5)
-        testMonster.getSkills().get(0).setLvl(5);
+        testMonster.getSkills().getFirst().setLvl(5);
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
 
         // Act & Assert
         assertThrows(SkillUpgradeException.class,
-            () -> monsterService.upgradeSkill(monsterId, ownerUsername, 1));
+                () -> monsterService.upgradeSkill(monsterId, ownerUsername, 1));
     }
 
     // ========== Tests deleteMonster ==========
@@ -298,7 +323,7 @@ class MonsterServiceTest {
 
         // Act & Assert
         assertThrows(MonsterNotOwnedException.class,
-            () -> monsterService.deleteMonster(monsterId, "WrongOwner"));
+                () -> monsterService.deleteMonster(monsterId, "WrongOwner"));
 
         verify(monsterRepository, never()).delete(any(Monster.class));
     }
@@ -331,7 +356,7 @@ class MonsterServiceTest {
         monster2.setId(monster2Id);
 
         when(monsterRepository.findAllById(Arrays.asList(monsterId, monster2Id)))
-            .thenReturn(Arrays.asList(testMonster, monster2));
+                .thenReturn(Arrays.asList(testMonster, monster2));
 
         // Act
         List<MonsterDTO> result = monsterService.getMonstersByIds(Arrays.asList(monsterId, monster2Id));
@@ -360,12 +385,3 @@ class MonsterServiceTest {
         verify(monsterRepository).save(testMonster);
     }
 }
-
-
-
-
-
-
-
-
-

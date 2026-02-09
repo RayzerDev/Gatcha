@@ -1,6 +1,10 @@
 package fr.imt.nord.fisa.ti.gatcha.invocation.service;
 
-import fr.imt.nord.fisa.ti.gatcha.invocation.model.*;
+import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
+import fr.imt.nord.fisa.ti.gatcha.common.model.StatType;
+import fr.imt.nord.fisa.ti.gatcha.invocation.model.MonsterTemplate;
+import fr.imt.nord.fisa.ti.gatcha.invocation.model.Ratio;
+import fr.imt.nord.fisa.ti.gatcha.invocation.model.SkillTemplate;
 import fr.imt.nord.fisa.ti.gatcha.invocation.repository.InvocationRepository;
 import fr.imt.nord.fisa.ti.gatcha.invocation.repository.MonsterTemplateRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class InvocationServiceTest {
@@ -349,9 +353,9 @@ class InvocationServiceTest {
     void testNonNormalizedLootRates() {
         // Arrange - Total > 1.0
         List<MonsterTemplate> nonNormalizedTemplates = Arrays.asList(
-            MonsterTemplate.builder().id(1).element(ElementType.FIRE).lootRate(0.5).skills(createDefaultSkills()).build(),
-            MonsterTemplate.builder().id(2).element(ElementType.WATER).lootRate(0.5).skills(createDefaultSkills()).build(),
-            MonsterTemplate.builder().id(3).element(ElementType.WIND).lootRate(0.5).skills(createDefaultSkills()).build()
+                MonsterTemplate.builder().id(1).element(ElementType.FIRE).lootRate(0.5).skills(createDefaultSkills()).build(),
+                MonsterTemplate.builder().id(2).element(ElementType.WATER).lootRate(0.5).skills(createDefaultSkills()).build(),
+                MonsterTemplate.builder().id(3).element(ElementType.WIND).lootRate(0.5).skills(createDefaultSkills()).build()
         );
 
         when(templateRepository.findAll()).thenReturn(nonNormalizedTemplates);

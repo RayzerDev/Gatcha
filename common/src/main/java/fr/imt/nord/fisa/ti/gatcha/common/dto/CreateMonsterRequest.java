@@ -1,5 +1,6 @@
-package fr.imt.nord.fisa.ti.gatcha.invocation.dto;
+package fr.imt.nord.fisa.ti.gatcha.common.dto;
 
+import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * Request DTO pour créer un monstre dans l'API Monster
+ * Request DTO partagé pour la création de monstre
  */
 @Data
 @Builder
@@ -17,7 +18,7 @@ import java.util.List;
 public class CreateMonsterRequest {
     private int templateId;
     private String ownerUsername;
-    private String element;
+    private ElementType element;
     private int hp;
     private int atk;
     private int def;
@@ -46,3 +47,4 @@ public class CreateMonsterRequest {
         private double percent;
     }
 }
+

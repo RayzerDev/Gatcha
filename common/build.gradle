@@ -6,7 +6,7 @@ plugins {
 
 group = 'fr.imt.nord.fisa.ti.gatcha'
 version = '0.0.1'
-description = 'common-auth'
+description = 'common'
 
 java {
     toolchain {
@@ -29,18 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    implementation project(':common')
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-// Ne pas créer un exécutable, c'est une librairie
 bootJar {
     enabled = false
 }
@@ -48,3 +38,4 @@ bootJar {
 jar {
     enabled = true
 }
+

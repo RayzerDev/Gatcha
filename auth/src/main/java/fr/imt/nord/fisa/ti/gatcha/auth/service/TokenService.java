@@ -1,11 +1,11 @@
 package fr.imt.nord.fisa.ti.gatcha.auth.service;
 
-import fr.imt.nord.fisa.ti.gatcha.auth.dto.token.OutputVerifyDTO;
 import fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenExpiredException;
 import fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenNotFoundException;
 import fr.imt.nord.fisa.ti.gatcha.auth.model.Token;
 import fr.imt.nord.fisa.ti.gatcha.auth.model.User;
 import fr.imt.nord.fisa.ti.gatcha.auth.repository.TokenRepository;
+import fr.imt.nord.fisa.ti.gatcha.common.dto.TokenVerifyResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -60,11 +60,11 @@ public class TokenService {
      * Si valide, met à jour la date d'expiration à maintenant + 1 heure.
      *
      * @param tokenStr Le token à vérifier
-     * @return OutputVerifyDTO contenant le statut, le username et un message
+     * @return TokenVerifyResponse contenant le statut, le username et un message
      * @throws TokenNotFoundException si le token n'existe pas en base
      * @throws TokenExpiredException  si le token a expiré
      */
-    public OutputVerifyDTO verifyToken(String tokenStr) throws TokenNotFoundException, TokenExpiredException {
+    public TokenVerifyResponse verifyToken(String tokenStr) throws TokenNotFoundException, TokenExpiredException {
         log.debug("Verifying token");
 
         Optional<Token> tokenOptional = tokenRepository.findByToken(tokenStr);
@@ -93,7 +93,7 @@ public class TokenService {
         log.info("Token verified successfully for user: {}, new expiry: {}", token.getUser().getUsername(), newExpiryDate);
 
         // Construire et retourner le DTO
-        OutputVerifyDTO outputVerifyDTO = new OutputVerifyDTO();
+        TokenVerifyResponse outputVerifyDTO = new TokenVerifyResponse();
         outputVerifyDTO.setStatus(true);
         outputVerifyDTO.setUsername(token.getUser().getUsername());
         outputVerifyDTO.setMessage("Token valid");

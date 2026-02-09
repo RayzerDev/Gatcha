@@ -1,12 +1,14 @@
 package fr.imt.nord.fisa.ti.gatcha.monster.service;
 
-import fr.imt.nord.fisa.ti.gatcha.monster.dto.CreateMonsterRequest;
+import fr.imt.nord.fisa.ti.gatcha.common.dto.CreateMonsterRequest;
 import fr.imt.nord.fisa.ti.gatcha.monster.dto.MonsterDTO;
 import fr.imt.nord.fisa.ti.gatcha.monster.exception.InvalidValueException;
 import fr.imt.nord.fisa.ti.gatcha.monster.exception.MonsterNotFoundException;
 import fr.imt.nord.fisa.ti.gatcha.monster.exception.MonsterNotOwnedException;
 import fr.imt.nord.fisa.ti.gatcha.monster.exception.SkillUpgradeException;
+import fr.imt.nord.fisa.ti.gatcha.common.model.*;
 import fr.imt.nord.fisa.ti.gatcha.monster.model.Monster;
+import fr.imt.nord.fisa.ti.gatcha.monster.model.Ratio;
 import fr.imt.nord.fisa.ti.gatcha.monster.model.Skill;
 import fr.imt.nord.fisa.ti.gatcha.monster.repository.MonsterRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,13 +47,19 @@ public class MonsterService {
 
     public MonsterDTO createMonster(CreateMonsterRequest request) {
         List<Skill> skills = request.getSkills().stream()
-                .map(s -> Skill.createFromBase(s.getNum(), s.getDmg(), s.getRatio(), s.getCooldown(), s.getLvlMax()))
+                .map(s -> Skill.createFromBase(
+                        s.getNum(),
+                        s.getDmg(),
+                        new Ratio(StatType.fromValue(s.getRatio().getStat()), s.getRatio().getPercent()),
+                        s.getCooldown(),
+                        s.getLvlMax()
+                ))
                 .collect(Collectors.toList());
 
         Monster monster = Monster.createFromTemplate(
                 request.getTemplateId(),
                 request.getOwnerUsername(),
-                request.getElement(),
+                ElementType.valueOf(request.getElement().name()),
                 request.getHp(),
                 request.getAtk(),
                 request.getDef(),

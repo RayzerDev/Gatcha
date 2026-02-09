@@ -2,11 +2,11 @@ package fr.imt.nord.fisa.ti.gatcha.invocation.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.imt.nord.fisa.ti.gatcha.invocation.model.ElementType;
+import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
+import fr.imt.nord.fisa.ti.gatcha.common.model.StatType;
 import fr.imt.nord.fisa.ti.gatcha.invocation.model.MonsterTemplate;
 import fr.imt.nord.fisa.ti.gatcha.invocation.model.Ratio;
 import fr.imt.nord.fisa.ti.gatcha.invocation.model.SkillTemplate;
-import fr.imt.nord.fisa.ti.gatcha.invocation.model.StatType;
 import fr.imt.nord.fisa.ti.gatcha.invocation.repository.MonsterTemplateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,8 @@ public class TemplateDataInitializer implements CommandLineRunner {
 
             List<Map<String, Object>> rawTemplates = objectMapper.readValue(
                     inputStream,
-                    new TypeReference<List<Map<String, Object>>>() {}
+                    new TypeReference<List<Map<String, Object>>>() {
+                    }
             );
 
             List<MonsterTemplate> templates = rawTemplates.stream()

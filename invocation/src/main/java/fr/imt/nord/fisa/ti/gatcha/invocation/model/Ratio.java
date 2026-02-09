@@ -1,5 +1,6 @@
 package fr.imt.nord.fisa.ti.gatcha.invocation.model;
 
+import fr.imt.nord.fisa.ti.gatcha.common.model.StatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

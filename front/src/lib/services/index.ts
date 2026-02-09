@@ -37,23 +37,21 @@ export const playerService = new PlayerService(apiClient);
 
 // ============= Exports =============
 
-// Exporter les types Auth
+// Exporter les types
 export type {
     RegisterRequest,
     LoginRequest,
     AuthResponse,
     VerifyResponse,
-} from './AuthService';
+    Monster,
+    Skill,
+    Invocation,
+    MonsterTemplate,
+    Player
+} from '../types';
 
-// Exporter les types Monster
-export type {Monster, Skill} from './MonsterService';
-
-// Exporter les types Invocation
-export type {Invocation, MonsterTemplate} from './InvocationService';
-
-// Exporter les types Player
-export type {Player} from './PlayerService';
 export {AuthService} from './AuthService';
+export {BaseService} from './BaseService';
 export {ApiClient} from '../ApiClient';
 export {ApiError} from '../ApiError';
 export {TokenStorage} from '../TokenStorage';

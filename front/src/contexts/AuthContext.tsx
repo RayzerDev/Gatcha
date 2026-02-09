@@ -1,6 +1,6 @@
 ﻿'use client';
 import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
-import {authService} from '@/lib/services';
+import {ApiError, authService} from '@/lib/services';
 import {TokenStorage} from '@/lib/TokenStorage';
 import {authEvents} from '@/lib/AuthEvents';
 import {useRouter} from 'next/navigation';
@@ -58,11 +58,19 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
             } catch (error) {
                 // En cas d'erreur réseau, on garde le token et on réessaie plus tard
                 // Sauf si c'est une erreur 401 (token expiré)
-                const isUnauthorized = error instanceof Error &&
-                    (error.message.includes('401') || error.message.includes('Unauthorized'));
+                let isUnauthorized = false;
+
+                if (error instanceof ApiError) {
+                    isUnauthorized = error.isAuthError();
+                } else if (error instanceof Error) {
+                    isUnauthorized = error.message.includes('401') || error.message.includes('Unauthorized');
+                }
 
                 if (isUnauthorized) {
                     TokenStorage.remove();
+                    setToken(null);
+                    setUsername(null);
+                    router.push('/login');
                 } else {
                     // Erreur réseau - garder le token pour retry
                     console.warn('Auth check failed, keeping token for retry:', error);
@@ -75,7 +83,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         };
 
         checkAuth();
-    }, []);
+    }, [router]);
 
     const login = useCallback(async (newToken: string) => {
         try {
@@ -102,15 +110,13 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
 
     // Écouter les événements 401 de l'ApiClient
     useEffect(() => {
-        const unsubscribe = authEvents.onUnauthorized(() => {
+        return authEvents.onUnauthorized(() => {
             console.log('Received 401, logging out...');
             TokenStorage.remove();
             setToken(null);
             setUsername(null);
             router.push('/login');
         });
-
-        return unsubscribe;
     }, [router]);
 
     return (

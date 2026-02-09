@@ -1,6 +1,6 @@
 package fr.imt.nord.fisa.ti.gatcha.monster.controller;
 
-import fr.imt.nord.fisa.ti.gatcha.monster.dto.CreateMonsterRequest;
+import fr.imt.nord.fisa.ti.gatcha.common.dto.CreateMonsterRequest;
 import fr.imt.nord.fisa.ti.gatcha.monster.dto.MonsterDTO;
 import fr.imt.nord.fisa.ti.gatcha.monster.service.MonsterService;
 import fr.imt.nord.fisa.ti.gatcha.common.context.SecurityContext;

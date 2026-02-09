@@ -5,7 +5,6 @@ Système de jeu Gatcha complet avec gestion d'authentification, de joueurs, de m
 ## 📋 Table des matières
 
 - [Équipe et Contribution](#-équipe-et-contribution)
-- [TO DO](#-todo)
 - [Architecture](#-architecture)
 - [Installation et Démarrage](#-installation-et-démarrage)
 - [Services et Ports](#-services-et-ports)
@@ -17,63 +16,6 @@ Système de jeu Gatcha complet avec gestion d'authentification, de joueurs, de m
 
 - Maël DEMORY
 - Louis KARAMUCKI
-
-## ✅ TODO
-
-### 🔐 API d'Authentification (Priorité 1 - OBLIGATOIRE)
-
-#### Fonctionnalités Core
-
-- [ ] **Endpoint POST `/register`** - Enregistrement nouvel utilisateur
-    - [ ] Vérification non existence de l'identifiant en base MongoDB
-    - [ ] Stockage identifiant + password en base MongoDB
-    - [ ] Retour succès (201) ou erreur (400 si déjà existant)
-
-- [ ] **Endpoint POST `/login`** - Authentification avec identifiant/password
-    - [ ] Vérification identifiant + password en base MongoDB
-    - [ ] Génération token format: `username-date(YYYY/MM/DD)-heure(HH:mm:ss)`
-    - [ ] Annulation des tokens existants pour cet utilisateur
-    - [ ] Stockage du token en base avec date d'expiration (maintenant + 1h)
-    - [ ] Retour du token en cas de succès (201) ou erreur (400 si échec)
-
-- [ ] **Endpoint POST `/verify`** - Vérification d'un token
-    - [ ] Vérification de la validité du token (non expiré)
-    - [ ] Si valide: retourner le username + renouveler expiration (+1h) code 200
-    - [ ] Si expiré: retourner erreur 401
-
-#### Tests
-
-- [ ] Tests unitaires endpoint `/register`
-- [ ] Tests unitaires endpoint `/login`
-- [ ] Tests unitaires endpoint `/verify`
-- [ ] Tests de génération de token
-- [ ] Tests de renouvellement d'expiration
-
----
-
-### 🐳 Infrastructure Docker ✅
-
-- [x] Docker Compose pour lancer TOUT le projet
-- [x] Chaque API tourne dans un container
-- [x] Chaque base MongoDB dans un container
-- [x] Frontend dans un container
-- [x] API Gateway Nginx
-- [x] Réseau Docker partagé
-- [x] README avec instructions de lancement
-
----
-
-**📅 Dernière mise à jour : 16 janvier 2026**
-
-**🎯 Ordre de Priorité d'Implémentation:**
-
-- [x] ✅ Infrastructure Docker
-- [ ] 🔐 API Auth
-- [ ] 👤 API Joueur
-- [ ] 👾 API Monstres
-- [ ] ✨ API Invocations
-- [ ] 🎨 Frontend
-- [ ] ⚔️ API Combat (BONUS)
 
 ## 🏗️ Architecture
 
@@ -201,15 +143,15 @@ docker compose -f docker/docker-compose.yml down -v
 |------------------------|------------|--------------|--------------|----------------------------------|
 | **front**              | Next.js    | 3000         | 3000         | Interface utilisateur            |
 | **api-gateway**        | Nginx      | 80           | 8000         | Point d'entrée unique (Gateway)  |
-| **api-auth**           | SpringBoot | 8080         | 8081         | API d'authentification           |
+| **api-auth**           | SpringBoot | 8081         | 8081         | API d'authentification           |
 | **mongodb-auth**       | MongoDB    | 27017        | 27017        | Base de données Authentification |
-| **api-player**         | SpringBoot | 8080         | 8082         | API de gestion des joueurs       |
+| **api-player**         | SpringBoot | 8082         | 8082         | API de gestion des joueurs       |
 | **mongodb-player**     | MongoDB    | 27017        | 27018        | Base de données Player           |
-| **api-monster**        | SpringBoot | 8080         | 8083         | API de gestion des monstres      |
+| **api-monster**        | SpringBoot | 8083         | 8083         | API de gestion des monstres      |
 | **mongodb-monster**    | MongoDB    | 27017        | 27019        | Base de données Monster          |
-| **api-invocation**     | SpringBoot | 8080         | 8084         | API d'invocation de monstres     |
+| **api-invocation**     | SpringBoot | 8084         | 8084         | API d'invocation de monstres     |
 | **mongodb-invocation** | MongoDB    | 27017        | 27020        | Base de données Invocation       |
-| **api-combat**         | SpringBoot | 8080         | 8085         | API de combat (BONUS)            |
+| **api-combat**         | SpringBoot | 8085         | 8085         | API de combat (BONUS)            |
 | **mongodb-combat**     | MongoDB    | 27017        | 27021        | Base de données Combat           |
 
 ### Notes Importantes
@@ -237,5 +179,7 @@ Gatcha/
 ├── monster/
 ├── invocation/
 ├── combat/
+├── common/                             # Code partagé (ex: modèles, utils)
+├── common-auth/                        # Code partagé spécifique à l'authentification (ex: Token verification)
 └── front/                              # Frontend Next.js
 ```

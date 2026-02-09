@@ -1,17 +1,16 @@
-package fr.imt.nord.fisa.ti.gatcha.monster.model;
+package fr.imt.nord.fisa.ti.gatcha.common.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum StatType {
-    HP("hp"),
-    ATK("atk"),
-    DEF("def"),
-    VIT("vit");
+public enum ElementType {
+    FIRE("fire"),
+    WATER("water"),
+    WIND("wind");
 
     private final String value;
 
-    StatType(String value) {
+    ElementType(String value) {
         this.value = value;
     }
 
@@ -21,12 +20,13 @@ public enum StatType {
     }
 
     @JsonCreator
-    public static StatType fromValue(String value) {
-        for (StatType type : StatType.values()) {
+    public static ElementType fromValue(String value) {
+        for (ElementType type : ElementType.values()) {
             if (type.value.equalsIgnoreCase(value)) {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unknown stat type: " + value);
+        throw new IllegalArgumentException("Unknown enum type " + value);
     }
 }
+

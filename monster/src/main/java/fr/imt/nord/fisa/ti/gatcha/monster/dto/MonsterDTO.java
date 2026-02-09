@@ -1,6 +1,6 @@
 package fr.imt.nord.fisa.ti.gatcha.monster.dto;
 
-import fr.imt.nord.fisa.ti.gatcha.monster.model.ElementType;
+import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
 import fr.imt.nord.fisa.ti.gatcha.monster.model.Monster;
 import fr.imt.nord.fisa.ti.gatcha.monster.model.Skill;
 import lombok.AllArgsConstructor;

@@ -41,6 +41,7 @@ dependencies {
 
     // Ajout du module common-auth
     implementation project(':common-auth')
+    implementation project(':common')
 }
 
 tasks.named('test') {

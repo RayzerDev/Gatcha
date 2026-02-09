@@ -1,5 +1,7 @@
 package fr.imt.nord.fisa.ti.gatcha.monster.model;
 
+import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
+import fr.imt.nord.fisa.ti.gatcha.common.model.StatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,7 +41,7 @@ public class Monster {
     private List<Skill> skills;
 
     public static Monster createFromTemplate(int templateId, String ownerUsername, ElementType element,
-                                              int hp, int atk, int def, int vit, List<Skill> skills) {
+                                             int hp, int atk, int def, int vit, List<Skill> skills) {
         return Monster.builder()
                 .id(UUID.randomUUID())
                 .templateId(templateId)

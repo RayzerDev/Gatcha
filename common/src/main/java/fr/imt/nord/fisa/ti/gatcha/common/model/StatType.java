@@ -1,16 +1,17 @@
-package fr.imt.nord.fisa.ti.gatcha.invocation.model;
+package fr.imt.nord.fisa.ti.gatcha.common.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ElementType {
-    FIRE("fire"),
-    WATER("water"),
-    WIND("wind");
+public enum StatType {
+    HP("hp"),
+    ATK("atk"),
+    DEF("def"),
+    VIT("vit");
 
     private final String value;
 
-    ElementType(String value) {
+    StatType(String value) {
         this.value = value;
     }
 
@@ -20,12 +21,12 @@ public enum ElementType {
     }
 
     @JsonCreator
-    public static ElementType fromValue(String value) {
-        for (ElementType type : ElementType.values()) {
+    public static StatType fromValue(String value) {
+        for (StatType type : StatType.values()) {
             if (type.value.equalsIgnoreCase(value)) {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unknown element type: " + value);
+        throw new IllegalArgumentException("Unknown stat type: " + value);
     }
 }

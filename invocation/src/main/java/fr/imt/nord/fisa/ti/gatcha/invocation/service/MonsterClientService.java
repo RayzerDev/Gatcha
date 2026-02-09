@@ -1,7 +1,9 @@
 package fr.imt.nord.fisa.ti.gatcha.invocation.service;
 
 import fr.imt.nord.fisa.ti.gatcha.common.client.HttpClient;
-import fr.imt.nord.fisa.ti.gatcha.invocation.dto.CreateMonsterRequest;
+import fr.imt.nord.fisa.ti.gatcha.common.dto.CreateMonsterRequest;
+import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
+import fr.imt.nord.fisa.ti.gatcha.common.service.BaseClientService;
 import fr.imt.nord.fisa.ti.gatcha.invocation.dto.MonsterResponse;
 import fr.imt.nord.fisa.ti.gatcha.invocation.model.MonsterTemplate;
 import fr.imt.nord.fisa.ti.gatcha.invocation.model.SkillTemplate;
@@ -16,23 +18,19 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class MonsterClientService {
-
-    private final HttpClient httpClient;
-    private final String monsterServiceUrl;
+public class MonsterClientService extends BaseClientService {
 
     public MonsterClientService(
             HttpClient httpClient,
             @Value("${monster.service.url:http://localhost:8083}") String monsterServiceUrl) {
-        this.httpClient = httpClient;
-        this.monsterServiceUrl = monsterServiceUrl;
+        super(httpClient, monsterServiceUrl);
     }
 
     public MonsterResponse createMonster(MonsterTemplate template, String ownerUsername) {
         CreateMonsterRequest request = CreateMonsterRequest.builder()
                 .templateId(template.getId())
                 .ownerUsername(ownerUsername)
-                .element(template.getElement().getValue())
+                .element(ElementType.fromValue(template.getElement().getValue()))
                 .hp(template.getHp())
                 .atk(template.getAtk())
                 .def(template.getDef())
@@ -45,7 +43,7 @@ public class MonsterClientService {
         log.debug("Creating monster from template {} for user {}", template.getId(), ownerUsername);
 
         MonsterResponse response = httpClient.post(
-                monsterServiceUrl,
+                serviceUrl,
                 "/monsters",
                 request,
                 MonsterResponse.class

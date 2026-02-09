@@ -8,6 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/auth" />
+            <option value="$PROJECT_DIR$/common" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -16,6 +17,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/combat" />
+            <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/common-auth" />
           </set>
         </option>
@@ -24,6 +26,7 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/invocation" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/common-auth" />
             <option value="$PROJECT_DIR$/invocation" />
           </set>
@@ -33,6 +36,7 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/monster" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/common-auth" />
             <option value="$PROJECT_DIR$/monster" />
           </set>
@@ -42,6 +46,7 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/player" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/common-auth" />
             <option value="$PROJECT_DIR$/player" />
           </set>
