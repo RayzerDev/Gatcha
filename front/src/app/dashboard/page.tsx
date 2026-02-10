@@ -17,6 +17,7 @@ export default function DashboardPage() {
     const [player, setPlayer] = useState<Player | null>(null);
     const [hasPendingInvocations, setHasPendingInvocations] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(true);
+    const [isRetrying, setIsRetrying] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -117,6 +118,8 @@ export default function DashboardPage() {
 
     // Rejouer les invocations échouées
     const handleRetryInvocations = async () => {
+        if (isRetrying) return;
+        setIsRetrying(true);
         try {
             setError(null);
             const retriedInvocations = await invocationService.retryFailed();
@@ -131,6 +134,8 @@ export default function DashboardPage() {
             }
         } catch (err) {
             handleError(err, 'Impossible de relancer les invocations.');
+        } finally {
+            setIsRetrying(false);
         }
     };
 
@@ -254,9 +259,12 @@ export default function DashboardPage() {
                                     </p>
                                     <button
                                         onClick={handleRetryInvocations}
-                                        className="shrink-0 rounded-lg bg-purple-600 px-4 py-2 text-sm font-bold text-white hover:bg-purple-700 transition-colors shadow-lg hover:shadow-purple-500/20"
+                                        disabled={isRetrying}
+                                        className={`shrink-0 rounded-lg bg-purple-600 px-4 py-2 text-sm font-bold text-white transition-colors shadow-lg hover:shadow-purple-500/20 ${
+                                            isRetrying ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-700'
+                                        }`}
                                     >
-                                        Récupérer
+                                        {isRetrying ? 'Traitement...' : 'Récupérer'}
                                     </button>
                                 </div>
                             )}
