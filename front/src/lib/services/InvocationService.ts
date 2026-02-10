@@ -24,6 +24,20 @@ export class InvocationService extends BaseService {
     }
 
     /**
+     * Crée un nouveau template de monstre
+     */
+    async createTemplate(template: Omit<MonsterTemplate, 'id'>): Promise<MonsterTemplate> {
+        return this.postAuthenticated<MonsterTemplate>('/api/invocation/invocations/templates', template);
+    }
+
+    /**
+     * Met à jour un template de monstre existant
+     */
+    async updateTemplate(id: number, template: MonsterTemplate): Promise<MonsterTemplate> {
+        return this.putAuthenticated<MonsterTemplate>(`/api/invocation/invocations/templates/${id}`, template);
+    }
+
+    /**
      * Rejoue les invocations échouées
      */
     async retryFailed(): Promise<Invocation[]> {

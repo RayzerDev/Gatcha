@@ -77,6 +77,43 @@ public class InvocationService {
     }
 
     /**
+     * Crée un nouveau template de monstre
+     */
+    public MonsterTemplate createTemplate(MonsterTemplate template) {
+        // Générer un ID si non fourni
+        if (template.getId() == null || template.getId() == 0) {
+            int maxId = templateRepository.findAll().stream()
+                    .mapToInt(t -> t.getId() != null ? t.getId() : 0)
+                    .max().orElse(0);
+            template.setId(maxId + 1);
+        }
+
+        // Valider les données (basic)
+        if (template.getLootRate() <= 0) {
+            throw new IllegalArgumentException("Loot rate must be positive");
+        }
+
+        return templateRepository.save(template);
+    }
+
+    /**
+     * Met à jour un template de monstre existant
+     */
+    public MonsterTemplate updateTemplate(int id, MonsterTemplate template) {
+        if (!templateRepository.existsById(id)) {
+            throw new TemplateNotFoundException(id);
+        }
+        template.setId(id);
+
+        // Valider les données
+        if (template.getLootRate() <= 0) {
+            throw new IllegalArgumentException("Loot rate must be positive");
+        }
+
+        return templateRepository.save(template);
+    }
+
+    /**
      * Sélectionne un monstre aléatoirement en fonction des taux de loot
      */
     public MonsterTemplate selectRandomMonster() {

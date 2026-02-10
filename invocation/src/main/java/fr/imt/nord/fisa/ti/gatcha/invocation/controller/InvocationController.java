@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,6 +44,18 @@ public class InvocationController {
     @Operation(summary = "Récupérer tous les templates de monstres disponibles")
     public ResponseEntity<List<MonsterTemplate>> getTemplates() {
         return ResponseEntity.ok(invocationService.getAllTemplates());
+    }
+
+    @PostMapping("/templates")
+    @Operation(summary = "Ajouter un nouveau template de monstre")
+    public ResponseEntity<MonsterTemplate> createTemplate(@RequestBody MonsterTemplate template) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(invocationService.createTemplate(template));
+    }
+
+    @PutMapping("/templates/{id}")
+    @Operation(summary = "Mettre à jour un template de monstre existant")
+    public ResponseEntity<MonsterTemplate> updateTemplate(@org.springframework.web.bind.annotation.PathVariable int id, @RequestBody MonsterTemplate template) {
+        return ResponseEntity.ok(invocationService.updateTemplate(id, template));
     }
 
     @PostMapping("/retry")

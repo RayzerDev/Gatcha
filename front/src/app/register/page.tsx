@@ -4,6 +4,7 @@ import {useState, useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 import {authService, ApiError} from '@/lib/services';
 import {useAuth} from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -11,7 +12,7 @@ export default function RegisterPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+    // const [error, setError] = useState(''); // Removed
     const [loading, setLoading] = useState(false);
 
     // Générer les particules une seule fois
@@ -26,15 +27,15 @@ export default function RegisterPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
+        // setError('');
 
         if (password !== confirmPassword) {
-            setError('Les mots de passe ne correspondent pas');
+            toast.error('Les mots de passe ne correspondent pas');
             return;
         }
 
         if (password.length < 3) {
-            setError('Le mot de passe doit contenir au moins 3 caractères');
+            toast.error('Le mot de passe doit contenir au moins 3 caractères');
             return;
         }
 
@@ -43,14 +44,15 @@ export default function RegisterPage() {
         try {
             const response = await authService.register({username, password});
             await loginContext(response.token);
+            toast.success('Compte créé avec succès !');
             router.push('/dashboard');
         } catch (err: unknown) {
             if (err instanceof ApiError) {
-                setError(err.message);
+                toast.error(err.message);
             } else if (err instanceof Error) {
-                setError(err.message);
+                toast.error(err.message);
             } else {
-                setError('Échec de l\'inscription');
+                toast.error('Échec de l\'inscription');
             }
         } finally {
             setLoading(false);
@@ -98,11 +100,7 @@ export default function RegisterPage() {
                     </h2>
 
                     <form className="space-y-5" onSubmit={handleSubmit}>
-                        {error && (
-                            <div className="rounded-xl bg-red-500/20 border border-red-500/50 p-4 backdrop-blur-sm animate-shake">
-                                <p className="text-sm font-medium text-red-200">{error}</p>
-                            </div>
-                        )}
+                        {/* Error banner removed */}
 
                         <div>
                             <label htmlFor="username" className="block text-sm font-semibold text-white/90 mb-2">

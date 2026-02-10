@@ -2,11 +2,22 @@
 
 import {useAuth} from '@/contexts/AuthContext';
 import {useRouter} from 'next/navigation';
-import {useCallback, useEffect, useMemo, useState} from 'react';
-import {ApiError, invocationService, Monster, monsterService, Player, playerService} from '@/lib/services';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {createPortal} from 'react-dom';
+import toast from 'react-hot-toast';
+import {
+    ApiError,
+    invocationService,
+    Monster,
+    monsterService,
+    MonsterTemplate,
+    Player,
+    playerService
+} from '@/lib/services';
 import {LoadingPage, Navbar, PlayerStats} from '@/components/ui';
 import {MonsterGrid} from '@/components/monsters';
 import {BoosterPack} from '@/components/BoosterPack';
+import {TemplateList} from '@/components/invocation/TemplateList';
 
 export default function DashboardPage() {
     const {username, isAuthenticated, isLoading: authLoading, logout} = useAuth();
@@ -14,22 +25,23 @@ export default function DashboardPage() {
 
     // États
     const [monsters, setMonsters] = useState<Monster[]>([]);
+    const [templates, setTemplates] = useState<MonsterTemplate[]>([]);
     const [player, setPlayer] = useState<Player | null>(null);
     const [hasPendingInvocations, setHasPendingInvocations] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [isRetrying, setIsRetrying] = useState(false);
+    const [showDropRates, setShowDropRates] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
 
     // Helper pour afficher les erreurs retournées par ApiClient (qui sont maintenant conviviales)
     const handleError = (err: unknown, fallbackMessage: string) => {
         console.error(fallbackMessage, err);
         if (err instanceof ApiError) {
-            setError(err.message);
+            toast.error(err.message);
         } else if (err instanceof Error) {
-            setError(err.message);
+            toast.error(err.message);
         } else {
-            setError(fallbackMessage);
+            toast.error(fallbackMessage);
         }
     };
 
@@ -48,17 +60,18 @@ export default function DashboardPage() {
 
         try {
             setIsLoadingData(true);
-            setError(null);
 
-            const [monstersData, playerData, historyData] = await Promise.all([
+            const [monstersData, playerData, historyData, templatesData] = await Promise.all([
                 monsterService.getMyMonsters(),
                 playerService.getPlayer(username),
                 invocationService.getHistory(),
+                invocationService.getTemplates(),
             ]);
 
             setMonsters(monstersData);
             setPlayer(playerData);
             setHasPendingInvocations(historyData.some(i => i.status !== 'COMPLETED'));
+            setTemplates(templatesData);
         } catch (err) {
             handleError(err, 'Impossible de charger vos données.');
         } finally {
@@ -83,7 +96,6 @@ export default function DashboardPage() {
     // Invocation d'un monstre avec l'animation de booster
     const handleSummon = async (): Promise<Monster> => {
         try {
-            setError(null);
             const invocation = await invocationService.invoke();
 
             if (invocation.monsterId) {
@@ -121,16 +133,15 @@ export default function DashboardPage() {
         if (isRetrying) return;
         setIsRetrying(true);
         try {
-            setError(null);
             const retriedInvocations = await invocationService.retryFailed();
 
             // Toujours recharger les données pour mettre à jour l'état (monstres et pending status)
             await loadData();
 
             if (retriedInvocations.length > 0) {
-                alert(`${retriedInvocations.length} invocations ont été traitées !`);
+                toast.success(`${retriedInvocations.length} invocations ont été traitées !`);
             } else {
-                alert("Aucune invocation en attente n'a été trouvée.");
+                toast.error("Aucune invocation en attente n'a été trouvée.");
             }
         } catch (err) {
             handleError(err, 'Impossible de relancer les invocations.');
@@ -142,7 +153,6 @@ export default function DashboardPage() {
     // Amélioration d'une compétence
     const handleUpgradeSkill = async (monsterId: string, skillNum: number) => {
         try {
-            setError(null);
             const updatedMonster = await monsterService.upgradeSkill(monsterId, skillNum);
             setMonsters(prev =>
                 prev.map(m => m.id === monsterId ? updatedMonster : m)
@@ -155,7 +165,6 @@ export default function DashboardPage() {
     // Suppression d'un monstre
     const handleDelete = async (monsterId: string) => {
         try {
-            setError(null);
             setDeletingId(monsterId);
             await monsterService.deleteMonster(monsterId);
             setMonsters(prev => prev.filter(m => m.id !== monsterId));
@@ -188,21 +197,6 @@ export default function DashboardPage() {
             <Navbar username={username} onLogout={logout}/>
 
             <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                {/* Message d'erreur */}
-                {error && (
-                    <div
-                        className="mb-6 rounded-xl bg-red-500/20 border border-red-500/30 p-4 text-red-300 backdrop-blur-sm animate-shake">
-                        <div className="flex items-center justify-between">
-                            <span>{error}</span>
-                            <button
-                                onClick={() => setError(null)}
-                                className="ml-4 rounded-lg bg-red-500/20 px-3 py-1 text-sm font-medium hover:bg-red-500/30 transition-colors"
-                            >
-                                Fermer
-                            </button>
-                        </div>
-                    </div>
-                )}
 
                 {/* Stats du joueur */}
                 <div className="mb-8 animate-fadeInUp">
@@ -228,6 +222,16 @@ export default function DashboardPage() {
                         ))}
                     </div>
 
+                    {/* Bouton Info Taux de drop */}
+                    <button
+                        onClick={() => setShowDropRates(true)}
+                        className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all hover:scale-110 z-20 group"
+                        title="Voir les taux de drop"
+                    >
+                        <span className="sr-only">Voir les taux</span>
+                        <span className="text-xl group-hover:animate-pulse">📊</span>
+                    </button>
+
                     <div className="relative z-10">
                         <div className="mb-8 text-center">
                             <h2 className="mb-3 text-4xl font-black text-white drop-shadow-lg">
@@ -250,7 +254,7 @@ export default function DashboardPage() {
                         {/* Statistiques et avertissements */}
                         <div className="flex flex-col items-center gap-4 w-full max-w-2xl mx-auto">
                             {/* Bouton pour réessayer les invocations échouées */}
-                            {hasPendingInvocations && (
+                            {hasPendingInvocations && canSummon && (
                                 <div
                                     className="w-full rounded-xl bg-purple-500/20 border border-purple-500/40 px-6 py-4 backdrop-blur-sm animate-pulse flex items-center justify-between gap-4">
                                     <p className="text-sm font-bold text-purple-300 flex items-center gap-3">
@@ -259,9 +263,9 @@ export default function DashboardPage() {
                                     </p>
                                     <button
                                         onClick={handleRetryInvocations}
-                                        disabled={isRetrying}
+                                        disabled={isRetrying || !canSummon}
                                         className={`shrink-0 rounded-lg bg-purple-600 px-4 py-2 text-sm font-bold text-white transition-colors shadow-lg hover:shadow-purple-500/20 ${
-                                            isRetrying ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-700'
+                                            isRetrying || !canSummon ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-700'
                                         }`}
                                     >
                                         {isRetrying ? 'Traitement...' : 'Récupérer'}
@@ -280,6 +284,27 @@ export default function DashboardPage() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Modal Taux de Drop */}
+                        {showDropRates && typeof document !== 'undefined' && createPortal(
+                            <div
+                                className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+                                <div
+                                    className="relative w-full max-w-2xl bg-zinc-900/90 rounded-2xl border border-purple-500/30 p-6 shadow-2xl">
+                                    <button
+                                        onClick={() => setShowDropRates(false)}
+                                        className="absolute top-4 right-4 text-zinc-400 hover:text-white font-bold transition-colors"
+                                    >
+                                        ✕
+                                    </button>
+                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        📊 Taux d&#39;invocation
+                                    </h3>
+                                    <TemplateList templates={templates} onRefresh={loadData} readOnly={true}/>
+                                </div>
+                            </div>,
+                            document.body
+                        )}
                     </div>
                 </div>
 
