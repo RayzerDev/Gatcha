@@ -3,7 +3,7 @@
 import {useAuth} from '@/contexts/AuthContext';
 import {useRouter} from 'next/navigation';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {invocationService, Monster, monsterService, Player, playerService, ApiError} from '@/lib/services';
+import {ApiError, invocationService, Monster, monsterService, Player, playerService} from '@/lib/services';
 import {LoadingPage, Navbar, PlayerStats} from '@/components/ui';
 import {MonsterGrid} from '@/components/monsters';
 import {BoosterPack} from '@/components/BoosterPack';
@@ -15,7 +15,9 @@ export default function DashboardPage() {
     // États
     const [monsters, setMonsters] = useState<Monster[]>([]);
     const [player, setPlayer] = useState<Player | null>(null);
+    const [hasPendingInvocations, setHasPendingInvocations] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(true);
+    const [isRetrying, setIsRetrying] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -48,13 +50,15 @@ export default function DashboardPage() {
             setIsLoadingData(true);
             setError(null);
 
-            const [monstersData, playerData] = await Promise.all([
+            const [monstersData, playerData, historyData] = await Promise.all([
                 monsterService.getMyMonsters(),
                 playerService.getPlayer(username),
+                invocationService.getHistory(),
             ]);
 
             setMonsters(monstersData);
             setPlayer(playerData);
+            setHasPendingInvocations(historyData.some(i => i.status !== 'COMPLETED'));
         } catch (err) {
             handleError(err, 'Impossible de charger vos données.');
         } finally {
@@ -88,6 +92,15 @@ export default function DashboardPage() {
             throw new Error('Problème lors de l\'invocation : aucun monstre reçu.');
         } catch (err) {
             handleError(err, 'L\'invocation a échoué.');
+
+            // Vérifier s'il y a des invocations en attente suite à l'échec
+            try {
+                const history = await invocationService.getHistory();
+                setHasPendingInvocations(history.some(i => i.status !== 'COMPLETED'));
+            } catch (e) {
+                console.error("Erreur lors de la vérification de l'historique", e);
+            }
+
             throw err;
         }
     };
@@ -100,6 +113,29 @@ export default function DashboardPage() {
         if (username) {
             const updatedPlayer = await playerService.getPlayer(username);
             setPlayer(updatedPlayer);
+        }
+    };
+
+    // Rejouer les invocations échouées
+    const handleRetryInvocations = async () => {
+        if (isRetrying) return;
+        setIsRetrying(true);
+        try {
+            setError(null);
+            const retriedInvocations = await invocationService.retryFailed();
+
+            // Toujours recharger les données pour mettre à jour l'état (monstres et pending status)
+            await loadData();
+
+            if (retriedInvocations.length > 0) {
+                alert(`${retriedInvocations.length} invocations ont été traitées !`);
+            } else {
+                alert("Aucune invocation en attente n'a été trouvée.");
+            }
+        } catch (err) {
+            handleError(err, 'Impossible de relancer les invocations.');
+        } finally {
+            setIsRetrying(false);
         }
     };
 
@@ -207,12 +243,32 @@ export default function DashboardPage() {
                             <BoosterPack
                                 onOpen={handleSummon}
                                 onAdd={handleCollectionUpdate}
-                                disabled={!canSummon}
+                                disabled={!canSummon || hasPendingInvocations}
                             />
                         </div>
 
                         {/* Statistiques et avertissements */}
-                        <div className="flex flex-col items-center gap-4">
+                        <div className="flex flex-col items-center gap-4 w-full max-w-2xl mx-auto">
+                            {/* Bouton pour réessayer les invocations échouées */}
+                            {hasPendingInvocations && (
+                                <div
+                                    className="w-full rounded-xl bg-purple-500/20 border border-purple-500/40 px-6 py-4 backdrop-blur-sm animate-pulse flex items-center justify-between gap-4">
+                                    <p className="text-sm font-bold text-purple-300 flex items-center gap-3">
+                                        <span className="text-2xl">🔄</span>
+                                        <span>Des invocations incomplètes ont été détectées.</span>
+                                    </p>
+                                    <button
+                                        onClick={handleRetryInvocations}
+                                        disabled={isRetrying}
+                                        className={`shrink-0 rounded-lg bg-purple-600 px-4 py-2 text-sm font-bold text-white transition-colors shadow-lg hover:shadow-purple-500/20 ${
+                                            isRetrying ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-700'
+                                        }`}
+                                    >
+                                        {isRetrying ? 'Traitement...' : 'Récupérer'}
+                                    </button>
+                                </div>
+                            )}
+
                             {/* Avertissement si inventaire plein */}
                             {!canSummon && player && (
                                 <div
@@ -283,4 +339,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-
