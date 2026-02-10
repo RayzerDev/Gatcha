@@ -38,20 +38,20 @@ public class TemplateDataInitializer implements CommandLineRunner {
 
         try {
             ClassPathResource resource = new ClassPathResource("template.json");
-            InputStream inputStream = resource.getInputStream();
+            try (InputStream inputStream = resource.getInputStream()) {
+                List<Map<String, Object>> rawTemplates = objectMapper.readValue(
+                        inputStream,
+                        new TypeReference<List<Map<String, Object>>>() {
+                        }
+                );
 
-            List<Map<String, Object>> rawTemplates = objectMapper.readValue(
-                    inputStream,
-                    new TypeReference<List<Map<String, Object>>>() {
-                    }
-            );
+                List<MonsterTemplate> templates = rawTemplates.stream()
+                        .map(this::convertToMonsterTemplate)
+                        .collect(Collectors.toList());
 
-            List<MonsterTemplate> templates = rawTemplates.stream()
-                    .map(this::convertToMonsterTemplate)
-                    .collect(Collectors.toList());
-
-            templateRepository.saveAll(templates);
-            log.info("Successfully loaded {} monster templates", templates.size());
+                templateRepository.saveAll(templates);
+                log.info("Successfully loaded {} monster templates", templates.size());
+            }
 
         } catch (Exception e) {
             log.error("Failed to initialize monster templates", e);

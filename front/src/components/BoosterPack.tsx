@@ -211,7 +211,7 @@ export function BoosterPack({ onOpen, onAdd, disabled }: BoosterPackProps) {
 
             {/* Revealed Monster Card - Full screen overlay */}
             {isRevealing && revealedMonster && (
-                <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
+                <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
                      style={{
                          position: 'fixed',
                          top: 0,

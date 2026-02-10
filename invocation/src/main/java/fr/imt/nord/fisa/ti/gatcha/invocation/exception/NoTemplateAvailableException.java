@@ -7,4 +7,8 @@ public class NoTemplateAvailableException extends RuntimeException {
     public NoTemplateAvailableException() {
         super("No monster templates available for invocation");
     }
+
+    public NoTemplateAvailableException(String message) {
+        super(message);
+    }
 }

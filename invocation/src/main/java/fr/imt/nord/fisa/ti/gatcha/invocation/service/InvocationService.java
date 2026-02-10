@@ -1,7 +1,10 @@
 package fr.imt.nord.fisa.ti.gatcha.invocation.service;
 
+import fr.imt.nord.fisa.ti.gatcha.common.context.SecurityContext;
 import fr.imt.nord.fisa.ti.gatcha.invocation.dto.InvocationDTO;
 import fr.imt.nord.fisa.ti.gatcha.invocation.dto.MonsterResponse;
+import fr.imt.nord.fisa.ti.gatcha.invocation.dto.PlayerResponse;
+import fr.imt.nord.fisa.ti.gatcha.invocation.exception.InventoryFullException;
 import fr.imt.nord.fisa.ti.gatcha.invocation.exception.InvocationFailedException;
 import fr.imt.nord.fisa.ti.gatcha.invocation.exception.NoTemplateAvailableException;
 import fr.imt.nord.fisa.ti.gatcha.invocation.exception.TemplateNotFoundException;
@@ -27,25 +30,32 @@ public class InvocationService {
     private final MonsterTemplateRepository templateRepository;
     private final InvocationRepository invocationRepository;
     private final MonsterClientService monsterClientService;
+    private final PlayerClientService playerClientService;
     private final Random random = new Random();
 
     /**
      * Effectue une invocation pour un joueur
      */
-    public InvocationDTO invoke(String username) {
+    public InvocationDTO invoke() {
+        // Vérifier la place dans l'inventaire
+        PlayerResponse player = playerClientService.getPlayer(SecurityContext.getUsername());
+        if (player.getMonsters().size() >= player.getMaxMonsters()) {
+            throw new InventoryFullException("Player inventory is full");
+        }
+
         // Sélectionner un monstre aléatoirement basé sur les taux de loot
         MonsterTemplate selectedTemplate = selectRandomMonster();
 
         // Créer l'invocation dans la base tampon
-        Invocation invocation = Invocation.create(username, selectedTemplate.getId());
+        Invocation invocation = Invocation.create(SecurityContext.getUsername(), selectedTemplate.getId());
         invocation = invocationRepository.save(invocation);
         log.info("Created invocation {} for user {} with template {}",
-                invocation.getId(), username, selectedTemplate.getId());
+                invocation.getId(), SecurityContext.getUsername(), selectedTemplate.getId());
 
         try {
             // Étape 1: Créer le monstre via l'API Monster
             // L'API Monster gère aussi l'ajout du monstre au joueur
-            MonsterResponse monsterResponse = monsterClientService.createMonster(selectedTemplate, username);
+            MonsterResponse monsterResponse = monsterClientService.createMonster(selectedTemplate, SecurityContext.getUsername());
             invocation.markMonsterCreated(monsterResponse.getId());
             invocation.markPlayerUpdated(); // Le player est mis à jour par Monster
             invocationRepository.save(invocation);
@@ -80,6 +90,10 @@ public class InvocationService {
         double totalRate = templates.stream()
                 .mapToDouble(MonsterTemplate::getLootRate)
                 .sum();
+
+        if (totalRate <= 0) {
+            throw new NoTemplateAvailableException("Total loot rate must be positive, found: " + totalRate);
+        }
 
         // Générer un nombre aléatoire entre 0 et la somme totale
         double roll = random.nextDouble() * totalRate;

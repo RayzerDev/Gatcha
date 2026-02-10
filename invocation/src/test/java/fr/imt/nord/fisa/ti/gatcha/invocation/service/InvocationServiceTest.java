@@ -31,6 +31,9 @@ class InvocationServiceTest {
     @Mock
     private MonsterClientService monsterClientService;
 
+    @Mock
+    private PlayerClientService playerClientService;
+
     private InvocationService invocationService;
 
     private List<MonsterTemplate> testTemplates;
@@ -40,7 +43,8 @@ class InvocationServiceTest {
         invocationService = new InvocationService(
                 templateRepository,
                 invocationRepository,
-                monsterClientService
+                monsterClientService,
+                playerClientService
         );
 
         // Créer les templates de test basés sur le template.json

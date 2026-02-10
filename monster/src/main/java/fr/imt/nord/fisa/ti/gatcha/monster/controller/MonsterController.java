@@ -1,11 +1,12 @@
 package fr.imt.nord.fisa.ti.gatcha.monster.controller;
 
+import fr.imt.nord.fisa.ti.gatcha.common.context.SecurityContext;
 import fr.imt.nord.fisa.ti.gatcha.common.dto.CreateMonsterRequest;
 import fr.imt.nord.fisa.ti.gatcha.monster.dto.MonsterDTO;
 import fr.imt.nord.fisa.ti.gatcha.monster.service.MonsterService;
-import fr.imt.nord.fisa.ti.gatcha.common.context.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class MonsterController {
 
     @PostMapping
     @Operation(summary = "Créer un nouveau monstre (utilisé par l'API Invocation)")
-    public ResponseEntity<MonsterDTO> createMonster(@RequestBody CreateMonsterRequest request) {
+    public ResponseEntity<MonsterDTO> createMonster(@Valid @RequestBody CreateMonsterRequest request) {
         MonsterDTO created = monsterService.createMonster(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }

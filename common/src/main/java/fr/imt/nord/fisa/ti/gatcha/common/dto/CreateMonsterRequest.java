@@ -1,6 +1,9 @@
 package fr.imt.nord.fisa.ti.gatcha.common.dto;
 
 import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,12 +20,13 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateMonsterRequest {
     private int templateId;
-    private String ownerUsername;
     private ElementType element;
     private int hp;
     private int atk;
     private int def;
     private int vit;
+    @NotEmpty
+    @NotNull
     private List<SkillDTO> skills;
 
     @Data
@@ -32,6 +36,7 @@ public class CreateMonsterRequest {
     public static class SkillDTO {
         private int num;
         private int dmg;
+        @NotNull
         private RatioDTO ratio;
         private int cooldown;
         private int lvl;
@@ -43,7 +48,9 @@ public class CreateMonsterRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RatioDTO {
+        @NotBlank
         private String stat;
+        @NotBlank
         private double percent;
     }
 }

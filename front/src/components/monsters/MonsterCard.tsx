@@ -22,7 +22,7 @@ const elementIcons = {
 };
 
 export function MonsterCard({monster, onUpgradeSkill, onDelete, isDeleting}: MonsterCardProps) {
-    const expPercent = (monster.experience / monster.experienceToNextLevel) * 100;
+    const expPercent = Math.min(100, Math.max(0, (monster.experience / monster.experienceToNextLevel) * 100));
 
     return (
         <div className="relative overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800">

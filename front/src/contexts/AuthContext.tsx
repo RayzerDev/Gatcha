@@ -40,6 +40,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
 
         const checkAuth = async () => {
             const storedToken = TokenStorage.get();
+            const storedUsername = TokenStorage.getUsername();
 
             if (!storedToken) {
                 setIsLoading(false);
@@ -49,6 +50,8 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
             try {
                 const data = await authService.verify(storedToken);
                 if (data.status) {
+                    // Mettre à jour le storage avec le username validé
+                    TokenStorage.set(storedToken, data.username);
                     setToken(storedToken);
                     setUsername(data.username);
                 } else {
@@ -75,7 +78,11 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
                     // Erreur réseau - garder le token pour retry
                     console.warn('Auth check failed, keeping token for retry:', error);
                     setToken(storedToken);
-                    // On ne connaît pas le username, mais on est "connecté"
+                    if (storedUsername) {
+                        setUsername(storedUsername);
+                    }
+                    // Si on n'a pas de username stocké, l'app risque de planter
+                    // mais au moins on ne redirige pas incorrectement vers login
                 }
             } finally {
                 setIsLoading(false);
@@ -89,7 +96,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         try {
             const data = await authService.verify(newToken);
             if (data.status) {
-                TokenStorage.set(newToken);
+                TokenStorage.set(newToken, data.username);
                 setToken(newToken);
                 setUsername(data.username);
             } else {

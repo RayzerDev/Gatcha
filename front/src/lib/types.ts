@@ -1,4 +1,4 @@
-// ============= Auhtentication Types =============
+// ============= Authentication Types =============
 export interface RegisterRequest {
     username: string;
     password: string;
@@ -22,6 +22,12 @@ export interface VerifyResponse {
 
 // ============= Monster Types =============
 
+export enum ElementEnum {
+    fire = 'fire',
+    water = 'water',
+    wind = 'wind'
+}
+
 export interface Skill {
     num: number;
     dmg: number;
@@ -38,7 +44,7 @@ export interface Monster {
     id: string;
     templateId: number;
     ownerUsername: string;
-    element: 'fire' | 'water' | 'wind';
+    element: ElementEnum;
     hp: number;
     atk: number;
     def: number;
@@ -50,11 +56,10 @@ export interface Monster {
     skills: Skill[];
 }
 
-// ============= Invocation Types =============
 
 export interface MonsterTemplate {
     id: number;
-    element: 'FIRE' | 'WATER' | 'WIND';
+    element: ElementEnum;
     hp: number;
     atk: number;
     def: number;

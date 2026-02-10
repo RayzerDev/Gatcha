@@ -29,7 +29,6 @@ public class MonsterClientService extends BaseClientService {
     public MonsterResponse createMonster(MonsterTemplate template, String ownerUsername) {
         CreateMonsterRequest request = CreateMonsterRequest.builder()
                 .templateId(template.getId())
-                .ownerUsername(ownerUsername)
                 .element(ElementType.fromValue(template.getElement().getValue()))
                 .hp(template.getHp())
                 .atk(template.getAtk())

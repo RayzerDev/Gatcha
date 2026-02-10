@@ -1,5 +1,6 @@
 package fr.imt.nord.fisa.ti.gatcha.monster.service;
 
+import fr.imt.nord.fisa.ti.gatcha.common.context.SecurityContext;
 import fr.imt.nord.fisa.ti.gatcha.common.dto.CreateMonsterRequest;
 import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
 import fr.imt.nord.fisa.ti.gatcha.common.model.StatType;
@@ -48,6 +49,7 @@ class MonsterServiceTest {
     void setUp() {
         monsterId = UUID.randomUUID();
         ownerUsername = "TestOwner";
+        SecurityContext.set("token", ownerUsername);
 
         List<Skill> skills = createDefaultSkills();
         testMonster = Monster.createFromTemplate(
@@ -173,7 +175,6 @@ class MonsterServiceTest {
         // Arrange
         CreateMonsterRequest request = new CreateMonsterRequest();
         request.setTemplateId(1);
-        request.setOwnerUsername("NewOwner");
         request.setElement(ElementType.WIND);
         request.setHp(1200);
         request.setAtk(450);

@@ -5,6 +5,7 @@ import fr.imt.nord.fisa.ti.gatcha.common.service.BaseClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.UUID;
 
@@ -26,9 +27,15 @@ public class PlayerClientService extends BaseClientService {
      */
     public void addMonsterToPlayer(String username, UUID monsterId) {
         try {
+            String path = UriComponentsBuilder.fromPath("/players/{username}/monsters")
+                    .queryParam("monsterId", monsterId)
+                    .buildAndExpand(username)
+                    .encode()
+                    .toUriString();
+
             httpClient.post(
                     serviceUrl,
-                    "/players/" + username + "/monsters?monsterId=" + monsterId,
+                    path,
                     null,
                     Void.class
             );
@@ -44,9 +51,14 @@ public class PlayerClientService extends BaseClientService {
      */
     public void removeMonsterFromPlayer(String username, UUID monsterId) {
         try {
+            String path = UriComponentsBuilder.fromPath("/players/{username}/monsters/{monsterId}")
+                    .buildAndExpand(username, monsterId)
+                    .encode()
+                    .toUriString();
+
             httpClient.delete(
                     serviceUrl,
-                    "/players/" + username + "/monsters/" + monsterId,
+                    path,
                     Void.class
             );
             log.info("Removed monster {} from player {}", monsterId, username);
