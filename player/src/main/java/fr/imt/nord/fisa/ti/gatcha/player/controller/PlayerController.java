@@ -1,6 +1,7 @@
 package fr.imt.nord.fisa.ti.gatcha.player.controller;
 
 
+import fr.imt.nord.fisa.ti.gatcha.common.context.SecurityContext;
 import fr.imt.nord.fisa.ti.gatcha.player.dto.entity.PlayerDTO;
 import fr.imt.nord.fisa.ti.gatcha.player.service.PlayerService;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class PlayerController {
 
     @GetMapping("/{username}")
     public ResponseEntity<PlayerDTO> getPlayerByUsername(@PathVariable String username) {
-        PlayerDTO playerDTO = playerService.getPlayerByUsername(username, false);
+        PlayerDTO playerDTO = playerService.getPlayerByUsername(username, SecurityContext.getUsername() != null && SecurityContext.getUsername().equals(username));
         return ResponseEntity.ok(playerDTO);
     }
 

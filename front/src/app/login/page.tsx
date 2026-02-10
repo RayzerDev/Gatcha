@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 import {useAuth} from '@/contexts/AuthContext';
 import {authService, ApiError} from '@/lib/services';
@@ -13,6 +13,16 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Générer les particules une seule fois
+    const particles = useMemo(() => {
+        return Array.from({ length: 50 }, () => ({
+            left: Math.random() * 100,
+            top: Math.random() * 100,
+            delay: Math.random() * 5,
+            duration: 3 + Math.random() * 4,
+        }));
+    }, []);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -24,12 +34,11 @@ export default function LoginPage() {
             router.push('/dashboard');
         } catch (err: unknown) {
             if (err instanceof ApiError) {
-                // Afficher le message d'erreur de l'API
                 setError(err.message);
             } else if (err instanceof Error) {
                 setError(err.message);
             } else {
-                setError('Login failed');
+                setError('Échec de la connexion');
             }
         } finally {
             setLoading(false);
@@ -37,24 +46,55 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-900">
-            <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-lg dark:bg-zinc-800">
-                <div>
-                    <h2 className="text-center text-3xl font-bold text-zinc-900 dark:text-white">
-                        Sign in to Gatcha
-                    </h2>
+        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-purple-900 via-indigo-900 to-pink-900">
+            {/* Animated background particles */}
+            <div className="absolute inset-0">
+                {particles.map((particle, i) => (
+                    <div
+                        key={i}
+                        className="absolute h-1 w-1 rounded-full bg-white/30 animate-float"
+                        style={{
+                            left: `${particle.left}%`,
+                            top: `${particle.top}%`,
+                            animationDelay: `${particle.delay}s`,
+                            animationDuration: `${particle.duration}s`,
+                        }}
+                    />
+                ))}
+            </div>
+
+            {/* Glowing orbs */}
+            <div className="absolute top-20 left-20 h-64 w-64 rounded-full bg-purple-500/30 blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 right-20 h-96 w-96 rounded-full bg-pink-500/20 blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
+
+            <div className="relative z-10 w-full max-w-md px-6 animate-fadeInUp">
+                {/* Logo/Title */}
+                <div className="mb-8 text-center">
+                    <div className="mb-4 inline-block rounded-2xl bg-linear-to-br from-purple-600 to-pink-600 p-4 shadow-2xl">
+                        <span className="text-6xl">🎴</span>
+                    </div>
+                    <h1 className="mb-2 text-5xl font-black text-white drop-shadow-lg">
+                        GATCHA
+                    </h1>
+                    <p className="text-purple-200">Collecte, Combat, Conquête</p>
                 </div>
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    {error && (
-                        <div className="rounded-md bg-red-50 p-4 dark:bg-red-900/20">
-                            <p className="text-sm text-red-800 dark:text-red-400">{error}</p>
-                        </div>
-                    )}
-                    <div className="space-y-4">
+
+                {/* Login Card */}
+                <div className="rounded-2xl bg-white/10 p-8 shadow-2xl backdrop-blur-xl border border-white/20">
+                    <h2 className="mb-6 text-center text-2xl font-bold text-white">
+                        Bon Retour
+                    </h2>
+
+                    <form className="space-y-5" onSubmit={handleSubmit}>
+                        {error && (
+                            <div className="rounded-xl bg-red-500/20 border border-red-500/50 p-4 backdrop-blur-sm animate-shake">
+                                <p className="text-sm font-medium text-red-200">{error}</p>
+                            </div>
+                        )}
+
                         <div>
-                            <label htmlFor="username"
-                                   className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                                Username
+                            <label htmlFor="username" className="block text-sm font-semibold text-white/90 mb-2">
+                                Nom d'utilisateur
                             </label>
                             <input
                                 id="username"
@@ -63,14 +103,14 @@ export default function LoginPage() {
                                 required
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:placeholder-zinc-500"
-                                placeholder="Enter your username"
+                                className="block w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/50 backdrop-blur-sm transition-all focus:border-purple-400 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                                placeholder="Entrez votre nom d'utilisateur"
                             />
                         </div>
+
                         <div>
-                            <label htmlFor="password"
-                                   className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                                Password
+                            <label htmlFor="password" className="block text-sm font-semibold text-white/90 mb-2">
+                                Mot de passe
                             </label>
                             <input
                                 id="password"
@@ -79,32 +119,49 @@ export default function LoginPage() {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-zinc-300 px-3 py-2 text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:placeholder-zinc-500"
-                                placeholder="Enter your password"
+                                className="block w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/50 backdrop-blur-sm transition-all focus:border-purple-400 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                                placeholder="Entrez votre mot de passe"
                             />
                         </div>
-                    </div>
 
-                    <div>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group relative flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400 dark:focus:ring-offset-zinc-800"
+                            className="group relative w-full overflow-hidden rounded-xl bg-linear-to-r from-purple-600 to-pink-600 px-6 py-3.5 text-base font-bold text-white shadow-xl transition-all hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? 'Signing in...' : 'Sign in'}
+                            <span className="relative z-10">
+                                {loading ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                        Connexion...
+                                    </span>
+                                ) : (
+                                    'Se Connecter'
+                                )}
+                            </span>
+                            <div className="absolute inset-0 bg-linear-to-r from-purple-700 to-pink-700 opacity-0 transition-opacity group-hover:opacity-100" />
                         </button>
-                    </div>
+                    </form>
 
-                    <div className="text-center">
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                            Don&apos;t have an account?{' '}
-                            <a href="/register"
-                               className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
-                                Register here
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-white/70">
+                            Pas encore de compte ?{' '}
+                            <a
+                                href="/register"
+                                className="font-bold text-purple-300 transition-colors hover:text-purple-200"
+                            >
+                                Créez-en un maintenant
                             </a>
                         </p>
                     </div>
-                </form>
+                </div>
+
+                {/* Footer info */}
+                <div className="mt-6 text-center">
+                    <p className="text-xs text-white/50">
+                        Invoquez des monstres puissants et dominez l'arène
+                    </p>
+                </div>
             </div>
         </div>
     );

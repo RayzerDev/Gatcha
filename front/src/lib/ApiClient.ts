@@ -1,4 +1,5 @@
 import {ApiError} from "@/lib/ApiError";
+import {authEvents} from "@/lib/AuthEvents";
 
 export class ApiClient {
     private baseUrl: string;
@@ -85,8 +86,9 @@ export class ApiClient {
                 throw error;
             }
 
+            // Erreur réseau ou autre pépin technique (ex: offline)
             throw new ApiError(
-                'Network error or server unreachable',
+                'Impossible de contacter le serveur. Vérifiez votre connexion internet.',
                 0,
                 error instanceof Error ? error.message : String(error)
             );
@@ -94,38 +96,54 @@ export class ApiClient {
     }
 
     private async handleErrorResponse(response: Response): Promise<never> {
-        const statusMsg = `HTTP ${response.status}: ${response.statusText}`;
+        const isServerError = response.status >= 500;
         let errorDetails: unknown = null;
+        let errorMessage = `Erreur HTTP ${response.status}`;
+
+        if (response.status === 400) errorMessage = "Données invalides.";
+        else if (response.status === 401) errorMessage = "Vous devez être connecté.";
+        else if (response.status === 403) errorMessage = "Vous n'avez pas les droits nécessaires.";
+        else if (response.status === 404) errorMessage = "Ressource introuvable.";
+        else if (response.status === 409) errorMessage = "Un conflit est survenu (ex: nom déjà pris).";
+        else if (response.status === 429) errorMessage = "Trop de tentatives. Veuillez patienter.";
+        else if (response.status === 500) errorMessage = "Une erreur interne est survenue sur nos serveurs. Veuillez réessayer plus tard.";
+        else if (response.status === 502) errorMessage = "Le service est temporairement inaccessible. Veuillez réessayer dans quelques instants.";
+        else if (isServerError) errorMessage = "Nos serveurs rencontrent un problème passager. Veuillez réessayer plus tard.";
+
+        // Si 401, émettre un événement pour déconnecter l'utilisateur
+        if (response.status === 401) {
+            authEvents.emitUnauthorized();
+        }
 
         const text = await response.text();
         if (!text) {
-            throw new ApiError(statusMsg, response.status, null);
+            throw new ApiError(errorMessage, response.status, null);
         }
 
         let errorData: unknown;
         try {
             errorData = JSON.parse(text);
         } catch {
-            throw new ApiError(text, response.status, text);
+            // Si le corps n'est pas du JSON, on garde le message par défaut sauf si détail technique utile (mais on évite de l'afficher en brut user)
+            throw new ApiError(errorMessage, response.status, text);
         }
 
         errorDetails = errorData;
 
-        if (typeof errorData === "object" && errorData !== null) {
+        // Si le serveur renvoie un message spécifique précis (souvent le cas en 400/409 pour validation), on le privilégie
+        // Mais pour les 500+, on force le message générique pour ne pas effrayer l'utilisateur avec des stacktraces
+        if (!isServerError && typeof errorData === "object" && errorData !== null) {
             const rec = errorData as Record<string, unknown>;
             if (typeof rec.message === "string" && rec.message.trim()) {
-                throw new ApiError(rec.message, response.status, errorDetails);
+                errorMessage = rec.message;
+            } else if (typeof rec.error === "string" && rec.error.trim()) {
+                errorMessage = rec.error;
             }
-            if (typeof rec.error === "string" && rec.error.trim()) {
-                throw new ApiError(rec.error, response.status, errorDetails);
-            }
+        } else if (!isServerError && typeof errorData === "string" && errorData.trim()) {
+            errorMessage = errorData;
         }
 
-        if (typeof errorData === "string" && errorData.trim()) {
-            throw new ApiError(errorData, response.status, errorDetails);
-        }
-
-        throw new ApiError(statusMsg, response.status, errorDetails);
+        throw new ApiError(errorMessage, response.status, errorDetails);
     }
 
     setDefaultHeader(key: string, value: string): void {

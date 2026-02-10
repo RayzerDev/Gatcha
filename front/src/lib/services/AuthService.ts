@@ -1,61 +1,23 @@
-import {ApiClient} from '../ApiClient';
-import {TokenStorage} from '../TokenStorage';
-
-// ============= Interfaces =============
-
-export interface RegisterRequest {
-    username: string;
-    password: string;
-}
-
-export interface LoginRequest {
-    username: string;
-    password: string;
-}
-
-export interface AuthResponse {
-    token: string;
-    message: string;
-}
-
-export interface VerifyResponse {
-    status: boolean;
-    username: string;
-    message: string;
-}
-
-// ============= Service =============
+import { TokenStorage } from '../TokenStorage';
+import { BaseService } from './BaseService';
+import { RegisterRequest, AuthResponse, LoginRequest, VerifyResponse } from '../types';
 
 /**
  * Service d'authentification
  * Gère l'inscription, la connexion et la vérification des tokens
  */
-export class AuthService {
-    private client: ApiClient;
-
-    constructor(client: ApiClient) {
-        this.client = client;
-    }
-
+export class AuthService extends BaseService {
     /**
      * Inscription d'un nouvel utilisateur
      * Stocke automatiquement le token après inscription
      */
     async register(data: RegisterRequest): Promise<AuthResponse> {
-        try {
-            const response = await this.client.post<AuthResponse>('/api/auth/users/register', data);
+        const response = await this.client.post<AuthResponse>('/api/auth/users/register', data);
 
-            // Stocker automatiquement le token
-            TokenStorage.set(response.token);
+        // Stocker automatiquement le token
+        TokenStorage.set(response.token);
 
-            return response;
-        } catch (error) {
-            // Gérer les erreurs API spécifiques
-            if (error instanceof Error) {
-                throw error; // Re-lancer l'erreur avec le message approprié
-            }
-            throw new Error('Registration failed');
-        }
+        return response;
     }
 
     /**
@@ -63,20 +25,12 @@ export class AuthService {
      * Stocke automatiquement le token après connexion
      */
     async login(data: LoginRequest): Promise<AuthResponse> {
-        try {
-            const response = await this.client.post<AuthResponse>('/api/auth/users/login', data);
+        const response = await this.client.post<AuthResponse>('/api/auth/users/login', data);
 
-            // Stocker automatiquement le token
-            TokenStorage.set(response.token);
+        // Stocker automatiquement le token
+        TokenStorage.set(response.token);
 
-            return response;
-        } catch (error) {
-            // Gérer les erreurs API spécifiques
-            if (error instanceof Error) {
-                throw error; // Re-lancer l'erreur avec le message approprié
-            }
-            throw new Error('Login failed');
-        }
+        return response;
     }
 
     /**
@@ -90,7 +44,7 @@ export class AuthService {
             const authToken = token || TokenStorage.get();
 
             if (!authToken) {
-                throw new Error('No token available');
+                throw new Error('Aucun token disponible');
             }
 
             // Envoyer la requête avec Authorization header
@@ -100,14 +54,9 @@ export class AuthService {
                 }
             });
         } catch (error) {
-            // Si le token est invalide, le supprimer
+            // Si le token est invalide, le supprimer du stockage
             TokenStorage.remove();
-
-            // Gérer les erreurs API spécifiques
-            if (error instanceof Error) {
-                throw error; // Re-lancer l'erreur avec le message approprié
-            }
-            throw new Error('Token verification failed');
+            throw error;
         }
     }
 

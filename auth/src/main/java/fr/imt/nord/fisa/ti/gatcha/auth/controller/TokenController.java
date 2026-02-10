@@ -1,9 +1,9 @@
 package fr.imt.nord.fisa.ti.gatcha.auth.controller;
 
-import fr.imt.nord.fisa.ti.gatcha.auth.dto.token.OutputVerifyDTO;
 import fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenExpiredException;
 import fr.imt.nord.fisa.ti.gatcha.auth.exception.TokenNotFoundException;
 import fr.imt.nord.fisa.ti.gatcha.auth.service.TokenService;
+import fr.imt.nord.fisa.ti.gatcha.common.dto.TokenVerifyResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,7 +35,7 @@ public class TokenController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Token valide",
-                    content = @Content(schema = @Schema(implementation = OutputVerifyDTO.class))
+                    content = @Content(schema = @Schema(implementation = TokenVerifyResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -43,7 +43,7 @@ public class TokenController {
             )
     })
     @GetMapping("/verify")
-    public OutputVerifyDTO verifyToken(
+    public TokenVerifyResponse verifyToken(
             @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authHeader) throws TokenExpiredException, TokenNotFoundException {
 

@@ -1,9 +1,9 @@
 package fr.imt.nord.fisa.ti.gatcha.auth.service;
 
-import fr.imt.nord.fisa.ti.gatcha.auth.dto.token.OutputVerifyDTO;
 import fr.imt.nord.fisa.ti.gatcha.auth.model.Token;
 import fr.imt.nord.fisa.ti.gatcha.auth.model.User;
 import fr.imt.nord.fisa.ti.gatcha.auth.repository.TokenRepository;
+import fr.imt.nord.fisa.ti.gatcha.common.dto.TokenVerifyResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,7 +79,7 @@ class TokenServiceTest {
         when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
         when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        OutputVerifyDTO result = tokenService.verifyToken(tokenString);
+        TokenVerifyResponse result = tokenService.verifyToken(tokenString);
 
         assertNotNull(result);
         assertTrue(result.isStatus());
@@ -170,7 +170,7 @@ class TokenServiceTest {
         when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
         when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        OutputVerifyDTO result = tokenService.verifyToken(tokenString);
+        TokenVerifyResponse result = tokenService.verifyToken(tokenString);
 
         assertTrue(result.isStatus());
         verify(tokenRepository).save(any(Token.class));

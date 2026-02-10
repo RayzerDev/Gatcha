@@ -2,16 +2,21 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1492174550/auth.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1492174550/auth.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/208670271/combat.common-auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/208670271/combat.common-auth.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1492174550/combat.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1492174550/combat.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/combat.main.iml" filepath="$PROJECT_DIR$/.idea/modules/combat.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/front/front.iml" filepath="$PROJECT_DIR$/front/front.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/gatcha.iml" filepath="$PROJECT_DIR$/.idea/gatcha.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/208670271/invocation.common-auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/208670271/invocation.common-auth.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1492174550/invocation.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1492174550/invocation.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/invocation.main.iml" filepath="$PROJECT_DIR$/.idea/modules/invocation.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/208670271/monster.common-auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/208670271/monster.common-auth.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1492174550/monster.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1492174550/monster.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/monster.main.iml" filepath="$PROJECT_DIR$/.idea/modules/monster.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/208670271/player.common-auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/208670271/player.common-auth.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1492174550/player.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1492174550/player.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/player.main.iml" filepath="$PROJECT_DIR$/.idea/modules/player.main.iml" />
     </modules>
   </component>

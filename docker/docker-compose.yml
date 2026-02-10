@@ -165,11 +165,13 @@ services:
     depends_on:
       - mongodb-monster
       - api-auth
+      - api-player
     environment:
       <<: *api-env-base
       MONGO_HOST: mongodb-monster
       MONGO_DATABASE: monsterdb
       AUTH_API_URL: ${AUTH_API_URL:-http://api-auth:8080}
+      PLAYER_API_URL: ${PLAYER_API_URL:-http://api-player:8080}
       OPENAPI_SERVER_URL: http://localhost:${GATEWAY_PORT:-8000}/api/monster
 
   api-invocation:

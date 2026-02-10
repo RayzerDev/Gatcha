@@ -6,7 +6,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,22 +18,32 @@ import java.util.List;
 
 @Slf4j
 @Component
-@AllArgsConstructor
 public class TokenValidationFilter extends OncePerRequestFilter {
 
     private final AuthServiceClient authServiceClient;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
-
-    @Value("${auth.filter.excluded.paths:/tokens/**,/users/**,/actuator/health,/swagger/**,/api-docs/**}")
-    private List<String> excludedPaths;
+    private final List<String> excludedPaths;
 
     private static final List<String> DEFAULT_EXCLUDED_PATHS = Arrays.asList(
             "/tokens/**",
             "/users/**",
             "/actuator/health",
             "/swagger-ui/**",
-            "/api-docs/**"
+            "/api-docs/**",
+            "/health"
     );
+
+    public TokenValidationFilter(
+            AuthServiceClient authServiceClient,
+            @Value("${auth.filter.excluded.paths:}") String excludedPathsConfig) {
+        this.authServiceClient = authServiceClient;
+        if (excludedPathsConfig != null && !excludedPathsConfig.trim().isEmpty()) {
+            this.excludedPaths = Arrays.asList(excludedPathsConfig.split(","));
+        } else {
+            this.excludedPaths = List.of();
+        }
+        log.info("TokenValidationFilter initialized with excluded paths: {}", this.excludedPaths);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -42,10 +51,22 @@ public class TokenValidationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
         String token = extractToken(request);
 
-        if (token == null || token.isEmpty() || !authServiceClient.isTokenValid(token)) {
+        log.debug("Processing request: {} {}", request.getMethod(), path);
+
+        if (token == null || token.isEmpty()) {
+            log.warn("No token provided for path: {}", path);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"No token provided\"}");
+            return;
+        }
+
+        if (!authServiceClient.isTokenValid(token)) {
+            log.warn("Invalid token for path: {}", path);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"Invalid token\"}");
             return;
         }
 

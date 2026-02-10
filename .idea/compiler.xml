@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
@@ -9,6 +10,7 @@
         </processorPath>
         <module name="player.main" />
         <module name="player.common-auth.main" />
+        <module name="player.common.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -29,12 +31,18 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="auth" options="-parameters" />
+      <module name="auth.common" options="-parameters" />
+      <module name="auth.common.main" options="-parameters" />
+      <module name="auth.common.test" options="-parameters" />
       <module name="auth.main" options="-parameters" />
       <module name="auth.test" options="-parameters" />
       <module name="combat" options="-parameters" />
+      <module name="combat.common" options="-parameters" />
       <module name="combat.common-auth" options="-parameters" />
       <module name="combat.common-auth.main" options="-parameters" />
       <module name="combat.common-auth.test" options="-parameters" />
+      <module name="combat.common.main" options="-parameters" />
+      <module name="combat.common.test" options="-parameters" />
       <module name="combat.main" options="-parameters" />
       <module name="combat.test" options="-parameters" />
       <module name="fr.imt.nord.fisa.ti.gatcha.auth" options="-parameters" />
@@ -44,27 +52,36 @@
       <module name="invocation.auth" options="-parameters" />
       <module name="invocation.auth.main" options="-parameters" />
       <module name="invocation.auth.test" options="-parameters" />
+      <module name="invocation.common" options="-parameters" />
       <module name="invocation.common-auth" options="-parameters" />
       <module name="invocation.common-auth.main" options="-parameters" />
       <module name="invocation.common-auth.test" options="-parameters" />
+      <module name="invocation.common.main" options="-parameters" />
+      <module name="invocation.common.test" options="-parameters" />
       <module name="invocation.main" options="-parameters" />
       <module name="invocation.test" options="-parameters" />
       <module name="monster" options="-parameters" />
       <module name="monster.auth" options="-parameters" />
       <module name="monster.auth.main" options="-parameters" />
       <module name="monster.auth.test" options="-parameters" />
+      <module name="monster.common" options="-parameters" />
       <module name="monster.common-auth" options="-parameters" />
       <module name="monster.common-auth.main" options="-parameters" />
       <module name="monster.common-auth.test" options="-parameters" />
+      <module name="monster.common.main" options="-parameters" />
+      <module name="monster.common.test" options="-parameters" />
       <module name="monster.main" options="-parameters" />
       <module name="monster.test" options="-parameters" />
       <module name="player" options="-parameters" />
       <module name="player.auth" options="-parameters" />
       <module name="player.auth.main" options="-parameters" />
       <module name="player.auth.test" options="-parameters" />
+      <module name="player.common" options="-parameters" />
       <module name="player.common-auth" options="-parameters" />
       <module name="player.common-auth.main" options="-parameters" />
       <module name="player.common-auth.test" options="-parameters" />
+      <module name="player.common.main" options="-parameters" />
+      <module name="player.common.test" options="-parameters" />
       <module name="player.main" options="-parameters" />
       <module name="player.test" options="-parameters" />
     </option>
