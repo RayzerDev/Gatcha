@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: mongo:8.2.3
+    image: mongo:8.2.5-noble
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-root}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-example}

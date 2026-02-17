@@ -22,5 +22,5 @@ public class PlayerResponse {
     private double experience;
     private double experienceStep;
     private List<UUID> monsters;
-    private int maxMonsters;
+    private Integer maxMonsters;
 }

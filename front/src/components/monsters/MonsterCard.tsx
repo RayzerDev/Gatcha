@@ -1,6 +1,7 @@
 'use client';
 
 import {Monster} from '@/lib/services';
+import {ArrowUp, Clock, Droplets, Flame, Heart, Shield, Sparkles, Sword, Trash2, Wind, Zap} from 'lucide-react';
 
 interface MonsterCardProps {
     monster: Monster;
@@ -9,125 +10,179 @@ interface MonsterCardProps {
     isDeleting?: boolean;
 }
 
-const elementColors = {
-    fire: 'from-red-500 to-orange-500',
-    water: 'from-blue-500 to-cyan-500',
-    wind: 'from-green-500 to-emerald-500',
-};
-
-const elementIcons = {
-    fire: '🔥',
-    water: '💧',
-    wind: '🌪️',
+const elementConfig = {
+    fire: {
+        gradient: 'from-orange-600 to-red-600',
+        bg: 'bg-orange-950/30',
+        border: 'border-orange-500/30',
+        text: 'text-orange-400',
+        icon: <Flame size={20} className="text-orange-400"/>
+    },
+    water: {
+        gradient: 'from-blue-600 to-cyan-600',
+        bg: 'bg-blue-950/30',
+        border: 'border-blue-500/30',
+        text: 'text-blue-400',
+        icon: <Droplets size={20} className="text-blue-400"/>
+    },
+    wind: {
+        gradient: 'from-green-600 to-emerald-600',
+        bg: 'bg-green-950/30',
+        border: 'border-green-500/30',
+        text: 'text-green-400',
+        icon: <Wind size={20} className="text-green-400"/>
+    },
 };
 
 export function MonsterCard({monster, onUpgradeSkill, onDelete, isDeleting}: MonsterCardProps) {
     const expPercent = Math.min(100, Math.max(0, (monster.experience / monster.experienceToNextLevel) * 100));
+    const config = elementConfig[monster.element as keyof typeof elementConfig] || elementConfig.fire;
 
     return (
-        <div className="relative overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800">
-            {/* Header avec élément */}
-            <div className={`bg-linear-to-r ${elementColors[monster.element]} p-4`}>
-                <div className="flex items-center justify-between">
-                    <h3 className="mt-2 text-xl font-bold text-white">
-                        Monstre #{monster.templateId}
-                    </h3>
-                    <span className="text-3xl">{elementIcons[monster.element]}</span>
-                    <span className="rounded-full bg-white/20 px-3 py-1 text-sm font-bold text-white">
-                        Lvl {monster.level}
-                    </span>
-                </div>
-            </div>
+        <div
+            className={`relative overflow-hidden rounded-2xl bg-zinc-900 border ${config.border} shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1 hover:border-opacity-50 group`}>
 
-            {/* Stats */}
-            <div className="p-4">
-                {/* Barre d'XP */}
-                <div className="mb-4">
-                    <div className="flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
-                        <span>XP</span>
-                        <span>{Math.floor(monster.experience)} / {Math.floor(monster.experienceToNextLevel)}</span>
+            {/* Background Glow */}
+            <div
+                className={`absolute -right-10 -top-10 w-40 h-40 bg-linear-to-br ${config.gradient} opacity-20 blur-3xl rounded-full group-hover:opacity-30 transition-opacity`}/>
+
+            {/* Header */}
+            <div className="relative p-5 pb-0">
+                <div className="flex justify-between items-start">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-black/40 border border-white/10 text-zinc-400`}>
+                                #{monster.templateId}
+                            </span>
+                            <span
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${config.bg} ${config.text} border ${config.border}`}>
+                                {monster.element}
+                            </span>
+                        </div>
+                        <h3 className="text-2xl font-black text-white leading-none tracking-tight">
+                            MONSTRE #{monster.templateId}
+                        </h3>
                     </div>
-                    <div className="mt-1 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
+                    <div className="flex flex-col items-end">
                         <div
-                            className="h-full bg-linear-to-r from-purple-500 to-pink-500 transition-all duration-300"
+                            className={`w-10 h-10 rounded-xl bg-linear-to-br ${config.gradient} flex items-center justify-center shadow-lg`}>
+                            <span className="text-white font-black text-lg">{monster.level}</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-zinc-500 mt-1 uppercase">Level</span>
+                    </div>
+                </div>
+
+                {/* XP Bar */}
+                <div className="mt-4 relative">
+                    <div
+                        className="flex justify-between text-[10px] font-bold text-zinc-500 mb-1 uppercase tracking-wide">
+                        <span>Experience</span>
+                        <span>{Math.floor(monster.experience)} / {Math.floor(monster.experienceToNextLevel)} XP</span>
+                    </div>
+                    <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
+                        <div
+                            className={`h-full bg-linear-to-r ${config.gradient} transition-all duration-500 ease-out`}
                             style={{width: `${expPercent}%`}}
                         />
                     </div>
                 </div>
+            </div>
 
-                {/* Stats grid */}
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="rounded-lg bg-red-50 p-2 dark:bg-red-900/20">
-                        <span className="text-red-600 dark:text-red-400">❤️ HP</span>
-                        <p className="font-bold text-red-700 dark:text-red-300">{monster.hp}</p>
+            {/* Stats Grid */}
+            <div className="p-5 grid grid-cols-2 gap-3">
+                <div className="bg-zinc-950/50 p-3 rounded-xl border border-white/5 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-red-900/20 text-red-500">
+                        <Heart size={16}/>
                     </div>
-                    <div className="rounded-lg bg-orange-50 p-2 dark:bg-orange-900/20">
-                        <span className="text-orange-600 dark:text-orange-400">⚔️ ATK</span>
-                        <p className="font-bold text-orange-700 dark:text-orange-300">{monster.atk}</p>
-                    </div>
-                    <div className="rounded-lg bg-blue-50 p-2 dark:bg-blue-900/20">
-                        <span className="text-blue-600 dark:text-blue-400">🛡️ DEF</span>
-                        <p className="font-bold text-blue-700 dark:text-blue-300">{monster.def}</p>
-                    </div>
-                    <div className="rounded-lg bg-green-50 p-2 dark:bg-green-900/20">
-                        <span className="text-green-600 dark:text-green-400">⚡ VIT</span>
-                        <p className="font-bold text-green-700 dark:text-green-300">{monster.vit}</p>
+                    <div>
+                        <div className="text-[10px] font-bold text-zinc-500 uppercase">Health</div>
+                        <div className="text-lg font-black text-white leading-none">{monster.hp}</div>
                     </div>
                 </div>
+                <div className="bg-zinc-950/50 p-3 rounded-xl border border-white/5 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-orange-900/20 text-orange-500">
+                        <Sword size={16}/>
+                    </div>
+                    <div>
+                        <div className="text-[10px] font-bold text-zinc-500 uppercase">Attack</div>
+                        <div className="text-lg font-black text-white leading-none">{monster.atk}</div>
+                    </div>
+                </div>
+                <div className="bg-zinc-950/50 p-3 rounded-xl border border-white/5 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-blue-900/20 text-blue-500">
+                        <Shield size={16}/>
+                    </div>
+                    <div>
+                        <div className="text-[10px] font-bold text-zinc-500 uppercase">Defense</div>
+                        <div className="text-lg font-black text-white leading-none">{monster.def}</div>
+                    </div>
+                </div>
+                <div className="bg-zinc-950/50 p-3 rounded-xl border border-white/5 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-yellow-900/20 text-yellow-500">
+                        <Zap size={16}/>
+                    </div>
+                    <div>
+                        <div className="text-[10px] font-bold text-zinc-500 uppercase">Speed</div>
+                        <div className="text-lg font-black text-white leading-none">{monster.vit}</div>
+                    </div>
+                </div>
+            </div>
 
-                {/* Skill Points */}
-                {monster.skillPoints > 0 && (
-                    <div className="mt-3 rounded-lg bg-yellow-50 p-2 text-center dark:bg-yellow-900/20">
-                        <span className="text-yellow-700 dark:text-yellow-300">
-                            ✨ {monster.skillPoints} Point{monster.skillPoints > 1 ? 's' : ''} de compétence
+            {/* Skills Section */}
+            <div className="px-5 pb-5">
+                <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+                        <Sparkles size={12} className={config.text}/>
+                        Compétences
+                    </h4>
+                    {monster.skillPoints > 0 && (
+                        <span
+                            className="text-[10px] font-bold bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded border border-yellow-500/30 animate-pulse">
+                            {monster.skillPoints} PTS DISPO
                         </span>
-                    </div>
-                )}
-
-                {/* Skills */}
-                <div className="mt-4">
-                    <h4 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">Compétences</h4>
-                    <div className="space-y-2">
-                        {monster.skills.map((skill) => (
-                            <div
-                                key={skill.num}
-                                className="flex items-center justify-between rounded-lg bg-zinc-50 p-2 dark:bg-zinc-700"
-                            >
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-medium text-zinc-700 dark:text-zinc-200">
-                                            Capacité {skill.num}
-                                        </span>
-                                        <span className="text-xs text-zinc-500">
-                                            Lvl {skill.lvl}/{skill.lvlMax}
-                                        </span>
-                                    </div>
-                                    <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                                        {skill.dmg} Dégâts • {skill.ratio.percent}% {skill.ratio.stat} •
-                                        Recharge: {skill.cooldown}
-                                    </div>
-                                </div>
-                                {onUpgradeSkill && monster.skillPoints > 0 && skill.lvl < skill.lvlMax && (
-                                    <button
-                                        onClick={() => onUpgradeSkill(skill.num)}
-                                        className="ml-2 rounded bg-yellow-500 px-2 py-1 text-xs font-medium text-white hover:bg-yellow-600"
-                                    >
-                                        +
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                    )}
                 </div>
 
-                {/* Delete button */}
+                <div className="space-y-2">
+                    {monster.skills.map((skill) => (
+                        <div key={skill.num}
+                             className="bg-zinc-800/50 rounded-lg p-3 border border-white/5 hover:border-white/10 transition-colors">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-sm font-bold text-white">Skill #{skill.num}</span>
+                                <div className="text-[10px] font-bold text-zinc-500 bg-black/30 px-1.5 py-0.5 rounded">
+                                    LVL {skill.lvl}/{skill.lvlMax}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 text-xs text-zinc-400 mb-2">
+                                <span className="flex items-center gap-1"><Sword size={10}/> {skill.dmg}</span>
+                                <span className="flex items-center gap-1"><Clock size={10}/> {skill.cooldown}s</span>
+                                <span
+                                    className="text-purple-400 font-bold">{skill.ratio.percent}% {skill.ratio.stat}</span>
+                            </div>
+
+                            {onUpgradeSkill && monster.skillPoints > 0 && skill.lvl < skill.lvlMax && (
+                                <button
+                                    onClick={() => onUpgradeSkill(skill.num)}
+                                    className="w-full mt-1 flex items-center justify-center gap-1 bg-white/5 hover:bg-white/10 text-xs font-bold text-white py-1.5 rounded transition-colors border border-white/10"
+                                >
+                                    <ArrowUp size={12} className="text-yellow-400"/>
+                                    UPGRADE
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
                 {onDelete && (
                     <button
                         onClick={onDelete}
                         disabled={isDeleting}
-                        className="mt-4 w-full rounded-lg bg-red-100 py-2 text-sm font-medium text-red-600 hover:bg-red-200 disabled:opacity-50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40"
+                        className="mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/10 text-red-500 font-bold text-sm hover:bg-red-500/20 border border-red-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed group/delete"
                     >
-                        {isDeleting ? 'Suppression...' : 'Supprimer le monstre'}
+                        <Trash2 size={16} className="group-hover/delete:animate-bounce"/>
+                        {isDeleting ? 'Suppression...' : 'Libérer le Monstre'}
                     </button>
                 )}
             </div>
