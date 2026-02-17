@@ -4,12 +4,12 @@ import {useAuth} from '@/contexts/AuthContext';
 import {useRouter} from 'next/navigation';
 import {useCallback, useEffect, useState} from 'react';
 import {invocationService, MonsterTemplate} from '@/lib/services';
-import {LoadingPage, Navbar} from '@/components/ui';
+import {LoadingPage} from '@/components/ui';
 import {TemplateList} from '@/components/invocation/TemplateList';
 import toast from 'react-hot-toast';
 
 export default function TemplatesPage() {
-    const {username, isAuthenticated, isLoading: authLoading, logout} = useAuth();
+    const {isAuthenticated, isLoading: authLoading} = useAuth();
     const router = useRouter();
 
     const [templates, setTemplates] = useState<MonsterTemplate[]>([]);
@@ -47,18 +47,14 @@ export default function TemplatesPage() {
     if (!isAuthenticated) return null;
 
     return (
-        <div className="min-h-screen bg-zinc-900 text-white">
-            <Navbar username={username} onLogout={logout}/>
+        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold mb-2">Gestion des Templates</h1>
+                <p className="text-zinc-400">Ajoutez et visualisez les modèles de monstres disponibles pour
+                    l&#39;invocation.</p>
+            </div>
 
-            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">Gestion des Templates</h1>
-                    <p className="text-zinc-400">Ajoutez et visualisez les modèles de monstres disponibles pour
-                        l'invocation.</p>
-                </div>
-
-                <TemplateList templates={templates} onRefresh={loadTemplates}/>
-            </main>
-        </div>
+            <TemplateList templates={templates} onRefresh={loadTemplates}/>
+        </main>
     );
 }

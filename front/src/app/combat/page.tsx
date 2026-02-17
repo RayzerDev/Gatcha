@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { monsterService, combatService } from '@/lib/services';
-import { Monster, Combat } from '@/lib/types';
-import { MonsterCard } from '@/components/monsters/MonsterCard';
-import { CombatArena } from '@/components/combat/CombatArena';
+import {useEffect, useMemo, useState} from 'react';
+import {combatService, monsterService} from '@/lib/services';
+import {Combat, Monster} from '@/lib/types';
+import {MonsterCard} from '@/components/monsters/MonsterCard';
+import {CombatArena} from '@/components/combat/CombatArena';
 import Link from 'next/link';
 
 export default function CombatPage() {
     const [monsters, setMonsters] = useState<Monster[]>([]);
-    
+
     // Selection state for 2 monsters
     const [selectedId1, setSelectedId1] = useState<string | null>(null);
     const [selectedId2, setSelectedId2] = useState<string | null>(null);
@@ -64,7 +64,7 @@ export default function CombatPage() {
 
     const handleStartCombat = async () => {
         if (!selectedId1 || !selectedId2) return;
-        
+
         try {
             setStarting(true);
             setError(null);
@@ -91,16 +91,17 @@ export default function CombatPage() {
             <div className="min-h-screen bg-linear-to-br from-zinc-900 via-purple-900/20 to-zinc-900">
                 <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                     <div className="mb-6 flex items-center justify-between">
-                        <button 
+                        <button
                             onClick={handleBackToLobby}
                             className="flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 hover:text-white transition-all backdrop-blur-sm"
                         >
                             <span>←</span> Retour au lobby
                         </button>
                     </div>
-                
-                    <div className="rounded-3xl bg-black/40 border border-white/5 backdrop-blur-xl overflow-hidden shadow-2xl">
-                        <CombatArena combat={activeCombat} />
+
+                    <div
+                        className="rounded-3xl bg-black/40 border border-white/5 backdrop-blur-xl overflow-hidden shadow-2xl">
+                        <CombatArena combat={activeCombat}/>
                     </div>
                 </main>
             </div>
@@ -108,9 +109,9 @@ export default function CombatPage() {
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-zinc-900 via-purple-900/20 to-zinc-900 overflow-hidden relative">
-             {/* Particles Background */}
-             <div className="absolute inset-0 pointer-events-none">
+        <div>
+            {/* Particles Background */}
+            <div className="absolute inset-0 pointer-events-none">
                 {particles.map((particle, i) => (
                     <div
                         key={i}
@@ -126,29 +127,32 @@ export default function CombatPage() {
             </div>
 
             <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 relative z-10">
-                
+
                 {/* Header Section */}
                 <div className="mb-12 text-center animate-fadeInUp">
-                    <div className="inline-block p-3 rounded-2xl bg-gradient-to-br from-red-500/20 to-purple-500/20 ring-1 ring-white/10 backdrop-blur-sm mb-6">
+                    <div
+                        className="inline-block p-3 rounded-2xl bg-linear-to-br from-red-500/20 to-purple-500/20 ring-1 ring-white/10 backdrop-blur-sm mb-6">
                         <span className="text-4xl">⚔️</span>
                     </div>
                     <h1 className="text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-linear-to-r from-red-400 via-purple-400 to-pink-400 sm:text-6xl drop-shadow-sm mb-4">
-                        ARÈNE D'ENTRAÎNEMENT
+                        ARÈNE D&#39;ENTRAÎNEMENT
                     </h1>
                     <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-8">
-                        Sélectionnez deux monstres de votre collection pour lancer un combat simulé et gagner de l'expérience.
+                        Sélectionnez deux monstres de votre collection pour lancer un combat simulé et gagner de
+                        l&#39;expérience.
                     </p>
-                    
-                    <Link 
-                        href="/combat/history" 
+
+                    <Link
+                        href="/combat/history"
                         className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white font-medium transition-all border border-white/10"
                     >
-                        <span>📜</span> Voir l'historique des combats
+                        <span>📜</span> Voir l&#39;historique des combats
                     </Link>
                 </div>
 
                 {error && (
-                    <div className="mb-8 rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-center text-red-400 backdrop-blur-sm animate-shake">
+                    <div
+                        className="mb-8 rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-center text-red-400 backdrop-blur-sm animate-shake">
                         {error}
                     </div>
                 )}
@@ -157,17 +161,22 @@ export default function CombatPage() {
                 {!loading && monsters.length > 0 && (
                     <div className="sticky top-20 z-30 mb-12 -mx-4 px-4 sm:mx-0 sm:px-0">
                         <div className="mx-auto max-w-2xl">
-                            <div className="relative rounded-2xl bg-zinc-900/80 p-4 shadow-2xl backdrop-blur-xl border border-white/10 ring-1 ring-black/5 flex items-center justify-between gap-4 animate-fadeInUp" style={{animationDelay: '0.1s'}}>
-                                
+                            <div
+                                className="relative rounded-2xl bg-zinc-900/80 p-4 shadow-2xl backdrop-blur-xl border border-white/10 ring-1 ring-black/5 flex items-center justify-between gap-4 animate-fadeInUp"
+                                style={{animationDelay: '0.1s'}}>
+
                                 {/* Slot 1 */}
-                                <div className={`flex flex-col items-center gap-2 transition-all duration-300 ${selectedId1 ? 'scale-110' : 'opacity-50'}`}>
-                                    <div className={`h-16 w-16 rounded-2xl border-2 ${selectedId1 ? 'border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]' : 'border-zinc-700 bg-zinc-800'} flex items-center justify-center relative overflow-hidden`}>
+                                <div
+                                    className={`flex flex-col items-center gap-2 transition-all duration-300 ${selectedId1 ? 'scale-110' : 'opacity-50'}`}>
+                                    <div
+                                        className={`h-16 w-16 rounded-2xl border-2 ${selectedId1 ? 'border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]' : 'border-zinc-700 bg-zinc-800'} flex items-center justify-center relative overflow-hidden`}>
                                         {selectedId1 ? (
-                                             // Find monster image content here if we had access to it easily, 
-                                             // for now just color/number
-                                             <div className="absolute inset-0 bg-purple-600 flex items-center justify-center text-2xl font-black text-white">
+                                            // Find monster image content here if we had access to it easily,
+                                            // for now just color/number
+                                            <div
+                                                className="absolute inset-0 bg-purple-600 flex items-center justify-center text-2xl font-black text-white">
                                                 1
-                                             </div>
+                                            </div>
                                         ) : (
                                             <span className="text-zinc-600 font-bold text-xl">1</span>
                                         )}
@@ -177,16 +186,20 @@ export default function CombatPage() {
 
                                 {/* VS Badge */}
                                 <div className="flex flex-col items-center">
-                                    <span className="text-3xl font-black italic text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-500">VS</span>
+                                    <span
+                                        className="text-3xl font-black italic text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-500">VS</span>
                                 </div>
 
                                 {/* Slot 2 */}
-                                <div className={`flex flex-col items-center gap-2 transition-all duration-300 ${selectedId2 ? 'scale-110' : 'opacity-50'}`}>
-                                    <div className={`h-16 w-16 rounded-2xl border-2 ${selectedId2 ? 'border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.4)]' : 'border-zinc-700 bg-zinc-800'} flex items-center justify-center relative overflow-hidden`}>
+                                <div
+                                    className={`flex flex-col items-center gap-2 transition-all duration-300 ${selectedId2 ? 'scale-110' : 'opacity-50'}`}>
+                                    <div
+                                        className={`h-16 w-16 rounded-2xl border-2 ${selectedId2 ? 'border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.4)]' : 'border-zinc-700 bg-zinc-800'} flex items-center justify-center relative overflow-hidden`}>
                                         {selectedId2 ? (
-                                             <div className="absolute inset-0 bg-pink-600 flex items-center justify-center text-2xl font-black text-white">
+                                            <div
+                                                className="absolute inset-0 bg-pink-600 flex items-center justify-center text-2xl font-black text-white">
                                                 2
-                                             </div>
+                                            </div>
                                         ) : (
                                             <span className="text-zinc-600 font-bold text-xl">2</span>
                                         )}
@@ -201,13 +214,14 @@ export default function CombatPage() {
                                         disabled={!selectedId1 || !selectedId2 || starting}
                                         className={`
                                             whitespace-nowrap rounded-xl px-8 py-4 font-black text-lg uppercase tracking-wider transition-all duration-300
-                                            ${!selectedId1 || !selectedId2 || starting 
-                                                ? 'cursor-not-allowed bg-zinc-800 text-zinc-600' 
-                                                : 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40 hover:scale-105 hover:shadow-purple-700/60 active:scale-95'}
+                                            ${!selectedId1 || !selectedId2 || starting
+                                            ? 'cursor-not-allowed bg-zinc-800 text-zinc-600'
+                                            : 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40 hover:scale-105 hover:shadow-purple-700/60 active:scale-95'}
                                         `}
                                     >
                                         {starting ? (
-                                            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-white"></div>
+                                            <div
+                                                className="h-6 w-6 animate-spin rounded-full border-b-2 border-white"></div>
                                         ) : (
                                             'COMBATTRE'
                                         )}
@@ -222,7 +236,8 @@ export default function CombatPage() {
                 {loading ? (
                     <div className="flex h-64 items-center justify-center">
                         <div className="relative">
-                            <div className="h-16 w-16 animate-spin rounded-full border-4 border-purple-500/30 border-t-purple-500"></div>
+                            <div
+                                className="h-16 w-16 animate-spin rounded-full border-4 border-purple-500/30 border-t-purple-500"></div>
                         </div>
                     </div>
                 ) : monsters.length === 0 ? (
@@ -230,10 +245,10 @@ export default function CombatPage() {
                         <div className="mb-6 text-7xl opacity-50">👻</div>
                         <h3 className="mb-2 text-2xl font-bold text-white">Pas assez de monstres</h3>
                         <p className="text-zinc-400 max-w-md mx-auto mb-8">
-                            Vous avez besoin d'au moins 2 monstres pour lancer un combat d'entraînement.
+                            Vous avez besoin d&#39;au moins 2 monstres pour lancer un combat d&#39;entraînement.
                         </p>
-                        <Link 
-                            href="/dashboard" 
+                        <Link
+                            href="/dashboard"
                             className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 font-bold text-white hover:bg-purple-500 transition-colors"
                         >
                             Aller invoquer
@@ -242,10 +257,11 @@ export default function CombatPage() {
                 ) : (
                     <div className="animate-fadeInUp" style={{animationDelay: '0.2s'}}>
                         <h3 className="mb-6 text-xl font-bold text-white flex items-center gap-2">
-                             <span className="text-zinc-400">Votre Équipe</span>
-                             <span className="px-2 py-0.5 rounded-md bg-white/10 text-xs text-white">{monsters.length}</span>
+                            <span className="text-zinc-400">Votre Équipe</span>
+                            <span
+                                className="px-2 py-0.5 rounded-md bg-white/10 text-xs text-white">{monsters.length}</span>
                         </h3>
-                        
+
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {monsters.map((monster) => {
                                 const isSelected1 = selectedId1 === monster.id;
@@ -253,15 +269,15 @@ export default function CombatPage() {
                                 const isSelected = isSelected1 || isSelected2;
 
                                 return (
-                                    <div 
+                                    <div
                                         key={monster.id}
                                         onClick={() => handleSelect(monster.id)}
                                         className={`
                                             group relative cursor-pointer transition-all duration-300
-                                            ${isSelected 
-                                                ? 'z-10 scale-105' 
-                                                : 'hover:scale-102 hover:z-10'
-                                            }
+                                            ${isSelected
+                                            ? 'z-10 scale-105'
+                                            : 'hover:scale-102 hover:z-10'
+                                        }
                                         `}
                                     >
                                         <div className={`
@@ -270,8 +286,8 @@ export default function CombatPage() {
                                             ${isSelected2 ? 'ring-4 ring-pink-500 shadow-2xl shadow-pink-500/20' : ''}
                                             ${!isSelected ? 'hover:ring-2 hover:ring-white/20' : ''}
                                         `}>
-                                            <MonsterCard monster={monster} />
-                                            
+                                            <MonsterCard monster={monster}/>
+
                                             {/* Selection Overlay */}
                                             {isSelected && (
                                                 <div className={`
@@ -284,8 +300,10 @@ export default function CombatPage() {
 
                                             {/* Hover Selection Hint */}
                                             {!isSelected && (selectedId1 || selectedId2) && (
-                                                <div className="absolute inset-0 rounded-3xl bg-black/60 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                                    <span className="font-bold text-white tracking-wider uppercase border border-white/30 px-4 py-2 rounded-lg bg-black/40">
+                                                <div
+                                                    className="absolute inset-0 rounded-3xl bg-black/60 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                    <span
+                                                        className="font-bold text-white tracking-wider uppercase border border-white/30 px-4 py-2 rounded-lg bg-black/40">
                                                         {!selectedId1 ? 'Sélectionner 1' : !selectedId2 ? 'Sélectionner 2' : 'Remplacer'}
                                                     </span>
                                                 </div>

@@ -14,12 +14,12 @@ import {
     Player,
     playerService
 } from '@/lib/services';
-import {LoadingPage, Navbar, PlayerStats} from '@/components/ui';
+import {LoadingPage, PlayerStats} from '@/components/ui';
 import {InvocationTab} from '@/components/dashboard/InvocationTab';
 import {CollectionTab} from '@/components/dashboard/CollectionTab';
 
 export default function DashboardPage() {
-    const {username, isAuthenticated, isLoading: authLoading, logout} = useAuth();
+    const {username, isAuthenticated, isLoading: authLoading} = useAuth();
     const router = useRouter();
 
     // États
@@ -187,67 +187,64 @@ export default function DashboardPage() {
     const canSummon = player && player.monsters.length < player.maxMonsters;
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-zinc-900 via-purple-900/20 to-zinc-900">
-            <Navbar username={username} onLogout={logout}/>
 
-            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 
-                {/* Stats du joueur */}
-                <div className="mb-8 animate-fadeInUp">
-                    <PlayerStats player={player} monsters={monsters} isLoading={isLoadingData}/>
-                </div>
+            {/* Stats du joueur */}
+            <div className="mb-8 animate-fadeInUp">
+                <PlayerStats player={player} monsters={monsters} isLoading={isLoadingData}/>
+            </div>
 
-                {/* Tabs */}
-                <div className="flex justify-center mb-8 gap-4 animate-fadeInUp" style={{animationDelay: '0.05s'}}>
-                    <button
-                        onClick={() => setActiveTab('invocation')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                            activeTab === 'invocation'
-                                ? 'bg-purple-600 text-white shadow-lg scale-105'
-                                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
-                        }`}
-                    >
-                        <Sparkles size={20}/>
-                        Invocation
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('collection')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                            activeTab === 'collection'
-                                ? 'bg-purple-600 text-white shadow-lg scale-105'
-                                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
-                        }`}
-                    >
-                        <LayoutGrid size={20}/>
-                        Collection
-                    </button>
-                </div>
+            {/* Tabs */}
+            <div className="flex justify-center mb-8 gap-4 animate-fadeInUp" style={{animationDelay: '0.05s'}}>
+                <button
+                    onClick={() => setActiveTab('invocation')}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                        activeTab === 'invocation'
+                            ? 'bg-purple-600 text-white shadow-lg scale-105'
+                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
+                    }`}
+                >
+                    <Sparkles size={20}/>
+                    Invocation
+                </button>
+                <button
+                    onClick={() => setActiveTab('collection')}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                        activeTab === 'collection'
+                            ? 'bg-purple-600 text-white shadow-lg scale-105'
+                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
+                    }`}
+                >
+                    <LayoutGrid size={20}/>
+                    Collection
+                </button>
+            </div>
 
-                {activeTab === 'invocation' && (
-                    <InvocationTab
-                        canSummon={canSummon || false}
-                        hasPendingInvocations={hasPendingInvocations}
-                        isRetrying={isRetrying}
-                        player={player}
-                        templates={templates}
-                        onSummon={handleSummon}
-                        onCollectionUpdate={handleCollectionUpdate}
-                        onRetryInvocations={handleRetryInvocations}
-                        onRefreshTemplates={loadData}
-                    />
-                )}
+            {activeTab === 'invocation' && (
+                <InvocationTab
+                    canSummon={canSummon || false}
+                    hasPendingInvocations={hasPendingInvocations}
+                    isRetrying={isRetrying}
+                    player={player}
+                    templates={templates}
+                    onSummon={handleSummon}
+                    onCollectionUpdate={handleCollectionUpdate}
+                    onRetryInvocations={handleRetryInvocations}
+                    onRefreshTemplates={loadData}
+                />
+            )}
 
-                {activeTab === 'collection' && (
-                    <CollectionTab
-                        monsters={monsters}
-                        player={player}
-                        isLoading={isLoadingData}
-                        deletingId={deletingId}
-                        onUpgradeSkill={handleUpgradeSkill}
-                        onDelete={handleDelete}
-                    />
-                )}
-            </main>
-        </div>
+            {activeTab === 'collection' && (
+                <CollectionTab
+                    monsters={monsters}
+                    player={player}
+                    isLoading={isLoadingData}
+                    deletingId={deletingId}
+                    onUpgradeSkill={handleUpgradeSkill}
+                    onDelete={handleDelete}
+                />
+            )}
+        </main>
     );
 }

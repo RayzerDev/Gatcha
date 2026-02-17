@@ -1,15 +1,12 @@
 'use client';
 
+import {useAuth} from '@/contexts/AuthContext';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {Gamepad2, Home, LogOut, Settings, Swords} from 'lucide-react';
 
-interface NavbarProps {
-    username: string | null;
-    onLogout: () => void;
-}
-
-export function Navbar({username, onLogout}: NavbarProps) {
+export function Navbar() {
+    const {username, logout} = useAuth();
     const pathname = usePathname();
 
     return (
@@ -40,8 +37,8 @@ export function Navbar({username, onLogout}: NavbarProps) {
                                 href="/combat"
                                 className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${
                                     pathname?.startsWith('/combat')
-                                        ? 'bg-red-600 text-white shadow-lg shadow-red-900/50'
-                                        : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                                        : 'text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700'
                                 }`}
                             >
                                 <Swords size={16}/>
@@ -51,7 +48,7 @@ export function Navbar({username, onLogout}: NavbarProps) {
                                 href="/templates"
                                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors opacity-60 flex items-center gap-2 ${
                                     pathname === '/templates'
-                                        ? 'bg-zinc-100 text-zinc-700 dark:bg-zinc-900/30 dark:text-zinc-300'
+                                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
                                         : 'text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700'
                                 }`}
                             >
@@ -64,7 +61,7 @@ export function Navbar({username, onLogout}: NavbarProps) {
                             Bonjour, <strong>{username}</strong>
                         </span>
                         <button
-                            onClick={onLogout}
+                            onClick={logout}
                             className="rounded bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 flex items-center gap-2"
                         >
                             <LogOut size={16}/> Déconnexion
