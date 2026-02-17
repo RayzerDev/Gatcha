@@ -122,6 +122,7 @@ public class PlayerService {
     }
 
     public List<UUID> getPlayerWithMonsters(String username) {
-        return new ArrayList<>(getPlayerByUsername(username).getMonsters());
+        Player player = getPlayerByUsername(username);
+        return player.getMonsters() != null ? player.getMonsters() : new ArrayList<>();
     }
 }

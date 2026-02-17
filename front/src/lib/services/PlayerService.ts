@@ -1,5 +1,5 @@
-import { BaseService } from './BaseService';
-import { Player } from '../types';
+import {BaseService} from './BaseService';
+import {Player} from '../types';
 
 export class PlayerService extends BaseService {
     /**

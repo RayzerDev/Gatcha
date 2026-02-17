@@ -1,9 +1,11 @@
 'use client';
 
-import {useState, useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {authService, ApiError} from '@/lib/services';
+import {ApiError, authService} from '@/lib/services';
 import {useAuth} from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
+import {UserPlus} from 'lucide-react';
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -11,12 +13,12 @@ export default function RegisterPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+    // const [error, setError] = useState(''); // Removed
     const [loading, setLoading] = useState(false);
 
     // Générer les particules une seule fois
     const particles = useMemo(() => {
-        return Array.from({ length: 50 }, () => ({
+        return Array.from({length: 50}, () => ({
             left: Math.random() * 100,
             top: Math.random() * 100,
             delay: Math.random() * 5,
@@ -26,15 +28,15 @@ export default function RegisterPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
+        // setError('');
 
         if (password !== confirmPassword) {
-            setError('Les mots de passe ne correspondent pas');
+            toast.error('Les mots de passe ne correspondent pas');
             return;
         }
 
         if (password.length < 3) {
-            setError('Le mot de passe doit contenir au moins 3 caractères');
+            toast.error('Le mot de passe doit contenir au moins 3 caractères');
             return;
         }
 
@@ -43,14 +45,15 @@ export default function RegisterPage() {
         try {
             const response = await authService.register({username, password});
             await loginContext(response.token);
+            toast.success('Compte créé avec succès !');
             router.push('/dashboard');
         } catch (err: unknown) {
             if (err instanceof ApiError) {
-                setError(err.message);
+                toast.error(err.message);
             } else if (err instanceof Error) {
-                setError(err.message);
+                toast.error(err.message);
             } else {
-                setError('Échec de l\'inscription');
+                toast.error('Échec de l\'inscription');
             }
         } finally {
             setLoading(false);
@@ -58,7 +61,8 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-indigo-900 via-purple-900 to-pink-900">
+        <div
+            className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-indigo-900 via-purple-900 to-pink-900">
             {/* Animated background particles */}
             <div className="absolute inset-0">
                 {particles.map((particle, i) => (
@@ -76,14 +80,16 @@ export default function RegisterPage() {
             </div>
 
             {/* Glowing orbs */}
-            <div className="absolute top-20 right-20 h-64 w-64 rounded-full bg-indigo-500/30 blur-3xl animate-pulse" />
-            <div className="absolute bottom-20 left-20 h-96 w-96 rounded-full bg-pink-500/20 blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
+            <div className="absolute top-20 right-20 h-64 w-64 rounded-full bg-indigo-500/30 blur-3xl animate-pulse"/>
+            <div className="absolute bottom-20 left-20 h-96 w-96 rounded-full bg-pink-500/20 blur-3xl animate-pulse"
+                 style={{animationDelay: '1s'}}/>
 
             <div className="relative z-10 w-full max-w-md px-6 animate-fadeInUp">
                 {/* Logo/Title */}
                 <div className="mb-8 text-center">
-                    <div className="mb-4 inline-block rounded-2xl bg-linear-to-br from-indigo-600 to-pink-600 p-4 shadow-2xl">
-                        <span className="text-6xl">✨</span>
+                    <div
+                        className="mb-4 inline-block rounded-2xl bg-linear-to-br from-indigo-600 to-pink-600 p-4 shadow-2xl">
+                        <UserPlus size={64} className="text-white"/>
                     </div>
                     <h1 className="mb-2 text-5xl font-black text-white drop-shadow-lg">
                         Rejoignez GATCHA
@@ -98,15 +104,11 @@ export default function RegisterPage() {
                     </h2>
 
                     <form className="space-y-5" onSubmit={handleSubmit}>
-                        {error && (
-                            <div className="rounded-xl bg-red-500/20 border border-red-500/50 p-4 backdrop-blur-sm animate-shake">
-                                <p className="text-sm font-medium text-red-200">{error}</p>
-                            </div>
-                        )}
+                        {/* Error banner removed */}
 
                         <div>
                             <label htmlFor="username" className="block text-sm font-semibold text-white/90 mb-2">
-                                Nom d'utilisateur
+                                Nom d&apos;utilisateur
                             </label>
                             <input
                                 id="username"
@@ -160,14 +162,16 @@ export default function RegisterPage() {
                             <span className="relative z-10">
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
-                                        <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                        <span
+                                            className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"/>
                                         Création du compte...
                                     </span>
                                 ) : (
                                     'Créer un Compte'
                                 )}
                             </span>
-                            <div className="absolute inset-0 bg-linear-to-r from-indigo-700 to-pink-700 opacity-0 transition-opacity group-hover:opacity-100" />
+                            <div
+                                className="absolute inset-0 bg-linear-to-r from-indigo-700 to-pink-700 opacity-0 transition-opacity group-hover:opacity-100"/>
                         </button>
                     </form>
 

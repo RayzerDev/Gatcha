@@ -19,7 +19,7 @@ import java.util.List;
 public class MonsterTemplate {
     @Id
     @Field("_id")
-    private int id;
+    private Integer id;
 
     private ElementType element;
     private int hp;

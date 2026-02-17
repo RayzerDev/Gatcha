@@ -2,7 +2,7 @@
 # YAML Anchors - Configuration réutilisable
 # ============================================
 x-mongodb-common: &mongodb-common
-  image: mongo:8.2.3
+  image: mongo:8.2.5-noble
   restart: unless-stopped
   environment:
     MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}

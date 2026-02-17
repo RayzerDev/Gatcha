@@ -1,21 +1,22 @@
 'use client';
 
-import {useState, useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useAuth} from '@/contexts/AuthContext';
-import {authService, ApiError} from '@/lib/services';
+import {ApiError, authService} from '@/lib/services';
+import toast from 'react-hot-toast';
+import {Gamepad2} from 'lucide-react';
 
 export default function LoginPage() {
     const router = useRouter();
     const {login: loginContext} = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     // Générer les particules une seule fois
     const particles = useMemo(() => {
-        return Array.from({ length: 50 }, () => ({
+        return Array.from({length: 50}, () => ({
             left: Math.random() * 100,
             top: Math.random() * 100,
             delay: Math.random() * 5,
@@ -25,20 +26,20 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
         setLoading(true);
 
         try {
             const response = await authService.login({username, password});
             await loginContext(response.token);
+            toast.success('Bon retour !');
             router.push('/dashboard');
         } catch (err: unknown) {
             if (err instanceof ApiError) {
-                setError(err.message);
+                toast.error(err.message);
             } else if (err instanceof Error) {
-                setError(err.message);
+                toast.error(err.message);
             } else {
-                setError('Échec de la connexion');
+                toast.error('Échec de la connexion');
             }
         } finally {
             setLoading(false);
@@ -46,7 +47,8 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-purple-900 via-indigo-900 to-pink-900">
+        <div
+            className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-purple-900 via-indigo-900 to-pink-900">
             {/* Animated background particles */}
             <div className="absolute inset-0">
                 {particles.map((particle, i) => (
@@ -64,14 +66,16 @@ export default function LoginPage() {
             </div>
 
             {/* Glowing orbs */}
-            <div className="absolute top-20 left-20 h-64 w-64 rounded-full bg-purple-500/30 blur-3xl animate-pulse" />
-            <div className="absolute bottom-20 right-20 h-96 w-96 rounded-full bg-pink-500/20 blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
+            <div className="absolute top-20 left-20 h-64 w-64 rounded-full bg-purple-500/30 blur-3xl animate-pulse"/>
+            <div className="absolute bottom-20 right-20 h-96 w-96 rounded-full bg-pink-500/20 blur-3xl animate-pulse"
+                 style={{animationDelay: '1s'}}/>
 
             <div className="relative z-10 w-full max-w-md px-6 animate-fadeInUp">
                 {/* Logo/Title */}
                 <div className="mb-8 text-center">
-                    <div className="mb-4 inline-block rounded-2xl bg-linear-to-br from-purple-600 to-pink-600 p-4 shadow-2xl">
-                        <span className="text-6xl">🎴</span>
+                    <div
+                        className="mb-4 inline-block rounded-2xl bg-linear-to-br from-purple-600 to-pink-600 p-4 shadow-2xl">
+                        <Gamepad2 size={64} className="text-white"/>
                     </div>
                     <h1 className="mb-2 text-5xl font-black text-white drop-shadow-lg">
                         GATCHA
@@ -86,15 +90,9 @@ export default function LoginPage() {
                     </h2>
 
                     <form className="space-y-5" onSubmit={handleSubmit}>
-                        {error && (
-                            <div className="rounded-xl bg-red-500/20 border border-red-500/50 p-4 backdrop-blur-sm animate-shake">
-                                <p className="text-sm font-medium text-red-200">{error}</p>
-                            </div>
-                        )}
-
                         <div>
                             <label htmlFor="username" className="block text-sm font-semibold text-white/90 mb-2">
-                                Nom d'utilisateur
+                                Nom d&#39;utilisateur
                             </label>
                             <input
                                 id="username"
@@ -132,14 +130,16 @@ export default function LoginPage() {
                             <span className="relative z-10">
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
-                                        <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                        <span
+                                            className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"/>
                                         Connexion...
                                     </span>
                                 ) : (
                                     'Se Connecter'
                                 )}
                             </span>
-                            <div className="absolute inset-0 bg-linear-to-r from-purple-700 to-pink-700 opacity-0 transition-opacity group-hover:opacity-100" />
+                            <div
+                                className="absolute inset-0 bg-linear-to-r from-purple-700 to-pink-700 opacity-0 transition-opacity group-hover:opacity-100"/>
                         </button>
                     </form>
 
@@ -159,7 +159,7 @@ export default function LoginPage() {
                 {/* Footer info */}
                 <div className="mt-6 text-center">
                     <p className="text-xs text-white/50">
-                        Invoquez des monstres puissants et dominez l'arène
+                        Invoquez des monstres puissants et dominez l&#39;arène
                     </p>
                 </div>
             </div>

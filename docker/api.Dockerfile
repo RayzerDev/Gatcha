@@ -13,7 +13,7 @@ RUN gradle dependencies --no-daemon
 
 COPY --chown=gradle:gradle ${SERVICE_NAME}/src src
 
-RUN gradle clean build -x test --no-daemon
+RUN gradle build -x test --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine
 

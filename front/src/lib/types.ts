@@ -54,8 +54,21 @@ export interface Monster {
     experienceToNextLevel: number;
     skillPoints: number;
     skills: Skill[];
+    xp: number;
 }
 
+export interface Booster {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    rates?: {
+        common: number;
+        rare: number;
+        epic: number;
+        legendary: number;
+    };
+}
 
 export interface MonsterTemplate {
     id: number;
@@ -64,17 +77,17 @@ export interface MonsterTemplate {
     atk: number;
     def: number;
     vit: number;
-    skills: {
-        num: number;
-        dmg: number;
-        ratio: {
-            stat: string;
-            percent: number;
-        };
-        cooldown: number;
-        lvlMax: number;
-    }[];
+    skills: Skill[];
     lootRate: number;
+    boosterId?: number;
+}
+
+export enum InvocationStatus {
+    PENDING = 'PENDING',
+    MONSTER_CREATED = 'MONSTER_CREATED',
+    PLAYER_UPDATED = 'PLAYER_UPDATED',
+    COMPLETED = 'COMPLETED',
+    FAILED = 'FAILED'
 }
 
 export interface Invocation {
@@ -82,7 +95,7 @@ export interface Invocation {
     username: string;
     templateId: number;
     monsterId: string | null;
-    status: 'PENDING' | 'MONSTER_CREATED' | 'PLAYER_UPDATED' | 'COMPLETED' | 'FAILED';
+    status: InvocationStatus;
     createdAt: string;
 }
 
