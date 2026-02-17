@@ -4,15 +4,13 @@ import {useAuth} from '@/contexts/AuthContext';
 import {useRouter} from 'next/navigation';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 
-import {invocationService, Monster, monsterService, Player, playerService, ApiError} from '@/lib/services';
-import {LoadingPage, PlayerStats} from '@/components/ui';
 import {ApiError, invocationService, Monster, monsterService, Player, playerService} from '@/lib/services';
-import {LoadingPage, Navbar, PlayerStats} from '@/components/ui';
+import {LoadingPage, PlayerStats} from '@/components/ui';
 import {MonsterGrid} from '@/components/monsters';
 import {BoosterPack} from '@/components/BoosterPack';
 
 export default function DashboardPage() {
-    const {username, isAuthenticated, isLoading: authLoading, logout} = useAuth();
+    const {username, isAuthenticated, isLoading: authLoading} = useAuth();
     const router = useRouter();
 
     // États
