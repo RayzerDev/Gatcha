@@ -3,6 +3,9 @@
 import {useAuth} from '@/contexts/AuthContext';
 import {useRouter} from 'next/navigation';
 import {useCallback, useEffect, useMemo, useState} from 'react';
+
+import {invocationService, Monster, monsterService, Player, playerService, ApiError} from '@/lib/services';
+import {LoadingPage, PlayerStats} from '@/components/ui';
 import {ApiError, invocationService, Monster, monsterService, Player, playerService} from '@/lib/services';
 import {LoadingPage, Navbar, PlayerStats} from '@/components/ui';
 import {MonsterGrid} from '@/components/monsters';
@@ -185,8 +188,6 @@ export default function DashboardPage() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-zinc-900 via-purple-900/20 to-zinc-900">
-            <Navbar username={username} onLogout={logout}/>
-
             <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 {/* Message d'erreur */}
                 {error && (

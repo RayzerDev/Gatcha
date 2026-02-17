@@ -3,6 +3,7 @@ import {AuthService} from './AuthService';
 import {MonsterService} from './MonsterService';
 import {InvocationService} from './InvocationService';
 import {PlayerService} from './PlayerService';
+import {CombatService} from './CombatService';
 
 // ============= Configuration =============
 
@@ -35,6 +36,11 @@ export const invocationService = new InvocationService(apiClient);
  */
 export const playerService = new PlayerService(apiClient);
 
+/**
+ * Service de gestion des combats (singleton)
+ */
+export const combatService = new CombatService(apiClient);
+
 // ============= Exports =============
 
 // Exporter les types
@@ -47,11 +53,17 @@ export type {
     Skill,
     Invocation,
     MonsterTemplate,
-    Player
+    Player,
+    Combat,
+    CombatLog,
+    CombatMonsterSnapshot,
+    CombatSummary,
+    SkillSnapshot
 } from '../types';
 
 export {AuthService} from './AuthService';
 export {BaseService} from './BaseService';
+export {CombatService} from './CombatService';
 export {ApiClient} from '../ApiClient';
 export {ApiError} from '../ApiError';
 export {TokenStorage} from '../TokenStorage';

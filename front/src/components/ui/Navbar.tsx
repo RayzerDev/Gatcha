@@ -1,30 +1,70 @@
 'use client';
+import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePathname } from 'next/navigation';
 
-interface NavbarProps {
-    username: string | null;
-    onLogout: () => void;
-}
+export function Navbar() {
+    const { username, logout, isAuthenticated } = useAuth();
+    const pathname = usePathname();
 
-export function Navbar({ username, onLogout }: NavbarProps) {
+    if (!isAuthenticated) return null;
+
     return (
-        <nav className="sticky top-0 z-40 bg-white/80 shadow backdrop-blur-lg dark:bg-zinc-800/80">
+        <nav className="sticky top-0 z-40 bg-zinc-900/80 shadow-lg backdrop-blur-lg border-b border-white/10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 justify-between">
-                    <div className="flex items-center gap-2">
-                        <span className="text-2xl">🎮</span>
-                        <h1 className="text-xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                            Gatcha Game
-                        </h1>
+                <div className="flex h-16 justify-between items-center">
+                    <div className="flex items-center gap-8">
+                        {/* Logo */}
+                        <div className="flex items-center gap-3">
+                            <span className="text-3xl filter drop-shadow-lg">🎮</span>
+                            <span className="text-xl font-black bg-linear-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                                GATCHA
+                            </span>
+                        </div>
+                        
+                        {/* Navigation Links */}
+                        <div className="flex items-center gap-1 bg-white/5 rounded-xl p-1 border border-white/10">
+                            <Link 
+                                href="/dashboard" 
+                                className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
+                                    pathname === '/dashboard' 
+                                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50' 
+                                        : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                Dashboard
+                            </Link>
+                            <Link 
+                                href="/combat" 
+                                className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${
+                                    pathname?.startsWith('/combat')
+                                        ? 'bg-red-600 text-white shadow-lg shadow-red-900/50'
+                                        : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                <span>⚔️</span>
+                                Combats
+                            </Link>
+                        </div>
                     </div>
+
                     <div className="flex items-center gap-4">
-                        <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                            Bienvenue, <span className="font-semibold">{username}</span>
-                        </span>
+                        <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-zinc-800 border border-zinc-700">
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"/>
+                            <span className="text-sm font-medium text-zinc-300">
+                                {username}
+                            </span>
+                        </div>
                         <button
-                            onClick={onLogout}
-                            className="rounded-lg bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600"
+                            onClick={logout}
+                            className="p-2 text-zinc-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10"
+                            title="Se déconnecter"
                         >
-                            Déconnexion
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
                         </button>
                     </div>
                 </div>

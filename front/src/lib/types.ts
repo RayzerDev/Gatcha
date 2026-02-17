@@ -98,3 +98,72 @@ export interface Player {
     maxMonsters: number;
 }
 
+
+// ============= Combat Types =============
+
+export enum CombatStatus {
+    IN_PROGRESS = 'IN_PROGRESS',
+    COMPLETED = 'COMPLETED'
+}
+
+export interface SkillSnapshot {
+    num: number;
+    dmg: number;
+    ratioStat: string;
+    ratioPercent: number;
+    cooldown: number;
+    lvl: number;
+}
+
+export interface CombatMonsterSnapshot {
+    id: string;
+    ownerUsername: string;
+    element: ElementEnum;
+    hp: number;
+    atk: number;
+    def: number;
+    vit: number;
+    level: number;
+    skills: SkillSnapshot[];
+}
+
+export interface CombatLog {
+    turn: number;
+    attackerId: string;
+    defenderId: string;
+    skillUsed: number;
+    damageDealt: number;
+    attackerHpRemaining: number;
+    defenderHpRemaining: number;
+    description: string;
+}
+
+export interface Combat {
+    id: string;
+    initiatorUsername: string;
+    monster1: CombatMonsterSnapshot;
+    monster2: CombatMonsterSnapshot;
+    winnerId: string;
+    winnerUsername: string;
+    status: CombatStatus;
+    logs: CombatLog[];
+    totalTurns: number;
+    createdAt: string;
+}
+
+export interface CombatSummary {
+    id: string;
+    initiatorUsername: string;
+    monster1Id: string;
+    monster1Element: ElementEnum;
+    monster1Level: number;
+    monster2Id: string;
+    monster2Element: ElementEnum;
+    monster2Level: number;
+    winnerId: string;
+    winnerUsername: string;
+    status: CombatStatus;
+    totalTurns: number;
+    createdAt: string;
+}
+
