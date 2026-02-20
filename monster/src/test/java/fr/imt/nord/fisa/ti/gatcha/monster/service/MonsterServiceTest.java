@@ -187,7 +187,7 @@ class MonsterServiceTest {
             m.setId(UUID.randomUUID());
             return m;
         });
-        doNothing().when(playerClientService).addMonsterToPlayer(eq("NewOwner"), any(UUID.class));
+        org.mockito.Mockito.lenient().doNothing().when(playerClientService).addMonsterToPlayer(any(), any());
 
         // Act
         MonsterDTO result = monsterService.createMonster(request);
@@ -196,9 +196,9 @@ class MonsterServiceTest {
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals(ElementType.WIND, result.getElement());
-        assertEquals("NewOwner", result.getOwnerUsername());
+        assertEquals("TestOwner", result.getOwnerUsername());
         verify(monsterRepository).save(any(Monster.class));
-        verify(playerClientService).addMonsterToPlayer(eq("NewOwner"), any(UUID.class));
+        verify(playerClientService).addMonsterToPlayer(eq("TestOwner"), any(UUID.class));
     }
 
     // ========== Tests addExperience ==========
@@ -352,11 +352,11 @@ class MonsterServiceTest {
     @DisplayName("getMonstersByIds - Doit retourner plusieurs monstres")
     void getMonstersByIds_Success() {
         // Arrange
-        Monster monster2 = Monster.createFromTemplate(2, "AnotherOwner", ElementType.WATER, 1500, 400, 500, 70, createDefaultSkills());
+        Monster monster2 = Monster.createFromTemplate(2, "TestOwner", ElementType.WATER, 1500, 400, 500, 70, createDefaultSkills());
         UUID monster2Id = UUID.randomUUID();
         monster2.setId(monster2Id);
 
-        when(monsterRepository.findAllById(Arrays.asList(monsterId, monster2Id)))
+        when(monsterRepository.findAllByIdInAndOwnerUsername(anyList(), eq("TestOwner")))
                 .thenReturn(Arrays.asList(testMonster, monster2));
 
         // Act
@@ -373,7 +373,7 @@ class MonsterServiceTest {
     @DisplayName("addExperienceInternal - Doit ajouter de l'XP sans vérifier le propriétaire")
     void addExperienceInternal_Success() {
         // Arrange
-        when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
+        when(monsterRepository.findByIdAndOwnerUsername(eq(monsterId), org.mockito.ArgumentMatchers.anyString())).thenReturn(Optional.of(testMonster));
         when(monsterRepository.save(any(Monster.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act

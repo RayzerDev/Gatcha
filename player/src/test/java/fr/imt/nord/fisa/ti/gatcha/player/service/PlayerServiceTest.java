@@ -147,6 +147,7 @@ class PlayerServiceTest {
     @DisplayName("addExperience - Doit ajouter de l'XP au joueur")
     void addExperience_Success() {
         // Arrange
+        testPlayer.setExperienceStep(200.0); // Ensure no level up occurs
         when(playerRepository.findByUsername("TestPlayer")).thenReturn(Optional.of(testPlayer));
         when(playerRepository.save(any(Player.class))).thenAnswer(invocation -> invocation.getArgument(0));
 

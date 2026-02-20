@@ -3,6 +3,7 @@ package fr.imt.nord.fisa.ti.gatcha.combat.dto;
 import fr.imt.nord.fisa.ti.gatcha.common.model.ElementType;
 import fr.imt.nord.fisa.ti.gatcha.common.model.StatType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MonsterResponse {
     private UUID id;
     private int templateId;
@@ -33,6 +35,7 @@ public class MonsterResponse {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class SkillResponse {
         private int num;
         private int dmg;
@@ -45,6 +48,7 @@ public class MonsterResponse {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class RatioResponse {
         private StatType stat;
         private double percent;
