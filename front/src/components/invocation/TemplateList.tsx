@@ -3,24 +3,12 @@
 import {ElementEnum, MonsterTemplate} from '@/lib/types';
 import {CreateTemplateModal} from '@/components/admin/CreateTemplateModal';
 import {useState} from 'react';
-import {
-    ChevronLeft,
-    ChevronRight,
-    Droplets,
-    Edit,
-    Eye,
-    Flame,
-    Ghost,
-    Heart,
-    Shield,
-    Sword,
-    Wind,
-    Zap
-} from 'lucide-react';
+import {Droplets, Edit, Eye, Flame, Ghost, Heart, Shield, Sword, Wind, Zap} from 'lucide-react';
 import {TemplateDetailsModal} from './TemplateDetailsModal';
 
 interface TemplateListProps {
-    templates: MonsterTemplate[];
+    allTemplates: MonsterTemplate[];
+    displayedTemplates: MonsterTemplate[];
     onRefresh: () => void;
     readOnly?: boolean;
 }
@@ -31,16 +19,9 @@ const elementIcons = {
     [ElementEnum.wind]: <Wind className="text-green-500" size={24}/>,
 };
 
-const ITEMS_PER_PAGE = 5;
-
-export function TemplateList({templates, onRefresh, readOnly = false}: TemplateListProps) {
-    const totalRate = templates.reduce((acc, t) => acc + t.lootRate, 0);
+export function TemplateList({allTemplates, displayedTemplates, onRefresh, readOnly = false}: TemplateListProps) {
+    const totalRate = allTemplates.reduce((acc, t) => acc + t.lootRate, 0);
     const [selectedTemplate, setSelectedTemplate] = useState<MonsterTemplate | null>(null);
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const totalPages = Math.ceil(templates.length / ITEMS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const displayedTemplates = templates.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
         <div
@@ -49,17 +30,9 @@ export function TemplateList({templates, onRefresh, readOnly = false}: TemplateL
                     ? 'mx-auto border-none bg-transparent p-0'
                     : 'bg-zinc-900/80 border border-purple-500/20 backdrop-blur-md p-6'
             }`}>
-            {!readOnly && (
-                <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-2xl font-black text-white flex items-center gap-2 drop-shadow-lg">
-                        <span className="text-purple-500">⚡</span> Gestion des Templates
-                    </h3>
-                    <CreateTemplateModal onSuccess={onRefresh}/>
-                </div>
-            )}
 
             <div className={`space-y-3 ${readOnly ? '' : 'overflow-y-auto pr-2 custom-scrollbar max-h-[60vh]'}`}>
-                {templates.length === 0 ? (
+                {displayedTemplates.length === 0 ? (
                     <div
                         className="flex flex-col items-center justify-center py-12 text-zinc-500 bg-zinc-800/30 rounded-xl border border-dashed border-zinc-700">
                         <Ghost size={48} className="mb-2 opacity-50"/>
@@ -98,24 +71,25 @@ export function TemplateList({templates, onRefresh, readOnly = false}: TemplateL
                                                             Number(percent) < 30 ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
                                                                 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
                                                 }`}>
-                                                    {Number(percent) < 5 ? 'LEGENDARY' : Number(percent) < 15 ? 'EPIC' : Number(percent) < 30 ? 'RARE' : 'COMMON'}
+                                                    {Number(percent) < 5 ? 'LÉGENDAIRE' : Number(percent) < 15 ? 'ÉPIQUE' : Number(percent) < 30 ? 'RARE' : 'COMMUN'}
                                                 </span>
                                             )}
                                         </div>
 
                                         <div className="flex items-center gap-3 mt-1.5">
                                             <div
-                                                className="flex items-center gap-3 text-xs font-medium text-zinc-400 bg-black/20 px-3 py-1 rounded-full border border-white/5">
-                                                <span className="flex items-center gap-1.5"><Heart
+                                                className="flex items-center gap-0 text-xs font-medium text-zinc-400 bg-black/20 rounded-full border border-white/5 overflow-hidden">
+                                                <span
+                                                    className="flex items-center justify-center gap-1.5 w-16 py-1 border-r border-white/5 bg-white/5"><Heart
                                                     className="text-red-400" size={12}/> {template.hp}</span>
-                                                <div className="w-px h-3 bg-zinc-700"/>
-                                                <span className="flex items-center gap-1.5"><Sword
+                                                <span
+                                                    className="flex items-center justify-center gap-1.5 w-16 py-1 border-r border-white/5"><Sword
                                                     className="text-orange-400" size={12}/> {template.atk}</span>
-                                                <div className="w-px h-3 bg-zinc-700"/>
-                                                <span className="flex items-center gap-1.5"><Shield
+                                                <span
+                                                    className="flex items-center justify-center gap-1.5 w-16 py-1 border-r border-white/5 bg-white/5"><Shield
                                                     className="text-blue-400" size={12}/> {template.def}</span>
-                                                <div className="w-px h-3 bg-zinc-700"/>
-                                                <span className="flex items-center gap-1.5"><Zap
+                                                <span
+                                                    className="flex items-center justify-center gap-1.5 w-16 py-1"><Zap
                                                     className="text-yellow-400" size={12}/> {template.vit}</span>
                                             </div>
                                         </div>
@@ -152,28 +126,6 @@ export function TemplateList({templates, onRefresh, readOnly = false}: TemplateL
                     })
                 )}
             </div>
-
-            {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 mt-8 pt-4 border-t border-white/5">
-                    <button
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                        <ChevronLeft size={20}/>
-                    </button>
-                    <span className="text-sm text-zinc-400 font-medium">
-                        Page {currentPage} sur {totalPages}
-                    </span>
-                    <button
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                        <ChevronRight size={20}/>
-                    </button>
-                </div>
-            )}
 
             {selectedTemplate && (
                 <TemplateDetailsModal

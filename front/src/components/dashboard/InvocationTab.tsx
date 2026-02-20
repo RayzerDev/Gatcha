@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {createPortal} from 'react-dom';
-import {AlertTriangle, BarChart3, RefreshCw, X} from 'lucide-react';
+import {AlertTriangle, BarChart3, ChevronLeft, ChevronRight, RefreshCw, X} from 'lucide-react';
 import {BoosterPack} from '@/components/BoosterPack';
 import {TemplateList} from '@/components/invocation/TemplateList';
 import {Monster, MonsterTemplate, Player} from '@/lib/services';
@@ -29,6 +29,12 @@ export function InvocationTab({
                                   onRefreshTemplates
                               }: InvocationTabProps) {
     const [showDropRates, setShowDropRates] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 5;
+
+    const totalPages = Math.ceil(templates.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const displayedTemplates = templates.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     // Générer les particules une seule fois
     const [particles] = useState(() =>
@@ -41,7 +47,7 @@ export function InvocationTab({
 
     return (
         <div
-            className="relative mb-12 overflow-hidden rounded-3xl bg-linear-to-br from-purple-900/40 via-pink-900/30 to-purple-900/40 p-12 shadow-2xl backdrop-blur-sm border border-purple-500/20 min-h-150 flex flex-col justify-center">
+            className="w-full relative mb-8 overflow-hidden rounded-3xl bg-linear-to-br from-purple-900/40 via-pink-900/30 to-purple-900/40 p-8 shadow-2xl backdrop-blur-sm border border-purple-500/20 min-h-125 flex flex-col justify-center">
             {/* Effet de particules d'arrière-plan */}
             <div className="absolute inset-0 opacity-20">
                 {particles.map((particle, i) => (
@@ -131,16 +137,47 @@ export function InvocationTab({
                                     <BarChart3 className="w-5 h-5 text-purple-400"/>
                                     Taux d&#39;invocation
                                 </h3>
-                                <button
-                                    onClick={() => setShowDropRates(false)}
-                                    className="p-1 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
-                                >
-                                    <X size={24}/>
-                                </button>
+
+                                <div className="flex items-center gap-4">
+                                    {/* Pagination Controls */}
+                                    {totalPages > 1 && (
+                                        <div className="flex items-center gap-2 mr-2">
+                                            <button
+                                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                                disabled={currentPage === 1}
+                                                className="p-1 rounded-lg bg-zinc-800 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-700 transition-colors"
+                                            >
+                                                <ChevronLeft size={16}/>
+                                            </button>
+                                            <span className="text-xs font-bold text-zinc-400">
+                                                {currentPage} / {totalPages}
+                                            </span>
+                                            <button
+                                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                                disabled={currentPage === totalPages}
+                                                className="p-1 rounded-lg bg-zinc-800 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-700 transition-colors"
+                                            >
+                                                <ChevronRight size={16}/>
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    <button
+                                        onClick={() => setShowDropRates(false)}
+                                        className="p-1 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                                    >
+                                        <X size={24}/>
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="overflow-y-auto p-4 custom-scrollbar">
-                                <TemplateList templates={templates} onRefresh={onRefreshTemplates} readOnly={true}/>
+                                <TemplateList
+                                    allTemplates={templates}
+                                    displayedTemplates={displayedTemplates}
+                                    onRefresh={onRefreshTemplates}
+                                    readOnly={true}
+                                />
                             </div>
                         </div>
                     </div>,
@@ -150,5 +187,3 @@ export function InvocationTab({
         </div>
     );
 }
-
-

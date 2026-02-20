@@ -5,10 +5,15 @@ import {combatService, monsterService} from '@/lib/services';
 import {Combat, Monster} from '@/lib/types';
 import {MonsterCard} from '@/components/monsters/MonsterCard';
 import {CombatArena} from '@/components/combat/CombatArena';
-import Link from 'next/link';
+import {ArrowLeft, ChevronLeft, ChevronRight, Ghost, ScrollText, Swords} from 'lucide-react';
+import Link from "next/link";
 
 export default function CombatPage() {
     const [monsters, setMonsters] = useState<Monster[]>([]);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 4;
 
     // Selection state for 2 monsters
     const [selectedId1, setSelectedId1] = useState<string | null>(null);
@@ -86,24 +91,31 @@ export default function CombatPage() {
         loadMonsters();
     };
 
+    // Pagination logic
+    const totalPages = Math.ceil(monsters.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const displayedMonsters = monsters.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
     if (activeCombat) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-zinc-900 via-purple-900/20 to-zinc-900">
-                <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                    <div className="mb-6 flex items-center justify-between">
+            <div className="h-full flex flex-col">
+                <div className="mx-auto w-full max-w-360 flex-1 px-2 sm:px-4 py-2 flex flex-col h-full">
+                    <div className="mb-2 flex items-center justify-between shrink-0">
                         <button
                             onClick={handleBackToLobby}
-                            className="flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 hover:text-white transition-all backdrop-blur-sm"
+                            className="flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-3 py-1.5 text-xs sm:text-sm font-bold text-zinc-300 hover:bg-white/10 hover:text-white transition-all backdrop-blur-sm"
                         >
-                            <span>←</span> Retour au lobby
+                            <ArrowLeft className="w-4 h-4"/> Retour au lobby
                         </button>
                     </div>
 
                     <div
-                        className="rounded-3xl bg-black/40 border border-white/5 backdrop-blur-xl overflow-hidden shadow-2xl">
-                        <CombatArena combat={activeCombat}/>
+                        className="flex-1 rounded-2xl sm:rounded-3xl bg-black/40 border border-white/5 backdrop-blur-xl overflow-hidden shadow-2xl relative flex flex-col min-h-0">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-2 sm:p-4 touch-pan-y">
+                            <CombatArena combat={activeCombat}/>
+                        </div>
                     </div>
-                </main>
+                </div>
             </div>
         );
     }
@@ -126,18 +138,18 @@ export default function CombatPage() {
                 ))}
             </div>
 
-            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 relative z-10">
+            <main className="mx-auto max-w-360 px-4 py-8 sm:px-6 lg:px-8 relative z-10">
 
                 {/* Header Section */}
                 <div className="mb-12 text-center animate-fadeInUp">
                     <div
                         className="inline-block p-3 rounded-2xl bg-linear-to-br from-red-500/20 to-purple-500/20 ring-1 ring-white/10 backdrop-blur-sm mb-6">
-                        <span className="text-4xl">⚔️</span>
+                        <Swords className="w-10 h-10 text-red-400"/>
                     </div>
                     <h1 className="text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-linear-to-r from-red-400 via-purple-400 to-pink-400 sm:text-6xl drop-shadow-sm mb-4">
                         ARÈNE D&#39;ENTRAÎNEMENT
                     </h1>
-                    <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-8">
+                    <p className="text-lg text-zinc-400 max-w-4xl mx-auto mb-8">
                         Sélectionnez deux monstres de votre collection pour lancer un combat simulé et gagner de
                         l&#39;expérience.
                     </p>
@@ -146,7 +158,7 @@ export default function CombatPage() {
                         href="/combat/history"
                         className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white font-medium transition-all border border-white/10"
                     >
-                        <span>📜</span> Voir l&#39;historique des combats
+                        <ScrollText className="w-5 h-5"/> Voir l&#39;historique des combats
                     </Link>
                 </div>
 
@@ -159,61 +171,65 @@ export default function CombatPage() {
 
                 {/* Selection & Action Bar */}
                 {!loading && monsters.length > 0 && (
-                    <div className="sticky top-20 z-30 mb-12 -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <div className="sticky top-0 z-30 mb-12 -mx-4 px-4 sm:mx-0 sm:px-0">
                         <div className="mx-auto max-w-2xl">
                             <div
-                                className="relative rounded-2xl bg-zinc-900/80 p-4 shadow-2xl backdrop-blur-xl border border-white/10 ring-1 ring-black/5 flex items-center justify-between gap-4 animate-fadeInUp"
+                                className="relative rounded-2xl bg-zinc-900/80 p-4 shadow-2xl backdrop-blur-xl border border-white/10 ring-1 ring-black/5 flex flex-col md:flex-row items-center justify-between gap-6 animate-fadeInUp"
                                 style={{animationDelay: '0.1s'}}>
 
-                                {/* Slot 1 */}
-                                <div
-                                    className={`flex flex-col items-center gap-2 transition-all duration-300 ${selectedId1 ? 'scale-110' : 'opacity-50'}`}>
+                                {/* 1 vs 2 Selection Area */}
+                                <div className="flex items-center justify-center gap-6 w-full md:w-auto flex-1">
+                                    {/* Slot 1 */}
                                     <div
-                                        className={`h-16 w-16 rounded-2xl border-2 ${selectedId1 ? 'border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]' : 'border-zinc-700 bg-zinc-800'} flex items-center justify-center relative overflow-hidden`}>
-                                        {selectedId1 ? (
-                                            // Find monster image content here if we had access to it easily,
-                                            // for now just color/number
-                                            <div
-                                                className="absolute inset-0 bg-purple-600 flex items-center justify-center text-2xl font-black text-white">
-                                                1
-                                            </div>
-                                        ) : (
-                                            <span className="text-zinc-600 font-bold text-xl">1</span>
-                                        )}
+                                        className={`flex flex-col items-center gap-2 transition-all duration-300 ${selectedId1 ? 'scale-110' : 'opacity-50'}`}>
+                                        <div
+                                            className={`h-16 w-16 rounded-2xl border-2 ${selectedId1 ? 'border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]' : 'border-zinc-700 bg-zinc-800'} flex items-center justify-center relative overflow-hidden`}>
+                                            {selectedId1 ? (
+                                                // Find monster image content here if we had access to it easily,
+                                                // for now just color/number
+                                                <div
+                                                    className="absolute inset-0 bg-purple-600 flex items-center justify-center text-2xl font-black text-white">
+                                                    1
+                                                </div>
+                                            ) : (
+                                                <span className="text-zinc-600 font-bold text-xl">1</span>
+                                            )}
+                                        </div>
+                                        <div className="h-1.5 w-8 rounded-full bg-purple-500/50"></div>
                                     </div>
-                                    <div className="h-1.5 w-8 rounded-full bg-purple-500/50"></div>
-                                </div>
 
-                                {/* VS Badge */}
-                                <div className="flex flex-col items-center">
-                                    <span
-                                        className="text-3xl font-black italic text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-500">VS</span>
-                                </div>
+                                    {/* VS Badge */}
+                                    <div className="flex flex-col items-center">
+                                        <span
+                                            className="text-3xl font-black italic text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-500">VS</span>
+                                    </div>
 
-                                {/* Slot 2 */}
-                                <div
-                                    className={`flex flex-col items-center gap-2 transition-all duration-300 ${selectedId2 ? 'scale-110' : 'opacity-50'}`}>
+                                    {/* Slot 2 */}
                                     <div
-                                        className={`h-16 w-16 rounded-2xl border-2 ${selectedId2 ? 'border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.4)]' : 'border-zinc-700 bg-zinc-800'} flex items-center justify-center relative overflow-hidden`}>
-                                        {selectedId2 ? (
-                                            <div
-                                                className="absolute inset-0 bg-pink-600 flex items-center justify-center text-2xl font-black text-white">
-                                                2
-                                            </div>
-                                        ) : (
-                                            <span className="text-zinc-600 font-bold text-xl">2</span>
-                                        )}
+                                        className={`flex flex-col items-center gap-2 transition-all duration-300 ${selectedId2 ? 'scale-110' : 'opacity-50'}`}>
+                                        <div
+                                            className={`h-16 w-16 rounded-2xl border-2 ${selectedId2 ? 'border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.4)]' : 'border-zinc-700 bg-zinc-800'} flex items-center justify-center relative overflow-hidden`}>
+                                            {selectedId2 ? (
+                                                <div
+                                                    className="absolute inset-0 bg-pink-600 flex items-center justify-center text-2xl font-black text-white">
+                                                    2
+                                                </div>
+                                            ) : (
+                                                <span className="text-zinc-600 font-bold text-xl">2</span>
+                                            )}
+                                        </div>
+                                        <div className="h-1.5 w-8 rounded-full bg-pink-500/50"></div>
                                     </div>
-                                    <div className="h-1.5 w-8 rounded-full bg-pink-500/50"></div>
                                 </div>
 
                                 {/* Action Button */}
-                                <div className="ml-4 pl-4 border-l border-white/10">
+                                <div
+                                    className="w-full md:w-auto md:pl-6 md:border-l border-white/10 flex justify-center">
                                     <button
                                         onClick={handleStartCombat}
                                         disabled={!selectedId1 || !selectedId2 || starting}
                                         className={`
-                                            whitespace-nowrap rounded-xl px-8 py-4 font-black text-lg uppercase tracking-wider transition-all duration-300
+                                            w-full md:w-auto whitespace-nowrap rounded-xl px-8 py-4 font-black text-lg uppercase tracking-wider transition-all duration-300
                                             ${!selectedId1 || !selectedId2 || starting
                                             ? 'cursor-not-allowed bg-zinc-800 text-zinc-600'
                                             : 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40 hover:scale-105 hover:shadow-purple-700/60 active:scale-95'}
@@ -242,7 +258,9 @@ export default function CombatPage() {
                     </div>
                 ) : monsters.length === 0 ? (
                     <div className="rounded-3xl bg-white/5 border border-white/10 p-16 text-center backdrop-blur-sm">
-                        <div className="mb-6 text-7xl opacity-50">👻</div>
+                        <div className="mb-6 flex justify-center opacity-50">
+                            <Ghost className="w-20 h-20"/>
+                        </div>
                         <h3 className="mb-2 text-2xl font-bold text-white">Pas assez de monstres</h3>
                         <p className="text-zinc-400 max-w-md mx-auto mb-8">
                             Vous avez besoin d&#39;au moins 2 monstres pour lancer un combat d&#39;entraînement.
@@ -256,14 +274,40 @@ export default function CombatPage() {
                     </div>
                 ) : (
                     <div className="animate-fadeInUp" style={{animationDelay: '0.2s'}}>
-                        <h3 className="mb-6 text-xl font-bold text-white flex items-center gap-2">
-                            <span className="text-zinc-400">Votre Équipe</span>
-                            <span
-                                className="px-2 py-0.5 rounded-md bg-white/10 text-xs text-white">{monsters.length}</span>
-                        </h3>
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                <span className="text-zinc-400">Votre Équipe</span>
+                                <span
+                                    className="px-2 py-0.5 rounded-md bg-white/10 text-xs text-white">{monsters.length}</span>
+                            </h3>
+
+                            {totalPages > 1 && (
+                                <div className="flex items-center gap-4">
+                                    <button
+                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                        disabled={currentPage === 1}
+                                        className="p-2 rounded-lg bg-zinc-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-700 transition-colors"
+                                        title="Précédent"
+                                    >
+                                        <ChevronLeft size={24}/>
+                                    </button>
+                                    <span className="text-zinc-400 font-medium">
+                                        Page {currentPage} / {totalPages}
+                                    </span>
+                                    <button
+                                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                        disabled={currentPage === totalPages}
+                                        className="p-2 rounded-lg bg-zinc-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-700 transition-colors"
+                                        title="Suivant"
+                                    >
+                                        <ChevronRight size={24}/>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
 
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {monsters.map((monster) => {
+                            {displayedMonsters.map((monster) => {
                                 const isSelected1 = selectedId1 === monster.id;
                                 const isSelected2 = selectedId2 === monster.id;
                                 const isSelected = isSelected1 || isSelected2;
@@ -282,7 +326,7 @@ export default function CombatPage() {
                                     >
                                         <div className={`
                                             h-full rounded-3xl transition-all duration-300
-                                            ${isSelected1 ? 'ring-4 ring-purple-500 shadow-2xl shadow-purple-500/20' : ''} 
+                                            ${isSelected1 ? 'ring-4 ring-purple-500 shadow-2xl shadow-purple-500/20' : ''}
                                             ${isSelected2 ? 'ring-4 ring-pink-500 shadow-2xl shadow-pink-500/20' : ''}
                                             ${!isSelected ? 'hover:ring-2 hover:ring-white/20' : ''}
                                         `}>
@@ -319,4 +363,3 @@ export default function CombatPage() {
         </div>
     );
 }
-

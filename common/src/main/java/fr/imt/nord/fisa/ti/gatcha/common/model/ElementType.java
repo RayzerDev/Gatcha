@@ -14,11 +14,6 @@ public enum ElementType {
         this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
-
     @JsonCreator
     public static ElementType fromValue(String value) {
         for (ElementType type : ElementType.values()) {
@@ -27,6 +22,11 @@ public enum ElementType {
             }
         }
         throw new IllegalArgumentException("Unknown enum type " + value);
+    }
+
+    @JsonValue
+    public String getValue() {
+        return value;
     }
 }
 

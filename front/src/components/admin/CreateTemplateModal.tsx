@@ -43,7 +43,7 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [element, setElement] = useState<ElementEnum>(ElementEnum.fire);
-    const [lootRate, setLootRate] = useState(10);
+    const [lootRate, setLootRate] = useState(1);
     const [hp, setHp] = useState(100);
     const [atk, setAtk] = useState(10);
     const [def, setDef] = useState(10);
@@ -104,7 +104,10 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                         [child]: value
                     };
                 }
-                (skill as any)[field] = value;
+            } else {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                skill[field] = value;
             }
 
             newSkills[index] = skill;
@@ -165,7 +168,7 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                 className="flex items-center gap-2 rounded-lg bg-pink-600 px-4 py-2 text-sm font-bold text-white hover:bg-pink-700 transition-colors shadow-lg group"
             >
                 <Plus size={16} className="group-hover:rotate-90 transition-transform"/>
-                Nouveau Template
+                Nouveau Modèle
             </button>
         );
     }
@@ -185,7 +188,7 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                     className="flex justify-between items-center p-6 border-b border-zinc-800 bg-zinc-900 sticky top-0 z-10">
                     <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                         <Dna className="text-pink-500" size={28}/>
-                        {template ? `Modifier Monstre #${template.id}` : 'Créer un Nouveau Monstre'}
+                        {template ? `Modifier Monstre #${template.id}` : 'Créer un Nouveau Modèle'}
                     </h2>
                     <button
                         onClick={handleClose}
@@ -197,10 +200,10 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
 
                 {/* Scrollable Content */}
                 <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
-                    <form id="templateForm" onSubmit={handleSubmit} className="space-y-8">
+                    <form id="templateForm" onSubmit={handleSubmit}>
 
                         {/* Section 1: Informations Générales */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-zinc-300">Élément</label>
                                 <div className="relative">
@@ -229,7 +232,7 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                                     <input
                                         type="number"
                                         min="0"
-                                        step="0.01"
+                                        step="0.0001"
                                         value={lootRate}
                                         onChange={(e) => setLootRate(Number(e.target.value))}
                                         className="w-full rounded-xl bg-zinc-800 border border-zinc-700 text-white p-3 pl-10 focus:border-purple-500 focus:outline-hidden focus:ring-1 focus:ring-purple-500 transition-all"
@@ -315,7 +318,7 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                                     className="flex items-center gap-1 text-xs font-bold bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white px-3 py-1.5 rounded-lg transition-all border border-purple-500/30 hover:border-purple-500"
                                 >
                                     <Plus size={14}/>
-                                    Ajouter Skill
+                                    Ajouter Compétence
                                 </button>
                             </div>
 
@@ -359,7 +362,7 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                                             </div>
                                             <div className="space-y-1">
                                                 <label className="text-xs text-zinc-500 flex items-center gap-1">
-                                                    <Clock size={12}/> Cooldown (s)
+                                                    <Clock size={12}/> Recharge (s)
                                                 </label>
                                                 <input
                                                     type="number"
@@ -372,7 +375,7 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                                             </div>
                                             <div className="space-y-1">
                                                 <label className="text-xs text-zinc-500 flex items-center gap-1">
-                                                    <ArrowUpCircle size={12}/> Level Max
+                                                    <ArrowUpCircle size={12}/> Niveau Max
                                                 </label>
                                                 <input
                                                     type="number"
@@ -386,8 +389,8 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
 
                                         <div className="bg-zinc-900/50 rounded-xl p-3 border border-zinc-800">
                                             <label
-                                                className="text-xs font-bold text-purple-400 mb-2 block uppercase tracking-wide">Scaling
-                                                (Ratio)</label>
+                                                className="text-xs font-bold text-purple-400 mb-2 block uppercase tracking-wide">Ratio
+                                                (Scaling)</label>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div>
                                                     <select
@@ -395,8 +398,8 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                                                         onChange={(e) => updateSkill(index, 'ratio.stat', e.target.value)}
                                                         className="w-full rounded-lg bg-zinc-800 border border-zinc-700 text-white p-2 text-sm focus:border-purple-500 focus:outline-hidden"
                                                     >
-                                                        <option value="ATK">Attack (ATK)</option>
-                                                        <option value="DEF">Defense (DEF)</option>
+                                                        <option value="ATK">Attaque (ATK)</option>
+                                                        <option value="DEF">Défense (DEF)</option>
                                                         <option value="VIT">Vitesse (VIT)</option>
                                                         <option value="HP">Points de vie (HP)</option>
                                                     </select>
@@ -445,7 +448,7 @@ export function CreateTemplateModal({template, onSuccess, onClose}: CreateTempla
                         ) : (
                             <>
                                 <Save size={18}/>
-                                {template ? 'Mettre à jour' : 'Créer le Template'}
+                                {template ? 'Mettre à jour' : 'Créer le Modèle'}
                             </>
                         )}
                     </button>

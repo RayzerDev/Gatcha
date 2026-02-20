@@ -23,16 +23,6 @@ public class CombatSimulator {
     private static final double ELEMENT_DISADVANTAGE_MULTIPLIER = 0.8;
 
     /**
-     * Résultat de la simulation contenant les logs et le vainqueur.
-     */
-    public record SimulationResult(
-            List<CombatLog> logs,
-            UUID winnerId,
-            String winnerUsername,
-            int totalTurns
-    ) {}
-
-    /**
      * Simule un combat automatique entre deux monstres.
      */
     public SimulationResult simulate(CombatMonsterSnapshot monster1, CombatMonsterSnapshot monster2) {
@@ -206,10 +196,7 @@ public class CombatSimulator {
         double elementMult = getElementMultiplier(attacker.getElement(), defender.getElement());
         rawDmg *= elementMult;
 
-        // Réduction par la défense
-        int finalDmg = Math.max(1, (int) rawDmg - defender.getDef());
-
-        return finalDmg;
+        return Math.max(1, (int) rawDmg - defender.getDef());
     }
 
     /**
@@ -223,5 +210,16 @@ public class CombatSimulator {
             case WATER -> defender == ElementType.FIRE ? ELEMENT_ADVANTAGE_MULTIPLIER : ELEMENT_DISADVANTAGE_MULTIPLIER;
             case WIND -> defender == ElementType.WATER ? ELEMENT_ADVANTAGE_MULTIPLIER : ELEMENT_DISADVANTAGE_MULTIPLIER;
         };
+    }
+
+    /**
+     * Résultat de la simulation contenant les logs et le vainqueur.
+     */
+    public record SimulationResult(
+            List<CombatLog> logs,
+            UUID winnerId,
+            String winnerUsername,
+            int totalTurns
+    ) {
     }
 }

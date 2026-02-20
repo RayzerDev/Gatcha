@@ -51,6 +51,18 @@ export class ApiClient {
         });
     }
 
+    setDefaultHeader(key: string, value: string): void {
+        this.defaultHeaders[key] = value;
+    }
+
+    removeDefaultHeader(key: string): void {
+        delete this.defaultHeaders[key];
+    }
+
+    getBaseUrl(): string {
+        return this.baseUrl;
+    }
+
     private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
         const url = `${this.baseUrl}${endpoint}`;
 
@@ -144,17 +156,5 @@ export class ApiClient {
         }
 
         throw new ApiError(errorMessage, response.status, errorDetails);
-    }
-
-    setDefaultHeader(key: string, value: string): void {
-        this.defaultHeaders[key] = value;
-    }
-
-    removeDefaultHeader(key: string): void {
-        delete this.defaultHeaders[key];
-    }
-
-    getBaseUrl(): string {
-        return this.baseUrl;
     }
 }

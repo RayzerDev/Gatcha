@@ -1,7 +1,8 @@
 'use client';
 
-import { CombatMonsterSnapshot, ElementEnum } from '@/lib/types';
-import { motion } from 'framer-motion';
+import {CombatMonsterSnapshot, ElementEnum} from '@/lib/types';
+import {motion} from 'framer-motion';
+import {Crown, Droplets, Flame, Shield, Swords, Wind, Zap} from 'lucide-react';
 
 interface MonsterCombatCardProps {
     monster: CombatMonsterSnapshot;
@@ -19,21 +20,15 @@ const elementColors = {
     [ElementEnum.wind]: 'from-green-500 to-emerald-600',
 };
 
-const elementIcons = {
-    [ElementEnum.fire]: '🔥',
-    [ElementEnum.water]: '💧',
-    [ElementEnum.wind]: '🌪️',
-};
-
 export function MonsterCombatCard({
-    monster,
-    currentHp,
-    maxHp,
-    isAttacking,
-    isHit,
-    isDead,
-    isWinner
-}: MonsterCombatCardProps) {
+                                      monster,
+                                      currentHp,
+                                      maxHp,
+                                      isAttacking,
+                                      isHit,
+                                      isDead,
+                                      isWinner
+                                  }: MonsterCombatCardProps) {
     const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
 
     return (
@@ -46,26 +41,30 @@ export function MonsterCombatCard({
                 opacity: isDead ? 0.5 : 1,
                 scale: isWinner ? [1, 1.1, 1] : 1,
             }}
-            transition={{ duration: 0.3 }}
+            transition={{duration: 0.3}}
         >
             {/* Header */}
-            <div className={`mb-3 flex items-center justify-between rounded-lg bg-linear-to-r ${elementColors[monster.element]} p-2 text-white`}>
-                <div className="font-bold">
-                    {monster.element === ElementEnum.fire && '🔥'}
-                    {monster.element === ElementEnum.water && '💧'}
-                    {monster.element === ElementEnum.wind && '🌪️'}
-                    <span className="ml-2">Lvl {monster.level}</span>
+            <div
+                className={`mb-3 flex items-center justify-between rounded-lg bg-linear-to-r ${elementColors[monster.element]} p-2 text-white`}>
+                <div className="font-bold flex items-center gap-2">
+                    {monster.element === ElementEnum.fire && <Flame size={16}/>}
+                    {monster.element === ElementEnum.water && <Droplets size={16}/>}
+                    {monster.element === ElementEnum.wind && <Wind size={16}/>}
+                    <span>Lvl {monster.level}</span>
                 </div>
                 <div className="text-xs font-mono opacity-80">#{monster.id.substring(0, 6)}</div>
             </div>
 
             {/* Monster Avatar Placeholder */}
             <div className="mb-4 flex h-32 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900">
-                <span className="text-6xl">
-                    {monster.element === ElementEnum.fire && '🐲'}
-                    {monster.element === ElementEnum.water && '🦈'}
-                    {monster.element === ElementEnum.wind && '🦅'}
-                </span>
+                <div className="text-zinc-400">
+                    {monster.element === ElementEnum.fire &&
+                        <Flame size={64} className="text-orange-500" strokeWidth={1}/>}
+                    {monster.element === ElementEnum.water &&
+                        <Droplets size={64} className="text-blue-500" strokeWidth={1}/>}
+                    {monster.element === ElementEnum.wind &&
+                        <Wind size={64} className="text-green-500" strokeWidth={1}/>}
+                </div>
             </div>
 
             {/* HP Bar */}
@@ -79,8 +78,8 @@ export function MonsterCombatCard({
                         className={`h-full ${
                             hpPercent > 50 ? 'bg-green-500' : hpPercent > 20 ? 'bg-yellow-500' : 'bg-red-500'
                         }`}
-                        initial={{ width: '100%' }}
-                        animate={{ width: `${hpPercent}%` }}
+                        initial={{width: '100%'}}
+                        animate={{width: `${hpPercent}%`}}
                         transition={{type: "spring", stiffness: 100}}
                     />
                 </div>
@@ -88,28 +87,28 @@ export function MonsterCombatCard({
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="rounded bg-zinc-100 p-1 dark:bg-zinc-700">
-                    <span className="block font-bold text-orange-600 dark:text-orange-400">ATK</span>
+                <div className="flex flex-col items-center rounded bg-zinc-100 p-1 dark:bg-zinc-700">
+                    <Swords size={14} className="mb-1 text-orange-600 dark:text-orange-400"/>
                     {monster.atk}
                 </div>
-                <div className="rounded bg-zinc-100 p-1 dark:bg-zinc-700">
-                    <span className="block font-bold text-blue-600 dark:text-blue-400">DEF</span>
+                <div className="flex flex-col items-center rounded bg-zinc-100 p-1 dark:bg-zinc-700">
+                    <Shield size={14} className="mb-1 text-blue-600 dark:text-blue-400"/>
                     {monster.def}
                 </div>
-                <div className="rounded bg-zinc-100 p-1 dark:bg-zinc-700">
-                    <span className="block font-bold text-green-600 dark:text-green-400">VIT</span>
+                <div className="flex flex-col items-center rounded bg-zinc-100 p-1 dark:bg-zinc-700">
+                    <Zap size={14} className="mb-1 text-green-600 dark:text-green-400"/>
                     {monster.vit}
                 </div>
             </div>
 
             {/* Winner Badge */}
             {isWinner && (
-                <motion.div 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 text-xl shadow-lg"
+                <motion.div
+                    initial={{scale: 0}}
+                    animate={{scale: 1}}
+                    className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 text-xl shadow-lg ring-2 ring-white dark:ring-zinc-900"
                 >
-                    👑
+                    <Crown size={24} className="text-white fill-white"/>
                 </motion.div>
             )}
         </motion.div>

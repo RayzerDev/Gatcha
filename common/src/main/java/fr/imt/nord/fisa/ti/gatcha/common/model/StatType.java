@@ -15,11 +15,6 @@ public enum StatType {
         this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
-
     @JsonCreator
     public static StatType fromValue(String value) {
         for (StatType type : StatType.values()) {
@@ -28,5 +23,10 @@ public enum StatType {
             }
         }
         throw new IllegalArgumentException("Unknown stat type: " + value);
+    }
+
+    @JsonValue
+    public String getValue() {
+        return value;
     }
 }

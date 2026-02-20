@@ -1,5 +1,5 @@
-import { BaseService } from './BaseService';
-import { Monster } from '../types';
+import {BaseService} from './BaseService';
+import {Monster} from '../types';
 
 export class MonsterService extends BaseService {
     /**

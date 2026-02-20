@@ -188,63 +188,67 @@ export default function DashboardPage() {
 
     return (
 
-        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-[90rem] px-4 py-4 sm:px-6 lg:px-8 h-full flex flex-col overflow-hidden">
 
             {/* Stats du joueur */}
-            <div className="mb-8 animate-fadeInUp">
+            <div className="mb-4 shrink-0 animate-fadeInUp">
                 <PlayerStats player={player} monsters={monsters} isLoading={isLoadingData}/>
             </div>
 
             {/* Tabs */}
-            <div className="flex justify-center mb-8 gap-4 animate-fadeInUp" style={{animationDelay: '0.05s'}}>
+            <div className="flex justify-center mb-4 gap-4 shrink-0 animate-fadeInUp" style={{animationDelay: '0.05s'}}>
                 <button
                     onClick={() => setActiveTab('invocation')}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                        activeTab === 'invocation'
-                            ? 'bg-purple-600 text-white shadow-lg scale-105'
-                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
-                    }`}
+                    className={`
+                        px-6 py-2 rounded-xl font-bold transition-all duration-300 flex items-center gap-2
+                        ${activeTab === 'invocation'
+                        ? 'bg-white text-black shadow-lg shadow-white/20 scale-105'
+                        : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white'}
+                    `}
                 >
                     <Sparkles size={20}/>
                     Invocation
                 </button>
                 <button
                     onClick={() => setActiveTab('collection')}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                        activeTab === 'collection'
-                            ? 'bg-purple-600 text-white shadow-lg scale-105'
-                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
-                    }`}
+                    className={`
+                        px-6 py-2 rounded-xl font-bold transition-all duration-300 flex items-center gap-2
+                        ${activeTab === 'collection'
+                        ? 'bg-white text-black shadow-lg shadow-white/20 scale-105'
+                        : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white'}
+                    `}
                 >
                     <LayoutGrid size={20}/>
                     Collection
                 </button>
             </div>
 
-            {activeTab === 'invocation' && (
-                <InvocationTab
-                    canSummon={canSummon || false}
-                    hasPendingInvocations={hasPendingInvocations}
-                    isRetrying={isRetrying}
-                    player={player}
-                    templates={templates}
-                    onSummon={handleSummon}
-                    onCollectionUpdate={handleCollectionUpdate}
-                    onRetryInvocations={handleRetryInvocations}
-                    onRefreshTemplates={loadData}
-                />
-            )}
-
-            {activeTab === 'collection' && (
-                <CollectionTab
-                    monsters={monsters}
-                    player={player}
-                    isLoading={isLoadingData}
-                    deletingId={deletingId}
-                    onUpgradeSkill={handleUpgradeSkill}
-                    onDelete={handleDelete}
-                />
-            )}
-        </main>
+            {/* Content Area */}
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar animate-fadeInUp"
+                 style={{animationDelay: '0.1s'}}>
+                {activeTab === 'invocation' ? (
+                    <InvocationTab
+                        canSummon={!!canSummon}
+                        hasPendingInvocations={hasPendingInvocations}
+                        isRetrying={isRetrying}
+                        player={player}
+                        templates={templates}
+                        onSummon={handleSummon}
+                        onCollectionUpdate={handleCollectionUpdate}
+                        onRetryInvocations={handleRetryInvocations}
+                        onRefreshTemplates={loadData}
+                    />
+                ) : (
+                    <CollectionTab
+                        monsters={monsters}
+                        player={player}
+                        isLoading={isLoadingData}
+                        deletingId={deletingId}
+                        onUpgradeSkill={handleUpgradeSkill}
+                        onDelete={handleDelete}
+                    />
+                )}
+            </div>
+        </div>
     );
 }

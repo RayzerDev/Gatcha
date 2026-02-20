@@ -11,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface InvocationRepository extends MongoRepository<Invocation, UUID> {
     List<Invocation> findByUsername(String username);
-    List<Invocation> findByStatus(InvocationStatus status);
+
     List<Invocation> findByStatusIn(List<InvocationStatus> statuses);
 }

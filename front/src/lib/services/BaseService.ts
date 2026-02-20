@@ -1,5 +1,5 @@
-import { ApiClient } from '../ApiClient';
-import { TokenStorage } from '../TokenStorage';
+import {ApiClient} from '../ApiClient';
+import {TokenStorage} from '../TokenStorage';
 
 /**
  * Classe de base pour tous les services API
@@ -17,7 +17,7 @@ export abstract class BaseService {
      */
     protected getAuthHeaders(): Record<string, string> {
         const token = TokenStorage.get();
-        return token ? { Authorization: `Bearer ${token}` } : {};
+        return token ? {Authorization: `Bearer ${token}`} : {};
     }
 
     /**
@@ -25,7 +25,7 @@ export abstract class BaseService {
      */
     protected async getAuthenticated<T>(endpoint: string, additionalHeaders?: Record<string, string>): Promise<T> {
         return this.client.get<T>(endpoint, {
-            headers: { ...this.getAuthHeaders(), ...additionalHeaders },
+            headers: {...this.getAuthHeaders(), ...additionalHeaders},
         });
     }
 
@@ -38,7 +38,7 @@ export abstract class BaseService {
         additionalHeaders?: Record<string, string>
     ): Promise<T> {
         return this.client.post<T>(endpoint, data, {
-            headers: { ...this.getAuthHeaders(), ...additionalHeaders },
+            headers: {...this.getAuthHeaders(), ...additionalHeaders},
         });
     }
 
@@ -47,7 +47,7 @@ export abstract class BaseService {
      */
     protected async deleteAuthenticated<T>(endpoint: string, additionalHeaders?: Record<string, string>): Promise<T> {
         return this.client.delete<T>(endpoint, {
-            headers: { ...this.getAuthHeaders(), ...additionalHeaders },
+            headers: {...this.getAuthHeaders(), ...additionalHeaders},
         });
     }
 
@@ -60,7 +60,7 @@ export abstract class BaseService {
         additionalHeaders?: Record<string, string>
     ): Promise<T> {
         return this.client.put<T>(endpoint, data, {
-            headers: { ...this.getAuthHeaders(), ...additionalHeaders },
+            headers: {...this.getAuthHeaders(), ...additionalHeaders},
         });
     }
 
@@ -73,7 +73,7 @@ export abstract class BaseService {
         additionalHeaders?: Record<string, string>
     ): Promise<T> {
         return this.client.patch<T>(endpoint, data, {
-            headers: { ...this.getAuthHeaders(), ...additionalHeaders },
+            headers: {...this.getAuthHeaders(), ...additionalHeaders},
         });
     }
 }

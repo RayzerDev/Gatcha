@@ -1,2 +1,2 @@
-export { MonsterCard } from './MonsterCard';
-export { MonsterGrid } from './MonsterGrid';
+export {MonsterCard} from './MonsterCard';
+export {MonsterGrid} from './MonsterGrid';

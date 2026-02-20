@@ -1,5 +1,5 @@
-import { BaseService } from './BaseService';
-import { Invocation, MonsterTemplate } from '../types';
+import {BaseService} from './BaseService';
+import {Invocation, MonsterTemplate} from '../types';
 
 export class InvocationService extends BaseService {
     /**

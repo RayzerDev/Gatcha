@@ -53,11 +53,11 @@ export function TemplateDetailsModal({template, onClose}: TemplateDetailsModalPr
                             <div className="flex items-center gap-2 mt-1">
                                 <span
                                     className="px-2 py-0.5 rounded text-xs font-bold bg-white/10 text-white border border-white/10">
-                                    TEMPLATE
+                                    MODÈLE
                                 </span>
                                 <span
                                     className="px-2 py-0.5 rounded text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/20">
-                                    Drop Rate: {template.lootRate}
+                                    Taux de Drop: {template.lootRate}
                                 </span>
                             </div>
                         </div>
@@ -125,14 +125,14 @@ export function TemplateDetailsModal({template, onClose}: TemplateDetailsModalPr
                                         </div>
                                         <span
                                             className="text-xs font-bold bg-zinc-700/50 px-3 py-1.5 rounded-full text-zinc-300 border border-zinc-600">
-                                            Max Lvl {skill.lvlMax}
+                                            Niveau Max {skill.lvlMax}
                                         </span>
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                         <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
                                             <div className="text-xs text-zinc-500 mb-1 uppercase font-bold">Dégâts
-                                                Base
+                                                de Base
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Sword size={16} className="text-orange-400"/>
@@ -141,7 +141,7 @@ export function TemplateDetailsModal({template, onClose}: TemplateDetailsModalPr
                                         </div>
 
                                         <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                                            <div className="text-xs text-zinc-500 mb-1 uppercase font-bold">Cooldown
+                                            <div className="text-xs text-zinc-500 mb-1 uppercase font-bold">Recharge
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Clock size={16} className="text-blue-400"/>
@@ -150,7 +150,7 @@ export function TemplateDetailsModal({template, onClose}: TemplateDetailsModalPr
                                         </div>
 
                                         <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                                            <div className="text-xs text-zinc-500 mb-1 uppercase font-bold">Scaling
+                                            <div className="text-xs text-zinc-500 mb-1 uppercase font-bold">Ratio
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-purple-400 font-black text-lg">
@@ -173,4 +173,3 @@ export function TemplateDetailsModal({template, onClose}: TemplateDetailsModalPr
         document.body
     );
 }
-

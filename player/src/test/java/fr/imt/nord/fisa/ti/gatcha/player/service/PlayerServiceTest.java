@@ -12,7 +12,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,12 +33,11 @@ class PlayerServiceTest {
 
     private Player testPlayer;
     private UUID monster1Id;
-    private UUID monster2Id;
 
     @BeforeEach
     void setUp() {
         monster1Id = UUID.randomUUID();
-        monster2Id = UUID.randomUUID();
+        UUID monster2Id = UUID.randomUUID();
 
         testPlayer = new Player("TestPlayer");
         testPlayer.addMonster(monster1Id);
@@ -70,9 +72,10 @@ class PlayerServiceTest {
     void createPlayer_NullUsername() {
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-            () -> playerService.createPlayer(null));
+                () -> playerService.createPlayer(null));
 
         assertEquals(400, exception.getStatusCode().value());
+        assert exception.getReason() != null;
         assertTrue(exception.getReason().contains("Username is required"));
         verify(playerRepository, never()).save(any(Player.class));
     }
@@ -85,9 +88,10 @@ class PlayerServiceTest {
 
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-            () -> playerService.createPlayer("ExistingPlayer"));
+                () -> playerService.createPlayer("ExistingPlayer"));
 
         assertEquals(409, exception.getStatusCode().value());
+        assert exception.getReason() != null;
         assertTrue(exception.getReason().contains("already exists"));
         verify(playerRepository, never()).save(any(Player.class));
     }

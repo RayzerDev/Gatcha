@@ -5,7 +5,7 @@ interface LoadingSpinnerProps {
     message?: string;
 }
 
-export function LoadingSpinner({ size = 'md', message }: LoadingSpinnerProps) {
+export function LoadingSpinner({size = 'md', message}: LoadingSpinnerProps) {
     const sizeClasses = {
         sm: 'h-6 w-6',
         md: 'h-12 w-12',
@@ -28,10 +28,10 @@ interface LoadingPageProps {
     message?: string;
 }
 
-export function LoadingPage({ message = 'Loading...' }: LoadingPageProps) {
+export function LoadingPage({message = 'Chargement...'}: LoadingPageProps) {
     return (
         <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-900">
-            <LoadingSpinner size="lg" message={message} />
+            <LoadingSpinner size="lg" message={message}/>
         </div>
     );
 }

@@ -1,5 +1,5 @@
-import { BaseService } from './BaseService';
-import { Combat, CombatSummary } from '../types';
+import {BaseService} from './BaseService';
+import {Combat, CombatSummary} from '../types';
 
 export class CombatService extends BaseService {
     /**

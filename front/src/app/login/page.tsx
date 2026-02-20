@@ -1,11 +1,10 @@
 'use client';
-
 import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useAuth} from '@/contexts/AuthContext';
 import {ApiError, authService} from '@/lib/services';
 import toast from 'react-hot-toast';
-import {Gamepad2} from 'lucide-react';
+import {Gamepad2} from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -16,35 +15,40 @@ export default function LoginPage() {
 
     // Générer les particules une seule fois
     const particles = useMemo(() => {
-        return Array.from({length: 50}, () => ({
-            left: Math.random() * 100,
-            top: Math.random() * 100,
-            delay: Math.random() * 5,
-            duration: 3 + Math.random() * 4,
-        }));
-    }, []);
+                return Array.from({length: 50}, () => ({
+                    left: Math.random() * 100,
+                    top: Math.random() * 100,
+                    delay: Math.random() * 5,
+                    duration: 3 + Math.random() * 4,
+                }));
+            }
+            ,
+            []
+        )
+    ;
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
+            e.preventDefault();
+            setLoading(true);
 
-        try {
-            const response = await authService.login({username, password});
-            await loginContext(response.token);
-            toast.success('Bon retour !');
-            router.push('/dashboard');
-        } catch (err: unknown) {
-            if (err instanceof ApiError) {
-                toast.error(err.message);
-            } else if (err instanceof Error) {
-                toast.error(err.message);
-            } else {
-                toast.error('Échec de la connexion');
+            try {
+                const response = await authService.login({username, password});
+                await loginContext(response.token);
+                toast.success('Bon retour !');
+                router.push('/dashboard');
+            } catch (err: unknown) {
+                if (err instanceof ApiError) {
+                    toast.error(err.message);
+                } else if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error('Échec de la connexion');
+                }
+            } finally {
+                setLoading(false);
             }
-        } finally {
-            setLoading(false);
         }
-    };
+    ;
 
     return (
         <div
@@ -101,7 +105,9 @@ export default function LoginPage() {
                                 required
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="block w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/50 backdrop-blur-sm transition-all focus:border-purple-400 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                                className="block w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white
+                placeholder-white/50 backdrop-blur-sm transition-all focus:border-purple-400 focus:bg-white/20
+                focus:outline-none focus:ring-2 focus:ring-purple-400/50"
                                 placeholder="Entrez votre nom d'utilisateur"
                             />
                         </div>
@@ -164,5 +170,6 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
-    );
+    )
+        ;
 }

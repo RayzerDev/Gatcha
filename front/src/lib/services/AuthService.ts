@@ -1,6 +1,6 @@
-import { TokenStorage } from '../TokenStorage';
-import { BaseService } from './BaseService';
-import { RegisterRequest, AuthResponse, LoginRequest, VerifyResponse } from '../types';
+import {TokenStorage} from '../TokenStorage';
+import {BaseService} from './BaseService';
+import {AuthResponse, LoginRequest, RegisterRequest, VerifyResponse} from '../types';
 
 /**
  * Service d'authentification

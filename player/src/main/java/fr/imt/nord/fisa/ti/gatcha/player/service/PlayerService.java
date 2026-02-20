@@ -3,6 +3,7 @@ package fr.imt.nord.fisa.ti.gatcha.player.service;
 import fr.imt.nord.fisa.ti.gatcha.player.dto.entity.PlayerDTO;
 import fr.imt.nord.fisa.ti.gatcha.player.model.Player;
 import fr.imt.nord.fisa.ti.gatcha.player.repository.PlayerRepository;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -63,6 +64,27 @@ public class PlayerService {
         }
         Player player = getPlayerByUsername(username);
         player.setExperience(player.getExperience() + experience);
+
+        // Check for level up immediately
+        return handleLevelUp(player);
+    }
+
+    @NonNull
+    private PlayerDTO handleLevelUp(Player player) {
+        double currentExp = player.getExperience();
+        double step = player.getExperienceStep();
+        int level = player.getLevel();
+
+        while (currentExp >= step && level < 50) {
+            currentExp -= step;
+            level += 1;
+            step *= 1.1;
+        }
+
+        player.setLevel(level);
+        player.setExperience(currentExp);
+        player.setExperienceStep(step);
+
         playerRepository.save(player);
         return new PlayerDTO(player);
     }
@@ -79,21 +101,7 @@ public class PlayerService {
                     "Not enough experience to level up: " + current + " / " + required);
         }
 
-        double experience = player.getExperience();
-        double step = player.getExperienceStep();
-        int level = player.getLevel();
-
-        while (experience >= step && level < 50) {
-            experience -= step;
-            level += 1;
-            step *= 1.1;
-        }
-
-        player.setLevel(level);
-        player.setExperience(experience);
-        player.setExperienceStep(step);
-        playerRepository.save(player);
-        return new PlayerDTO(player);
+        return handleLevelUp(player);
     }
 
     public PlayerDTO addMonster(String username, UUID monsterId) {

@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -20,10 +21,6 @@ import java.util.List;
 @Component
 public class TokenValidationFilter extends OncePerRequestFilter {
 
-    private final AuthServiceClient authServiceClient;
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
-    private final List<String> excludedPaths;
-
     private static final List<String> DEFAULT_EXCLUDED_PATHS = Arrays.asList(
             "/tokens/**",
             "/users/**",
@@ -32,6 +29,9 @@ public class TokenValidationFilter extends OncePerRequestFilter {
             "/api-docs/**",
             "/health"
     );
+    private final AuthServiceClient authServiceClient;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final List<String> excludedPaths;
 
     public TokenValidationFilter(
             AuthServiceClient authServiceClient,
@@ -47,8 +47,8 @@ public class TokenValidationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
         String path = request.getRequestURI();

@@ -9,6 +9,10 @@ export function Navbar() {
     const {username, logout} = useAuth();
     const pathname = usePathname();
 
+    if (pathname === '/login' || pathname === '/register') {
+        return null;
+    }
+
     return (
         <nav
             className="sticky top-0 z-40 bg-white/80 shadow backdrop-blur-lg dark:bg-gray-900/80 border-b border-zinc-800/50">

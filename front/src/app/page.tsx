@@ -21,7 +21,7 @@ export default function Home() {
 
     return (
         <div
-            className="flex min-h-screen items-center justify-center bg-linear-to-br from-purple-900 via-zinc-900 to-pink-900">
+            className="flex h-full flex-1 items-center justify-center bg-linear-to-br from-purple-900 via-zinc-900 to-pink-900">
             <div className="text-center">
                 {/* Logo animé */}
                 <div className="relative mb-8">

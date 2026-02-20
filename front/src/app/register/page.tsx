@@ -62,7 +62,7 @@ export default function RegisterPage() {
 
     return (
         <div
-            className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-indigo-900 via-purple-900 to-pink-900">
+            className="relative flex h-full flex-1 w-full items-center justify-center overflow-hidden bg-linear-to-br from-indigo-900 via-purple-900 to-pink-900">
             {/* Animated background particles */}
             <div className="absolute inset-0">
                 {particles.map((particle, i) => (

@@ -4,6 +4,7 @@ import {useState} from 'react';
 import {createPortal} from 'react-dom';
 import {Monster} from '@/lib/services';
 import {MonsterCard} from '@/components/monsters';
+import {Gift, Sparkles, Zap} from 'lucide-react';
 
 interface BoosterPackProps {
     onOpen: () => Promise<Monster>;
@@ -43,18 +44,18 @@ export function BoosterPack({onOpen, onAdd, disabled}: BoosterPackProps) {
                     const monster = await onOpen();
 
                     // Phase 3: Révélation avec confettis
+                    const config = Array.from({length: 100}, () => ({
+                        left: Math.random() * 100,
+                        color: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#fbbf24'][
+                            Math.floor(Math.random() * 7)
+                            ],
+                        delay: Math.random() * 0.3,
+                        duration: 1 + Math.random() * 1.5,
+                    }));
+                    setConfettiConfig(config);
+
                     setTimeout(() => {
                         setRevealedMonster(monster);
-
-                        // Générer les confettis
-                        setConfettiConfig(Array.from({length: 100}, () => ({
-                            left: Math.random() * 100,
-                            color: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#fbbf24'][
-                                Math.floor(Math.random() * 7)
-                                ],
-                            delay: Math.random() * 0.3,
-                            duration: 1 + Math.random() * 1.5,
-                        })));
 
                         setIsRevealing(true);
                         setShowConfetti(true);
@@ -126,7 +127,7 @@ export function BoosterPack({onOpen, onAdd, disabled}: BoosterPackProps) {
                                 <div
                                     className="h-full w-full rounded-l-2xl border-4 border-r-2 border-white/30 bg-linear-to-br from-purple-700 via-pink-700 to-red-700 p-6 backdrop-blur-sm shadow-2xl">
                                     <div className="flex h-full flex-col items-center justify-center">
-                                        <div className="text-6xl animate-float">✨</div>
+                                        <Sparkles size={64} className="text-white animate-float"/>
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +164,9 @@ export function BoosterPack({onOpen, onAdd, disabled}: BoosterPackProps) {
 
                                     {/* Logo/Icon */}
                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                        <div className="mb-4 text-7xl animate-float">✨</div>
+                                        <div className="mb-4 animate-float">
+                                            <Sparkles size={80} className="text-white"/>
+                                        </div>
 
                                         {/* Title */}
                                         <div className="mb-2 text-center">
@@ -202,20 +205,20 @@ export function BoosterPack({onOpen, onAdd, disabled}: BoosterPackProps) {
 
                         {/* Instruction text */}
                         {!disabled && !isShaking && !isTearing && (
-                            <p className="mt-6 text-center text-sm font-medium text-white/80 animate-pulse">
-                                Cliquez pour invoquer un monstre ! 🎁
+                            <p className="mt-6 text-center text-sm font-medium text-white/80 animate-pulse flex items-center justify-center gap-2">
+                                Cliquez pour invoquer un monstre ! <Gift size={16}/>
                             </p>
                         )}
 
                         {/* Status text */}
                         {isShaking && (
-                            <p className="mt-6 text-center text-sm font-bold text-yellow-300 animate-pulse">
-                                ✨ Canalisation de l&#39;énergie... ✨
+                            <p className="mt-6 text-center text-sm font-bold text-yellow-300 animate-pulse flex items-center justify-center gap-2">
+                                <Sparkles size={16}/> Canalisation de l&#39;énergie... <Sparkles size={16}/>
                             </p>
                         )}
                         {isTearing && (
-                            <p className="mt-6 text-center text-sm font-bold text-pink-300 animate-pulse">
-                                💥 DÉCHIREMENT EN COURS ! 💥
+                            <p className="mt-6 text-center text-sm font-bold text-pink-300 animate-pulse flex items-center justify-center gap-2">
+                                <Zap size={16}/> DÉCHIREMENT EN COURS ! <Zap size={16}/>
                             </p>
                         )}
                     </button>
@@ -225,7 +228,7 @@ export function BoosterPack({onOpen, onAdd, disabled}: BoosterPackProps) {
             {/* Revealed Monster Card - Full screen overlay */}
             {isRevealing && revealedMonster && createPortal(
                 <div
-                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fadeIn"
+                    className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fadeIn"
                     style={{
                         position: 'fixed',
                         top: 0,
@@ -258,7 +261,7 @@ export function BoosterPack({onOpen, onAdd, disabled}: BoosterPackProps) {
                         className="relative z-10 w-full max-w-md animate-[revealCard_0.8s_ease-out] flex flex-col gap-6 items-center">
                         <div className="text-center space-y-2">
                             <h2 className="text-4xl font-black text-white drop-shadow-[0_0_15px_rgba(168,85,247,0.8)] animate-pulse">
-                                NEW MONSTER!
+                                NOUVEAU MONSTRE !
                             </h2>
                             <div
                                 className="h-1 w-24 bg-linear-to-r from-transparent via-purple-500 to-transparent mx-auto"/>
@@ -272,9 +275,9 @@ export function BoosterPack({onOpen, onAdd, disabled}: BoosterPackProps) {
                         {/* Close button */}
                         <button
                             onClick={handleClose}
-                            className="w-full max-w-xs mt-4 rounded-xl bg-linear-to-r from-purple-600 to-pink-600 py-4 text-lg font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] active:scale-95 border border-white/20"
+                            className="w-full max-w-xs mt-4 rounded-xl bg-linear-to-r from-purple-600 to-pink-600 py-4 text-lg font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] active:scale-95 border border-white/20 flex items-center justify-center gap-2"
                         >
-                            Ajouter à la collection ✨
+                            Ajouter à la collection <Sparkles size={20}/>
                         </button>
                     </div>
                 </div>,

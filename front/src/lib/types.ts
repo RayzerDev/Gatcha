@@ -57,19 +57,6 @@ export interface Monster {
     xp: number;
 }
 
-export interface Booster {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    rates?: {
-        common: number;
-        rare: number;
-        epic: number;
-        legendary: number;
-    };
-}
-
 export interface MonsterTemplate {
     id: number;
     element: ElementEnum;
