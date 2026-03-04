@@ -47,14 +47,12 @@ class InvocationServiceTest {
                 playerClientService
         );
 
-        // Créer les templates de test basés sur le template.json
         testTemplates = createTestTemplates();
     }
 
     private List<MonsterTemplate> createTestTemplates() {
         List<MonsterTemplate> templates = new ArrayList<>();
 
-        // Template 1: Fire monster - 30% loot rate
         templates.add(MonsterTemplate.builder()
                 .id(1)
                 .element(ElementType.FIRE)
@@ -66,7 +64,6 @@ class InvocationServiceTest {
                 .skills(createDefaultSkills())
                 .build());
 
-        // Template 2: Wind monster - 30% loot rate
         templates.add(MonsterTemplate.builder()
                 .id(2)
                 .element(ElementType.WIND)
@@ -78,7 +75,6 @@ class InvocationServiceTest {
                 .skills(createDefaultSkills())
                 .build());
 
-        // Template 3: Water monster - 30% loot rate
         templates.add(MonsterTemplate.builder()
                 .id(3)
                 .element(ElementType.WATER)
@@ -90,7 +86,6 @@ class InvocationServiceTest {
                 .skills(createDefaultSkills())
                 .build());
 
-        // Template 4: Water monster (rare) - 10% loot rate
         templates.add(MonsterTemplate.builder()
                 .id(4)
                 .element(ElementType.WATER)
@@ -134,7 +129,6 @@ class InvocationServiceTest {
     @Test
     @DisplayName("L'algorithme d'invocation doit respecter les taux de loot sur un grand nombre d'invocations")
     void testInvocationAlgorithmRespectsLootRates() {
-        // Arrange
         when(templateRepository.findAll()).thenReturn(testTemplates);
 
         int totalInvocations = 10000;
@@ -143,15 +137,11 @@ class InvocationServiceTest {
             counts.put(template.getId(), 0);
         }
 
-        // Act
         for (int i = 0; i < totalInvocations; i++) {
             MonsterTemplate selected = invocationService.selectRandomMonster();
             counts.put(selected.getId(), counts.get(selected.getId()) + 1);
         }
 
-        // Assert
-        // Vérifier que chaque template a été sélectionné un nombre de fois proche de son taux de loot
-        // Avec une tolérance de 3% (pour gérer la variance statistique)
         double tolerance = 0.03;
 
         for (MonsterTemplate template : testTemplates) {
@@ -180,19 +170,16 @@ class InvocationServiceTest {
     @Test
     @DisplayName("L'algorithme doit sélectionner tous les templates disponibles")
     void testAllTemplatesCanBeSelected() {
-        // Arrange
         when(templateRepository.findAll()).thenReturn(testTemplates);
 
         Set<Integer> selectedTemplateIds = new HashSet<>();
         int maxAttempts = 1000;
 
-        // Act
         for (int i = 0; i < maxAttempts && selectedTemplateIds.size() < testTemplates.size(); i++) {
             MonsterTemplate selected = invocationService.selectRandomMonster();
             selectedTemplateIds.add(selected.getId());
         }
 
-        // Assert
         assertEquals(testTemplates.size(), selectedTemplateIds.size(),
                 "Tous les templates doivent pouvoir être sélectionnés");
     }
@@ -200,7 +187,6 @@ class InvocationServiceTest {
     @Test
     @DisplayName("Test avec un template rare (1%) sur 100000 invocations")
     void testRareTemplateLootRate() {
-        // Arrange - Un seul template très rare
         List<MonsterTemplate> rareTemplates = Arrays.asList(
                 MonsterTemplate.builder()
                         .id(1)
@@ -221,7 +207,6 @@ class InvocationServiceTest {
         int totalInvocations = 100000;
         int rareCount = 0;
 
-        // Act
         for (int i = 0; i < totalInvocations; i++) {
             MonsterTemplate selected = invocationService.selectRandomMonster();
             if (selected.getId() == 2) {
@@ -229,10 +214,9 @@ class InvocationServiceTest {
             }
         }
 
-        // Assert
         double actualRate = (double) rareCount / totalInvocations;
         double expectedRate = 0.01;
-        double tolerance = 0.005;  // 0.5% de tolérance
+        double tolerance = 0.005;
 
         System.out.printf("Template rare (1%% expected): %.3f%% actual (%d invocations sur %d)%n",
                 actualRate * 100, rareCount, totalInvocations);
@@ -246,7 +230,6 @@ class InvocationServiceTest {
     @Test
     @DisplayName("Test de distribution uniforme (tous les monstres ont le même taux)")
     void testUniformDistribution() {
-        // Arrange - Tous les templates avec le même taux
         List<MonsterTemplate> uniformTemplates = Arrays.asList(
                 MonsterTemplate.builder().id(1).element(ElementType.FIRE).lootRate(0.25).skills(createDefaultSkills()).build(),
                 MonsterTemplate.builder().id(2).element(ElementType.WATER).lootRate(0.25).skills(createDefaultSkills()).build(),
@@ -262,13 +245,11 @@ class InvocationServiceTest {
             counts.put(template.getId(), 0);
         }
 
-        // Act
         for (int i = 0; i < totalInvocations; i++) {
             MonsterTemplate selected = invocationService.selectRandomMonster();
             counts.put(selected.getId(), counts.get(selected.getId()) + 1);
         }
 
-        // Assert
         double tolerance = 0.02;  // 2% de tolérance
         for (MonsterTemplate template : uniformTemplates) {
             double actualRate = (double) counts.get(template.getId()) / totalInvocations;
@@ -281,7 +262,6 @@ class InvocationServiceTest {
     @Test
     @DisplayName("Test avec un seul template disponible")
     void testSingleTemplate() {
-        // Arrange
         MonsterTemplate singleTemplate = MonsterTemplate.builder()
                 .id(1)
                 .element(ElementType.FIRE)
@@ -291,17 +271,14 @@ class InvocationServiceTest {
 
         when(templateRepository.findAll()).thenReturn(Collections.singletonList(singleTemplate));
 
-        // Act
         MonsterTemplate selected = invocationService.selectRandomMonster();
 
-        // Assert
         assertEquals(1, selected.getId());
     }
 
     @Test
     @DisplayName("Vérification statistique Chi-squared pour la distribution")
     void testChiSquaredDistribution() {
-        // Arrange
         when(templateRepository.findAll()).thenReturn(testTemplates);
 
         int totalInvocations = 10000;
@@ -313,13 +290,11 @@ class InvocationServiceTest {
             expected.put(template.getId(), template.getLootRate() * totalInvocations);
         }
 
-        // Act
         for (int i = 0; i < totalInvocations; i++) {
             MonsterTemplate selected = invocationService.selectRandomMonster();
             observed.put(selected.getId(), observed.get(selected.getId()) + 1);
         }
 
-        // Calculate Chi-squared statistic
         double chiSquared = 0;
         for (MonsterTemplate template : testTemplates) {
             double obs = observed.get(template.getId());
@@ -327,25 +302,16 @@ class InvocationServiceTest {
             chiSquared += Math.pow(obs - exp, 2) / exp;
         }
 
-        // Assert
-        // Pour 3 degrés de liberté (4 templates - 1), la valeur critique à 95% est 7.815
-        // Une valeur chi-squared inférieure indique que la distribution observée
-        // correspond à la distribution attendue
         System.out.printf("Chi-squared value: %.4f (critical value at 95%%: 7.815)%n", chiSquared);
-        assertTrue(chiSquared < 15.0, // Seuil plus permissif pour tenir compte de la variance
+        assertTrue(chiSquared < 15.0,
                 String.format("Chi-squared test failed: %.4f", chiSquared));
     }
-
-    // Tests fonctionnels d'invocation supprimés car les signatures de méthode ont changé
-    // Les tests statistiques ci-dessus couvrent l'algorithme principal d'invocation
 
     @Test
     @DisplayName("selectRandomMonster - Should never return null")
     void testSelectRandomMonster_NeverNull() {
-        // Arrange
         when(templateRepository.findAll()).thenReturn(testTemplates);
 
-        // Act & Assert
         for (int i = 0; i < 100; i++) {
             MonsterTemplate selected = invocationService.selectRandomMonster();
             assertNotNull(selected, "Selected monster should never be null");
@@ -355,7 +321,6 @@ class InvocationServiceTest {
     @Test
     @DisplayName("Test avec templates ayant des loot rates non normalisés")
     void testNonNormalizedLootRates() {
-        // Arrange - Total > 1.0
         List<MonsterTemplate> nonNormalizedTemplates = Arrays.asList(
                 MonsterTemplate.builder().id(1).element(ElementType.FIRE).lootRate(0.5).skills(createDefaultSkills()).build(),
                 MonsterTemplate.builder().id(2).element(ElementType.WATER).lootRate(0.5).skills(createDefaultSkills()).build(),
@@ -364,7 +329,6 @@ class InvocationServiceTest {
 
         when(templateRepository.findAll()).thenReturn(nonNormalizedTemplates);
 
-        // Act - L'algorithme devrait normaliser automatiquement
         Set<Integer> selectedIds = new HashSet<>();
         for (int i = 0; i < 1000; i++) {
             MonsterTemplate selected = invocationService.selectRandomMonster();
@@ -372,7 +336,6 @@ class InvocationServiceTest {
             assertNotNull(selected);
         }
 
-        // Assert - Tous les templates doivent pouvoir être sélectionnés
         assertEquals(3, selectedIds.size());
     }
 }

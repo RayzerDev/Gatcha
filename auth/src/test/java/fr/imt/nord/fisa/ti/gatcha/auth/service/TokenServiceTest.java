@@ -50,7 +50,6 @@ class TokenServiceTest {
 
         String actualToken = tokenService.generateToken(testUser);
 
-        // Assert
         assertEquals(expectedEncryptedToken, actualToken);
 
         ArgumentCaptor<Token> tokenCaptor = ArgumentCaptor.forClass(Token.class);
@@ -86,7 +85,6 @@ class TokenServiceTest {
         assertEquals("testuser", result.getUsername());
         assertEquals("Token valid", result.getMessage());
 
-        // Vérifier que l'expiration a été mise à jour
         verify(tokenRepository).save(any(Token.class));
     }
 
@@ -97,7 +95,7 @@ class TokenServiceTest {
         token.setId(UUID.randomUUID());
         token.setToken(tokenString);
         token.setUser(testUser);
-        token.setExpiryDate(LocalDateTime.now().minusMinutes(10)); // Token expiré
+        token.setExpiryDate(LocalDateTime.now().minusMinutes(10));
 
         when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
         doNothing().when(tokenRepository).delete(token);
@@ -107,7 +105,6 @@ class TokenServiceTest {
                 () -> tokenService.verifyToken(tokenString)
         );
 
-        // Vérifier que le token a été supprimé
         verify(tokenRepository).delete(token);
     }
 
@@ -121,7 +118,6 @@ class TokenServiceTest {
                 () -> tokenService.verifyToken(tokenString)
         );
 
-        // Vérifier qu'aucune suppression n'a été effectuée
         verify(tokenRepository, never()).delete(any(Token.class));
     }
 
@@ -149,7 +145,6 @@ class TokenServiceTest {
         Token saved = tokenCaptor.getValue();
         assertNotNull(saved.getExpiryDate());
 
-        // On attend environ +1h depuis le moment du call
         LocalDateTime minExpected = beforeCall.plusMinutes(59);
         LocalDateTime maxExpected = afterCall.plusMinutes(61);
         assertTrue(saved.getExpiryDate().isAfter(minExpected));

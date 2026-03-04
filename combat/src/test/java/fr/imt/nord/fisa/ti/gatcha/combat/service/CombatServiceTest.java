@@ -78,13 +78,10 @@ class CombatServiceTest {
     @Test
     @DisplayName("getCombatHistory - Retourner tous les combats")
     void getCombatHistory_Success() {
-        // Arrange
         when(combatRepository.findAllByOrderByCreatedAtDesc()).thenReturn(Collections.singletonList(testCombat));
 
-        // Act
         List<OutputCombatSummaryDTO> result = combatService.getCombatHistory();
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(combatId, result.getFirst().getId());
@@ -94,14 +91,11 @@ class CombatServiceTest {
     @Test
     @DisplayName("getMyCombatHistory - Retourner les combats du joueur")
     void getMyCombatHistory_Success() {
-        // Arrange
         when(combatRepository.findByInitiatorUsernameOrderByCreatedAtDesc(initiatorUsername))
                 .thenReturn(Collections.singletonList(testCombat));
 
-        // Act
         List<OutputCombatSummaryDTO> result = combatService.getMyCombatHistory();
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(initiatorUsername, result.getFirst().getInitiatorUsername());
@@ -110,13 +104,10 @@ class CombatServiceTest {
     @Test
     @DisplayName("getCombatById - Retourner un combat existant")
     void getCombatById_Success() {
-        // Arrange
         when(combatRepository.findById(combatId)).thenReturn(Optional.of(testCombat));
 
-        // Act
         OutputCombatDTO result = combatService.getCombatById(combatId);
 
-        // Assert
         assertNotNull(result);
         assertEquals(combatId, result.getId());
     }
@@ -124,37 +115,31 @@ class CombatServiceTest {
     @Test
     @DisplayName("getCombatById - Exception si combat non trouvé")
     void getCombatById_NotFound() {
-        // Arrange
         when(combatRepository.findById(combatId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(CombatNotFoundException.class, () -> combatService.getCombatById(combatId));
     }
 
     @Test
     @DisplayName("startCombat - Succès du lancement")
     void startCombat_Success() {
-        // Arrange
         List<MonsterResponse> monsters = Arrays.asList(
                 createMockMonsterResponse(monster1Id, initiatorUsername),
                 createMockMonsterResponse(monster2Id, "Player2")
         );
 
         when(monsterClientService.getMonstersByIds(anyList())).thenReturn(monsters);
-        when(combatSimulator.simulate(any(), any())).thenReturn(new CombatSimulator.SimulationResult(new ArrayList<>(), monster1Id, initiatorUsername, 5)); // Logs
+        when(combatSimulator.simulate(any(), any())).thenReturn(new CombatSimulator.SimulationResult(new ArrayList<>(), monster1Id, initiatorUsername, 5));
         when(combatRepository.save(any(Combat.class))).thenAnswer(i -> {
             Combat c = i.getArgument(0);
             c.setId(combatId);
             return c;
         });
 
-        // Lenient stubs because logic might be complex inside verifyCombatEligibility
         Mockito.lenient().doNothing().when(monsterClientService).addExperienceReward(any(), anyDouble());
 
-        // Act
         OutputCombatDTO result = combatService.startCombat(monster1Id, monster2Id);
 
-        // Assert
         assertNotNull(result);
         verify(combatRepository).save(any(Combat.class));
         verify(combatSimulator).simulate(any(), any());

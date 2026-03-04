@@ -99,14 +99,11 @@ class MonsterServiceTest {
     @Test
     @DisplayName("getMonstersByOwner - Doit retourner les monstres d'un joueur")
     void getMonstersByOwner_Success() {
-        // Arrange
         Monster monster2 = Monster.createFromTemplate(2, ownerUsername, ElementType.WATER, 1500, 400, 500, 70, createDefaultSkills());
         when(monsterRepository.findByOwnerUsername(ownerUsername)).thenReturn(Arrays.asList(testMonster, monster2));
 
-        // Act
         List<MonsterDTO> result = monsterService.getMonstersByOwner(ownerUsername);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         verify(monsterRepository).findByOwnerUsername(ownerUsername);
@@ -115,13 +112,10 @@ class MonsterServiceTest {
     @Test
     @DisplayName("getMonstersByOwner - Doit retourner une liste vide si aucun monstre")
     void getMonstersByOwner_Empty() {
-        // Arrange
         when(monsterRepository.findByOwnerUsername("NoMonsterUser")).thenReturn(Collections.emptyList());
 
-        // Act
         List<MonsterDTO> result = monsterService.getMonstersByOwner("NoMonsterUser");
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -131,13 +125,10 @@ class MonsterServiceTest {
     @Test
     @DisplayName("getMonsterById - Doit retourner le monstre si le joueur en est propriétaire")
     void getMonsterById_Success() {
-        // Arrange
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
 
-        // Act
         MonsterDTO result = monsterService.getMonsterById(monsterId, ownerUsername);
 
-        // Assert
         assertNotNull(result);
         assertEquals(monsterId, result.getId());
         assertEquals(ElementType.FIRE, result.getElement());
@@ -147,11 +138,9 @@ class MonsterServiceTest {
     @Test
     @DisplayName("getMonsterById - Doit lever une exception si le monstre n'existe pas")
     void getMonsterById_NotFound() {
-        // Arrange
         UUID unknownId = UUID.randomUUID();
         when(monsterRepository.findById(unknownId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(MonsterNotFoundException.class,
                 () -> monsterService.getMonsterById(unknownId, ownerUsername));
     }
@@ -159,10 +148,8 @@ class MonsterServiceTest {
     @Test
     @DisplayName("getMonsterById - Doit lever une exception si le joueur n'est pas le propriétaire")
     void getMonsterById_NotOwned() {
-        // Arrange
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
 
-        // Act & Assert
         assertThrows(MonsterNotOwnedException.class,
                 () -> monsterService.getMonsterById(monsterId, "WrongOwner"));
     }
@@ -172,7 +159,6 @@ class MonsterServiceTest {
     @Test
     @DisplayName("createMonster - Doit créer un nouveau monstre")
     void createMonster_Success() {
-        // Arrange
         CreateMonsterRequest request = new CreateMonsterRequest();
         request.setTemplateId(1);
         request.setElement(ElementType.WIND);
@@ -189,10 +175,8 @@ class MonsterServiceTest {
         });
         org.mockito.Mockito.lenient().doNothing().when(playerClientService).addMonsterToPlayer(any(), any());
 
-        // Act
         MonsterDTO result = monsterService.createMonster(request);
 
-        // Assert
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals(ElementType.WIND, result.getElement());
@@ -201,19 +185,15 @@ class MonsterServiceTest {
         verify(playerClientService).addMonsterToPlayer(eq("TestOwner"), any(UUID.class));
     }
 
-    // ========== Tests addExperience ==========
 
     @Test
     @DisplayName("addExperience - Doit ajouter de l'XP au monstre")
     void addExperience_Success() {
-        // Arrange
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
         when(monsterRepository.save(any(Monster.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         MonsterDTO result = monsterService.addExperience(monsterId, ownerUsername, 100.0);
 
-        // Assert
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals(monsterId, result.getId());
@@ -223,7 +203,6 @@ class MonsterServiceTest {
     @Test
     @DisplayName("addExperience - Doit lever une exception si l'XP est négative ou nulle")
     void addExperience_InvalidXp() {
-        // Act & Assert
         assertThrows(InvalidValueException.class,
                 () -> monsterService.addExperience(monsterId, ownerUsername, -10.0));
 
@@ -236,16 +215,13 @@ class MonsterServiceTest {
     @Test
     @DisplayName("addExperience - Doit faire monter de niveau le monstre")
     void addExperience_LevelUp() {
-        // Arrange
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
         when(monsterRepository.save(any(Monster.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         int initialLevel = testMonster.getLevel();
 
-        // Act
         MonsterDTO result = monsterService.addExperience(monsterId, ownerUsername, 5000.0);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.getLevel() > initialLevel);
         verify(monsterRepository).save(testMonster);
@@ -256,28 +232,23 @@ class MonsterServiceTest {
     @Test
     @DisplayName("upgradeSkill - Doit améliorer une compétence")
     void upgradeSkill_Success() {
-        // Arrange
         testMonster.setSkillPoints(1);
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
         when(monsterRepository.save(any(Monster.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         MonsterDTO result = monsterService.upgradeSkill(monsterId, ownerUsername, 1);
 
-        // Assert
         assertNotNull(result);
-        assertEquals(0, result.getSkillPoints()); // Point consommé
+        assertEquals(0, result.getSkillPoints());
         verify(monsterRepository).save(testMonster);
     }
 
     @Test
     @DisplayName("upgradeSkill - Doit lever une exception si aucun point de compétence")
     void upgradeSkill_NoPoints() {
-        // Arrange
         testMonster.setSkillPoints(0);
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
 
-        // Act & Assert
         assertThrows(SkillUpgradeException.class,
                 () -> monsterService.upgradeSkill(monsterId, ownerUsername, 1));
 
@@ -287,13 +258,10 @@ class MonsterServiceTest {
     @Test
     @DisplayName("upgradeSkill - Doit lever une exception si la compétence est au niveau max")
     void upgradeSkill_MaxLevel() {
-        // Arrange
         testMonster.setSkillPoints(1);
-        // Mettre la skill directement au niveau max (5)
         testMonster.getSkills().getFirst().setLvl(5);
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
 
-        // Act & Assert
         assertThrows(SkillUpgradeException.class,
                 () -> monsterService.upgradeSkill(monsterId, ownerUsername, 1));
     }
@@ -303,15 +271,12 @@ class MonsterServiceTest {
     @Test
     @DisplayName("deleteMonster - Doit supprimer le monstre")
     void deleteMonster_Success() {
-        // Arrange
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
         doNothing().when(monsterRepository).delete(testMonster);
         doNothing().when(playerClientService).removeMonsterFromPlayer(ownerUsername, monsterId);
 
-        // Act
         monsterService.deleteMonster(monsterId, ownerUsername);
 
-        // Assert
         verify(monsterRepository).delete(testMonster);
         verify(playerClientService).removeMonsterFromPlayer(ownerUsername, monsterId);
     }
@@ -319,10 +284,8 @@ class MonsterServiceTest {
     @Test
     @DisplayName("deleteMonster - Doit lever une exception si le joueur n'est pas le propriétaire")
     void deleteMonster_NotOwned() {
-        // Arrange
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
 
-        // Act & Assert
         assertThrows(MonsterNotOwnedException.class,
                 () -> monsterService.deleteMonster(monsterId, "WrongOwner"));
 
@@ -334,16 +297,12 @@ class MonsterServiceTest {
     @Test
     @DisplayName("getMonsterByIdInternal - Doit retourner le monstre sans vérifier le propriétaire")
     void getMonsterByIdInternal_Success() {
-        // Arrange
         when(monsterRepository.findById(monsterId)).thenReturn(Optional.of(testMonster));
 
-        // Act
         MonsterDTO result = monsterService.getMonsterByIdInternal(monsterId);
 
-        // Assert
         assertNotNull(result);
         assertEquals(monsterId, result.getId());
-        // Pas de vérification de propriétaire
     }
 
     // ========== Tests getMonstersByIds ==========
@@ -351,7 +310,6 @@ class MonsterServiceTest {
     @Test
     @DisplayName("getMonstersByIds - Doit retourner plusieurs monstres")
     void getMonstersByIds_Success() {
-        // Arrange
         Monster monster2 = Monster.createFromTemplate(2, "TestOwner", ElementType.WATER, 1500, 400, 500, 70, createDefaultSkills());
         UUID monster2Id = UUID.randomUUID();
         monster2.setId(monster2Id);
@@ -359,10 +317,8 @@ class MonsterServiceTest {
         when(monsterRepository.findAllByIdInAndOwnerUsername(anyList(), eq("TestOwner")))
                 .thenReturn(Arrays.asList(testMonster, monster2));
 
-        // Act
         List<MonsterDTO> result = monsterService.getMonstersByIds(Arrays.asList(monsterId, monster2Id));
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
     }
@@ -372,14 +328,11 @@ class MonsterServiceTest {
     @Test
     @DisplayName("addExperienceInternal - Doit ajouter de l'XP sans vérifier le propriétaire")
     void addExperienceInternal_Success() {
-        // Arrange
         when(monsterRepository.findByIdAndOwnerUsername(eq(monsterId), org.mockito.ArgumentMatchers.anyString())).thenReturn(Optional.of(testMonster));
         when(monsterRepository.save(any(Monster.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         MonsterDTO result = monsterService.addExperienceInternal(monsterId, 200.0);
 
-        // Assert
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals(monsterId, result.getId());

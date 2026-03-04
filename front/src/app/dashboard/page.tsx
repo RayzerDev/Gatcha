@@ -187,8 +187,7 @@ export default function DashboardPage() {
     const canSummon = player && player.monsters.length < player.maxMonsters;
 
     return (
-
-        <div className="mx-auto w-full max-w-[90rem] px-4 py-4 sm:px-6 lg:px-8 h-full flex flex-col overflow-hidden">
+        <div className="mx-auto w-full max-w-[90rem] px-4 py-4 sm:px-6 lg:px-8 h-full flex flex-col">
 
             {/* Stats du joueur */}
             <div className="mb-4 shrink-0 animate-fadeInUp">
@@ -224,7 +223,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar animate-fadeInUp"
+            <div className="flex-1 min-h-0 custom-scrollbar animate-fadeInUp"
                  style={{animationDelay: '0.1s'}}>
                 {activeTab === 'invocation' ? (
                     <InvocationTab
