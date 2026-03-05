@@ -3,6 +3,7 @@ package fr.imt.nord.fisa.ti.gatcha.monster.controller;
 import fr.imt.nord.fisa.ti.gatcha.common.context.SecurityContext;
 import fr.imt.nord.fisa.ti.gatcha.common.dto.CreateMonsterRequest;
 import fr.imt.nord.fisa.ti.gatcha.monster.dto.MonsterDTO;
+import fr.imt.nord.fisa.ti.gatcha.monster.dto.RenameMonsterDTO;
 import fr.imt.nord.fisa.ti.gatcha.monster.service.MonsterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -127,5 +128,21 @@ public class MonsterController {
         String username = SecurityContext.getUsername();
         monsterService.deleteMonster(id, username);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/name")
+    @Operation(summary = "Renommer un monstre", description = "Donne un nom personnalisé à un monstre de la collection du joueur.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Monstre renommé",
+                    content = @Content(schema = @Schema(implementation = MonsterDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Nom invalide"),
+            @ApiResponse(responseCode = "404", description = "Monstre non trouvé")
+    })
+    public ResponseEntity<MonsterDTO> renameMonster(
+            @Parameter(description = "ID unique du monstre", required = true)
+            @PathVariable UUID id,
+            @Valid @RequestBody RenameMonsterDTO request) {
+        String username = SecurityContext.getUsername();
+        return ResponseEntity.ok(monsterService.renameMonster(id, username, request.getName()));
     }
 }

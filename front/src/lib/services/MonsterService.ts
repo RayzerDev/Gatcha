@@ -40,4 +40,14 @@ export class MonsterService extends BaseService {
     async deleteMonster(monsterId: string): Promise<void> {
         return this.deleteAuthenticated<void>(`/api/monster/monsters/${monsterId}`);
     }
+
+    /**
+     * Renomme un monstre
+     */
+    async renameMonster(monsterId: string, name: string): Promise<Monster> {
+        return this.patchAuthenticated<Monster>(
+            `/api/monster/monsters/${monsterId}/name`,
+            {name}
+        );
+    }
 }

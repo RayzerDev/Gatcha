@@ -10,6 +10,7 @@ interface CollectionTabProps {
     deletingId: string | null;
     onUpgradeSkill: (monsterId: string, skillNum: number) => void;
     onDelete: (monsterId: string) => void;
+    onRename: (monsterId: string, name: string) => void;
 }
 
 export function CollectionTab({
@@ -18,7 +19,8 @@ export function CollectionTab({
                                   isLoading,
                                   deletingId,
                                   onUpgradeSkill,
-                                  onDelete
+                                  onDelete,
+                                  onRename
                               }: CollectionTabProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 4;
@@ -90,6 +92,7 @@ export function CollectionTab({
                     monsters={displayedMonsters}
                     onUpgradeSkill={onUpgradeSkill}
                     onDelete={onDelete}
+                    onRename={onRename}
                     deletingId={deletingId}
                 />
             ) : (

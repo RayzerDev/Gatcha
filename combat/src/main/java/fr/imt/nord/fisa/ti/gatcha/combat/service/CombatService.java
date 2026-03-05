@@ -165,6 +165,7 @@ public class CombatService {
         return CombatMonsterSnapshot.builder()
                 .id(response.getId())
                 .ownerUsername(response.getOwnerUsername())
+            .name(response.getName())
                 .element(response.getElement())
                 .hp(response.getHp())
                 .atk(response.getAtk())

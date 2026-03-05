@@ -27,6 +27,8 @@ public class Monster {
     @Indexed
     private String ownerUsername;
 
+    private String name;
+
     private ElementType element;
     private int hp;
     private int atk;

@@ -30,6 +30,7 @@ export function MonsterCombatCard({
                                       isWinner
                                   }: MonsterCombatCardProps) {
     const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
+        const displayName = monster.name?.trim() || `#${monster.id.substring(0, 6)}`;
 
     return (
         <motion.div
@@ -52,7 +53,7 @@ export function MonsterCombatCard({
                     {monster.element === ElementEnum.wind && <Wind size={16}/>}
                     <span>Lvl {monster.level}</span>
                 </div>
-                <div className="text-xs font-mono opacity-80">#{monster.id.substring(0, 6)}</div>
+                <div className="max-w-28 truncate text-xs font-semibold opacity-90">{displayName}</div>
             </div>
 
             {/* Monster Avatar Placeholder */}

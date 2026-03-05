@@ -8,10 +8,11 @@ interface MonsterGridProps {
     monsters: Monster[];
     onUpgradeSkill?: (monsterId: string, skillNum: number) => void;
     onDelete?: (monsterId: string) => void;
+    onRename?: (monsterId: string, name: string) => void;
     deletingId?: string | null;
 }
 
-export function MonsterGrid({monsters, onUpgradeSkill, onDelete, deletingId}: MonsterGridProps) {
+export function MonsterGrid({monsters, onUpgradeSkill, onDelete, onRename, deletingId}: MonsterGridProps) {
     // displayedMonsters is now passed as monsters prop
 
     if (monsters.length === 0) {
@@ -36,6 +37,7 @@ export function MonsterGrid({monsters, onUpgradeSkill, onDelete, deletingId}: Mo
                             monster={monster}
                             onUpgradeSkill={onUpgradeSkill ? (skillNum) => onUpgradeSkill(monster.id, skillNum) : undefined}
                             onDelete={onDelete ? () => onDelete(monster.id) : undefined}
+                            onRename={onRename ? (name) => onRename(monster.id, name) : undefined}
                             isDeleting={deletingId === monster.id}
                         />
                     </div>

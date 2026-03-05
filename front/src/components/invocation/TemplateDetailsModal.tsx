@@ -48,7 +48,7 @@ export function TemplateDetailsModal({template, onClose}: TemplateDetailsModalPr
                         </div>
                         <div>
                             <h3 className="text-3xl font-black text-white drop-shadow-lg tracking-tight">
-                                Monstre #{template.id}
+                                Modele #{template.id}
                             </h3>
                             <div className="flex items-center gap-2 mt-1">
                                 <span

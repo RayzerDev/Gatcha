@@ -27,6 +27,9 @@ public class MonsterDTO {
     @Schema(description = "Nom du propriétaire", example = "joueur123")
     private String ownerUsername;
 
+    @Schema(description = "Nom donné au monstre par le joueur", example = "Flamby")
+    private String name;
+
     @Schema(description = "Élément du monstre", example = "FIRE")
     private ElementType element;
 
@@ -62,6 +65,7 @@ public class MonsterDTO {
                 .id(monster.getId())
                 .templateId(monster.getTemplateId())
                 .ownerUsername(monster.getOwnerUsername())
+                .name(monster.getName())
                 .element(monster.getElement())
                 .hp(monster.getHp())
                 .atk(monster.getAtk())

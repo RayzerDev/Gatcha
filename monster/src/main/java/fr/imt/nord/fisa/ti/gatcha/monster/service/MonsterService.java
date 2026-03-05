@@ -120,6 +120,14 @@ public class MonsterService {
         playerClientService.removeMonsterFromPlayer(ownerUsername, monsterId);
     }
 
+    public MonsterDTO renameMonster(UUID monsterId, String ownerUsername, String name) {
+        Monster monster = getMonsterByIdAndOwner(monsterId, ownerUsername);
+        monster.setName(name.trim());
+        Monster saved = monsterRepository.save(monster);
+        log.info("Monster {} renamed to '{}'", monsterId, name.trim());
+        return MonsterDTO.fromEntity(saved);
+    }
+
     private Monster getMonsterByIdAndOwner(UUID monsterId, String ownerUsername) {
         Monster monster = monsterRepository.findById(monsterId)
                 .orElseThrow(() -> new MonsterNotFoundException(monsterId.toString()));

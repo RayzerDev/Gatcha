@@ -21,6 +21,7 @@ public class MonsterResponse {
     private UUID id;
     private int templateId;
     private String ownerUsername;
+    private String name;
     private ElementType element;
     private int hp;
     private int atk;
