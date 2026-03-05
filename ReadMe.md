@@ -221,3 +221,77 @@ Gatcha/
 ├── common-auth/                        # Code partagé spécifique à l'authentification (ex: Token verification)
 └── front/                              # Frontend Next.js
 ```
+
+---
+
+## 🔍 Analyse qualité avec SonarQube
+
+### Prérequis
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installé et démarré
+- JDK 21 (pour les modules Java)
+- Node.js 20+ (pour le frontend)
+- `sonar-scanner` CLI pour le frontend : `npm install -g sonarqube-scanner`
+
+### 1. Démarrer SonarQube
+
+```powershell
+.\sonar-analyze.ps1 -Start
+```
+
+Au **premier lancement**, un container Docker `sonar-init` s'exécute **automatiquement** et :
+
+- 🔐 Change le mot de passe admin (`admin/admin` → `Admin1234!5678` par défaut)
+- 📁 Crée les 8 projets SonarQube (`gatcha-auth`, `gatcha-combat`, etc.)
+- 🎫 Génère un **token d'analyse global** persisté dans le volume Docker `sonar_token`
+
+Dès le deuxième lancement, le marqueur `.initialized` dans le volume empêche toute ré-initialisation. Le token est rechargé automatiquement.
+
+> **Mot de passe admin personnalisé** : définir `SONAR_ADMIN_PASSWORD` dans un fichier `.env` à la racine :
+> ```
+> SONAR_ADMIN_PASSWORD=MonMotDePasse!
+> ```
+
+> **Pour forcer une ré-initialisation** (après `down -v`) : supprimer et recréer les volumes Docker.
+
+### 2. Lancer les analyses
+
+Aucune configuration manuelle de token nécessaire, il est chargé automatiquement depuis le volume Docker :
+
+```powershell
+# Un seul module Java
+.\sonar-analyze.ps1 -Module auth
+.\sonar-analyze.ps1 -Module combat
+.\sonar-analyze.ps1 -Module monster
+# etc.
+
+# Le frontend
+.\sonar-analyze.ps1 -Module front
+
+# Tous les modules d'un coup
+.\sonar-analyze.ps1 -All
+
+# Avec token explicite (prioritaire sur le volume Docker)
+.\sonar-analyze.ps1 -All -Token squ_VOTRE_TOKEN
+```
+
+### 3. Consulter les résultats
+
+Ouvrez **http://localhost:9000** et accédez aux projets :
+
+| Projet | Clé SonarQube |
+|--------|--------------|
+| Auth | `gatcha-auth` |
+| Combat | `gatcha-combat` |
+| Common | `gatcha-common` |
+| Common-Auth | `gatcha-common-auth` |
+| Invocation | `gatcha-invocation` |
+| Monster | `gatcha-monster` |
+| Player | `gatcha-player` |
+| Frontend | `gatcha-front` |
+
+### 4. Arrêter SonarQube
+
+```powershell
+.\sonar-analyze.ps1 -Stop
+```
