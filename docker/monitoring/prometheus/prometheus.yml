@@ -1,0 +1,51 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+rule_files:
+  - "/etc/prometheus/alerts.yml"
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "gatcha-auth"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["api-auth:8080"]
+        labels:
+          service: "auth"
+
+  - job_name: "gatcha-player"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["api-player:8080"]
+        labels:
+          service: "player"
+
+  - job_name: "gatcha-monster"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["api-monster:8080"]
+        labels:
+          service: "monster"
+
+  - job_name: "gatcha-invocation"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["api-invocation:8080"]
+        labels:
+          service: "invocation"
+
+  - job_name: "gatcha-combat"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["api-combat:8080"]
+        labels:
+          service: "combat"
