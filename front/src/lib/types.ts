@@ -44,6 +44,7 @@ export interface Monster {
     id: string;
     templateId: number;
     ownerUsername: string;
+    name: string | null;
     element: ElementEnum;
     hp: number;
     atk: number;
@@ -118,6 +119,7 @@ export interface SkillSnapshot {
 export interface CombatMonsterSnapshot {
     id: string;
     ownerUsername: string;
+    name?: string | null;
     element: ElementEnum;
     hp: number;
     atk: number;

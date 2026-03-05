@@ -62,7 +62,7 @@ export function TemplateList({allTemplates, displayedTemplates, onRefresh, readO
                                     <div>
                                         <div className="flex items-center gap-2">
                                             <p className="font-bold text-zinc-200 text-lg group-hover:text-purple-300 transition-colors">
-                                                Monstre #{template.id}
+                                                Modele #{template.id}
                                             </p>
                                             {readOnly && (
                                                 <span className={`text-xs font-bold px-2 py-0.5 rounded border ${

@@ -20,6 +20,7 @@ import java.util.UUID;
 public class CombatMonsterSnapshot {
     private UUID id;
     private String ownerUsername;
+    private String name;
     private ElementType element;
     private int hp;
     private int atk;

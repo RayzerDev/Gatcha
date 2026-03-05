@@ -1,12 +1,14 @@
 'use client';
 
 import {Monster} from '@/lib/services';
-import {ArrowUp, Clock, Droplets, Flame, Heart, Shield, Sparkles, Sword, Trash2, Wind, Zap} from 'lucide-react';
+import {ArrowUp, Check, Clock, Droplets, Flame, Heart, Pencil, Shield, Sparkles, Sword, Trash2, Wind, X, Zap} from 'lucide-react';
+import React, {useState} from 'react';
 
 interface MonsterCardProps {
     monster: Monster;
     onUpgradeSkill?: (skillNum: number) => void;
     onDelete?: () => void;
+    onRename?: (name: string) => void;
     isDeleting?: boolean;
 }
 
@@ -40,9 +42,31 @@ const elementTranslations: { [key: string]: string } = {
     wind: 'VENT'
 };
 
-export function MonsterCard({monster, onUpgradeSkill, onDelete, isDeleting}: MonsterCardProps) {
+export function MonsterCard({monster, onUpgradeSkill, onDelete, onRename, isDeleting}: MonsterCardProps) {
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [editName, setEditName] = useState(monster.name || '');
     const expPercent = Math.min(100, Math.max(0, (monster.experience / monster.experienceToNextLevel) * 100));
     const config = elementConfig[monster.element as keyof typeof elementConfig] || elementConfig.fire;
+
+    const displayName = monster.name?.trim() || monster.id.substring(0, 8);
+
+    const handleSubmitName = () => {
+        const trimmed = editName.trim();
+        if (trimmed && trimmed !== monster.name && onRename) {
+            onRename(trimmed);
+        }
+        setIsEditingName(false);
+    };
+
+    const handleCancelEdit = () => {
+        setEditName(monster.name || '');
+        setIsEditingName(false);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleSubmitName();
+        if (e.key === 'Escape') handleCancelEdit();
+    };
 
     return (
         <div
@@ -67,9 +91,45 @@ export function MonsterCard({monster, onUpgradeSkill, onDelete, isDeleting}: Mon
                                     {elementTranslations[monster.element] || monster.element}
                                 </span>
                             </div>
-                            <h3 className="text-2xl font-black text-white leading-none tracking-tight">
-                                MONSTRE #{monster.templateId}
-                            </h3>
+                            {isEditingName ? (
+                                <div className="flex items-center gap-1 mt-1">
+                                    <input
+                                        type="text"
+                                        value={editName}
+                                        onChange={(e) => setEditName(e.target.value)}
+                                        onKeyDown={handleKeyDown}
+                                        autoFocus
+                                        maxLength={30}
+                                        className="bg-zinc-800 border border-white/20 rounded-lg px-2 py-1 text-white text-lg font-bold w-full focus:outline-none focus:border-white/40"
+                                    />
+                                    <button onClick={handleSubmitName}
+                                            className="p-1 rounded-lg hover:bg-green-500/20 text-green-400 transition-colors">
+                                        <Check size={16}/>
+                                    </button>
+                                    <button onClick={handleCancelEdit}
+                                            className="p-1 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors">
+                                        <X size={16}/>
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 group/name">
+                                    <h3 className="text-2xl font-black text-white leading-none tracking-tight">
+                                        {displayName}
+                                    </h3>
+                                    {onRename && (
+                                        <button
+                                            onClick={() => {
+                                                setEditName(monster.name || '');
+                                                setIsEditingName(true);
+                                            }}
+                                            className="p-1 rounded-lg opacity-0 group-hover/name:opacity-100 hover:bg-white/10 text-zinc-400 hover:text-white transition-all"
+                                            title="Renommer"
+                                        >
+                                            <Pencil size={14}/>
+                                        </button>
+                                    )}
+                                </div>
+                            )}
                         </div>
                         <div className="flex flex-col items-end">
                             <div

@@ -64,7 +64,7 @@ public class CombatSimulator {
                         .attackerHpRemaining(firstAttackerHp)
                         .defenderHpRemaining(firstDefenderHp)
                         .description(String.format("%s utilise compétence %d et inflige %d dégâts",
-                                firstAttacker.getId().toString().substring(0, 8), skill1.getNum(), damage))
+                            getMonsterDisplayName(firstAttacker), skill1.getNum(), damage))
                         .build());
             }
 
@@ -100,7 +100,7 @@ public class CombatSimulator {
                         .attackerHpRemaining(secondAttackerHp)
                         .defenderHpRemaining(secondDefenderHp)
                         .description(String.format("%s utilise compétence %d et inflige %d dégâts",
-                                secondAttacker.getId().toString().substring(0, 8), skill2.getNum(), damage))
+                            getMonsterDisplayName(secondAttacker), skill2.getNum(), damage))
                         .build());
             }
 
@@ -140,6 +140,16 @@ public class CombatSimulator {
 
         log.info("Combat terminé en {} tours. Vainqueur: {}", turn, winnerId);
         return new SimulationResult(logs, winnerId, winnerUsername, turn);
+    }
+
+    /**
+     * Utilise le nom personnalisé si présent, sinon l'ID court historique.
+     */
+    private String getMonsterDisplayName(CombatMonsterSnapshot monster) {
+        if (monster.getName() != null && !monster.getName().isBlank()) {
+            return monster.getName();
+        }
+        return monster.getId().toString().substring(0, 8);
     }
 
     /**

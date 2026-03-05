@@ -175,6 +175,19 @@ export default function DashboardPage() {
         }
     };
 
+    // Renommer un monstre
+    const handleRename = async (monsterId: string, name: string) => {
+        try {
+            const updatedMonster = await monsterService.renameMonster(monsterId, name);
+            setMonsters(prev =>
+                prev.map(m => m.id === monsterId ? updatedMonster : m)
+            );
+            toast.success(`Monstre renommé en "${name}"`);
+        } catch (err) {
+            handleError(err, 'Impossible de renommer ce monstre.');
+        }
+    };
+
     // États de chargement
     if (authLoading) {
         return <LoadingPage message="Vérification de l'authentification..."/>;
@@ -245,6 +258,7 @@ export default function DashboardPage() {
                         deletingId={deletingId}
                         onUpgradeSkill={handleUpgradeSkill}
                         onDelete={handleDelete}
+                        onRename={handleRename}
                     />
                 )}
             </div>
