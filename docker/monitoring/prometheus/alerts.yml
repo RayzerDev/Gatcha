@@ -1,0 +1,11 @@
+groups:
+  - name: service_availability
+    rules:
+      - alert: ServiceDown
+        expr: up{job=~"gatcha-.*"} == 0
+        for: 5s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.job }} est down"
+          description: "Le service {{ $labels.job }} ({{ $labels.instance }}) est inaccessible depuis plus de 30 secondes."

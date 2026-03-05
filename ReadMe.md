@@ -8,6 +8,7 @@ Système de jeu Gatcha complet avec gestion d'authentification, de joueurs, de m
 - [Architecture](#-architecture)
 - [Installation et Démarrage](#-installation-et-démarrage)
 - [Services et Ports](#-services-et-ports)
+- [Monitoring](#-monitoring)
 - [Structure du Projet](#-structure-du-projet)
 
 ## 👥 Équipe et Contribution
@@ -125,6 +126,12 @@ Tous les services doivent avoir le statut `Up` et être `healthy`.
 - **API Invocation** : http://localhost:8084
 - **API Combat** : http://localhost:8085
 
+#### Monitoring
+
+- **Prometheus** : http://localhost:9090
+- **Grafana** : http://localhost:3001
+- **Alertmanager** : http://localhost:9093
+
 ### 6. Arrêter l'application
 
 ```bash
@@ -153,6 +160,9 @@ docker compose -f docker/docker-compose.yml down -v
 | **mongodb-invocation** | MongoDB    | 27017        | 27020        | Base de données Invocation       |
 | **api-combat**         | SpringBoot | 8085         | 8085         | API de combat (BONUS)            |
 | **mongodb-combat**     | MongoDB    | 27017        | 27021        | Base de données Combat           |
+| **prometheus**         | Monitoring | 9090         | 9090         | Collecte des métriques           |
+| **grafana**            | Monitoring | 3000         | 3001         | Dashboard de monitoring          |
+| **alertmanager**       | Monitoring | 9093         | 9093         | Gestion des alertes              |
 
 ### Notes Importantes
 
@@ -160,6 +170,34 @@ docker compose -f docker/docker-compose.yml down -v
 - **Ports MongoDB** : Le port interne est toujours 27017 (dans le container), les ports externes sont mappés
   différemment (27017, 27018, 27019, etc.)
 - **Tous les ports sont configurables** via le fichier `.env`
+
+## 📈 Monitoring
+
+Le projet intègre une stack de monitoring complète via Docker Compose :
+
+- **Prometheus** scrape les endpoints `/actuator/prometheus` de chaque microservice
+- **Grafana** charge automatiquement la datasource Prometheus et le dashboard Gatcha
+- **Alertmanager** reçoit les alertes Prometheus
+
+### Alertes de disponibilité
+
+Une règle d'alerte est configurée pour notifier uniquement lorsqu'un service applicatif est indisponible :
+
+- **Alerte** : `ServiceDown`
+- **Condition** : `up{job=~"gatcha-.*"} == 0`
+- **Durée avant déclenchement** : 30 secondes
+
+### URLs d'accès monitoring
+
+- Prometheus : `http://localhost:9090`
+- Grafana : `http://localhost:3001`
+- Alertmanager : `http://localhost:9093`
+
+### Accès Grafana
+
+- Utilisateur par défaut : `admin`
+- Mot de passe par défaut : `admin`
+- Variables Docker disponibles : `GRAFANA_ADMIN_USER` et `GRAFANA_ADMIN_PASSWORD`
 
 ## 📁 Structure du Projet
 
