@@ -296,6 +296,10 @@ volumes:
     driver: local
   mongo-data-combat:
     driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
 
 # ============================================
 # Networks
