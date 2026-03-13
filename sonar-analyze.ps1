@@ -51,7 +51,7 @@ function Wait-SonarInit {
 
 function Start-Sonar {
     Write-Host "Demarrage de SonarQube..." -ForegroundColor Cyan
-    docker compose -f $COMPOSE_FILE up -d
+    docker compose -f $COMPOSE_FILE up -d --build
     Wait-Sonar
     Wait-SonarInit
     # Charger le token genere par sonar-init

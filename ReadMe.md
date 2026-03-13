@@ -10,6 +10,7 @@ Système de jeu Gatcha complet avec gestion d'authentification, de joueurs, de m
 - [Services et Ports](#-services-et-ports)
 - [Monitoring](#-monitoring)
 - [Structure du Projet](#-structure-du-projet)
+- [SonarQube](#-analyse-qualité-avec-sonarqube)
 
 ## 👥 Équipe et Contribution
 
@@ -107,7 +108,6 @@ Tous les services doivent avoir le statut `Up` et être `healthy`.
 #### API Gateway
 
 - **API Gateway (Point d'entrée unique)** : http://localhost:8000
-- **Documentation des routes** : http://localhost:8000/ (page d'accueil)
 - **Health check** : http://localhost:8000/health
 
 #### Documentation Swagger (via le gateway)
@@ -189,9 +189,9 @@ Une règle d'alerte est configurée pour notifier uniquement lorsqu'un service a
 
 ### URLs d'accès monitoring
 
-- Prometheus : `http://localhost:9090`
-- Grafana : `http://localhost:3001`
-- Alertmanager : `http://localhost:9093`
+- Prometheus : http://localhost:9090
+- Grafana : http://localhost:3001
+- Alertmanager : http://localhost:9093
 
 ### Accès Grafana
 
@@ -249,7 +249,7 @@ Dès le deuxième lancement, le marqueur `.initialized` dans le volume empêche 
 
 > **Mot de passe admin personnalisé** : définir `SONAR_ADMIN_PASSWORD` dans un fichier `.env` à la racine :
 > ```
-> SONAR_ADMIN_PASSWORD=MonMotDePasse!
+> SONAR_ADMIN_PASSWORD=Admin1234!5678
 > ```
 
 > **Pour forcer une ré-initialisation** (après `down -v`) : supprimer et recréer les volumes Docker.

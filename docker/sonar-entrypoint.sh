@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # sonar-entrypoint.sh
 # Lance SonarQube normalement, puis exécute sonar-init.sh en arrière-plan
 # dès que SonarQube est UP.
